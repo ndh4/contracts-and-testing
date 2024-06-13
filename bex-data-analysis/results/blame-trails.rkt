@@ -80,6 +80,30 @@
      (match stack/no-typed-mods
        [(list* (? type-interface-mod?) _) #t]
        [else #f])]
+    [(mutant-summary _
+                     (struct* run-status ([mutated-module mutated-mod-name]
+                                          [outcome 'blamed]
+                                          [blamed blamed]))
+                     config)
+     #:when (member mode '("blame.rkt" "stack.rkt" "null.rkt"))
+     (match blamed
+       [(list (== mutated-mod-name)) #t]
+       [else #f])]
+    [(mutant-summary _
+                     (struct* run-status ([mutated-module mutated-mod-name]
+                                          [outcome 'runtime-error]
+                                          [context-stack stack]))
+                     config)
+     #:when (member mode '("blame.rkt" "stack.rkt" "null.rkt"))
+     (match stack
+       [(list (and (not (== mutated-mod-name))
+                   (app (λ (m) (hash-ref config m 'none)) 'max))
+              ...
+              (== mutated-mod-name)
+              _ ...)
+        ;; lltodo this is a little weird. is it reasonable?
+        #t]
+       [else #f])]
     [else #f]))
 
 (module+ test

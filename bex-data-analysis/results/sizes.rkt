@@ -12,9 +12,9 @@
          "plot-common.rkt")
 
 (define-runtime-paths
-  [dyn-err-summaries-db-path "../../bex/dbs/type-api-mutations/dyn-err-summaries.rktdb"]
+  [dyn-err-summaries-db-path "../../../experiment-data/dbs/blutil-thesis/dyn-err-summaries.rktdb"]
   [benchmarks-dir "../../../gtp-benchmarks/benchmarks"]
-  [TR-config "../../bex/configurables/configs/TR.rkt"])
+  [TR-config "../../bex/configurables/configs/blame.rkt"])
 
 (define (benchmark-name->max-config name)
   (call-with-configuration

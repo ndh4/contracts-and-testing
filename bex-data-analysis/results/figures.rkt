@@ -1,7 +1,9 @@
 #lang at-exp rscript
 
-(provide mutant-mutators
-         get-bts-by-mutator-for-mode
+;; todo:
+;; - delete old scripts: bt-violations, adds-value-over, mutant-dynamic-errors.rkt
+
+(provide get-bts-by-mutator-for-mode
          get-bts-by-mutator-for-mode-backdoor
 
          generate-figure:bt-lengths-table
@@ -41,9 +43,10 @@
 ;;
 ;; todo: this is a whole lotta shit! easy to lose track. make it easier.
 (define-runtime-paths
-  [data-db "../../../experiment-data/results/type-api-mutations/data.sqlite"]
-  [TR-config "../../bex/configurables/configs/TR.rkt"]
-  [outdir "../../../experiment-data/results/type-api-mutations"]
+  ;; [data-db "../../../experiment-data/results/blutil/filtered-blutil-repro-data.sqlite"]
+  [data-db "../../../experiment-data/results/blutil/blutil-repro-data.sqlite"]
+  [TR-config "../../bex/configurables/configs/blame.rkt"]
+  [outdir "../../../experiment-data/results/blutil"]
   [data-cache "./data-cache"]
   [venn-template "venn-template.svg"])
 
@@ -60,14 +63,20 @@
 
                   "erasure-stack-first" "Erasure"
 
-                  "TR-null" "Random")
+                  "TR-null" "Random"
+
+                  "blame" "Blame"
+                  "stack" "Exceptions"
+                  "null" "Random")
             mode-name
             mode-name))
 (define rename-benchmark values)
 
 ;; (bt-lengths-table bt-length-comparisons avo-bars blame-vs-exns-venn success-bars detection-bars client-side-success-bars)
-(define to-generate '(bt-lengths-table #;bt-length-comparisons avo-bars #;blame-vs-exns-venn success-bars
-                      detection-bars client-side-success-bars))
+#;(define to-generate '(bt-lengths-table #;bt-length-comparisons avo-bars #;blame-vs-exns-venn success-bars
+                      #;detection-bars #;client-side-success-bars))
+(define to-generate '(#;bt-lengths-table #;bt-length-comparisons #;avo-bars #;blame-vs-exns-venn success-bars
+                      #;detection-bars #;client-side-success-bars))
 (plot-font-size 14)
 (define (plot-title-size) (inexact->exact (truncate (* 1.5 (plot-font-size)))))
 
@@ -125,7 +134,7 @@
                            (λ (l) (= (length l) (length mode-names))))
                     . -> .
                     boolean?)])
-       [result hash?])
+       [result #;hash? any/c])
 
   (define (mode->bts-by-id mode)
     (define bts-by-mutator (get-bts-by-mutator-for-mode mode))
@@ -186,25 +195,28 @@
       (* (inexact->exact (ceiling x)) of)))
 
 (define (generate-figure:bt-lengths-table modes/ordered)
+  (define null-mode-name "null")
   (define mode->max-trail-length
-    (match-lambda ["TR-null" 10]
-                  [else 4]))
+    (match-lambda [(== null-mode-name) 18]
+                  [else 10]))
   (define bt-length-distribution-for-mode
     (simple-memoize
      #:on-disk (and (use-disk-data-cache?)
                     (build-path data-cache "bt-length-distributions.rktd"))
      (λ (mode-name)
        (define bt-length/memo (simple-memoize bt-length))
-       (define (estimate-length-proportion length successful?)
-         (displayln @~a{Computing @mode-name @length @successful?})
+       (define (estimate-length-proportion target-length successful?)
+         (displayln @~a{Computing @mode-name @target-length @successful?})
          (define estimate
-           (bt-wise-strata-proportion-estimate
-            (list mode-name)
-            (match-lambda [(list bt)
-                           (and (= (bt-length/memo bt #t) length)
-                                (if successful?
-                                    (blame-trail-succeeded? bt)
-                                    (not (blame-trail-succeeded? bt))))])))
+           (or (bt-wise-strata-proportion-estimate
+                (list mode-name)
+                (match-lambda [(list bt)
+                               (and (= (bt-length/memo bt #t) target-length)
+                                    (if successful?
+                                        (blame-trail-succeeded? bt)
+                                        (not (blame-trail-succeeded? bt))))]))
+               (hash 'variance 0
+                     'proportion-estimate 0)))
          (when (collect-max-error-margin?)
            (record-error-margin! (variance->margin-of-error (hash-ref estimate 'variance)
                                                             1.96)))
@@ -236,10 +248,10 @@
                  #:x-label #f
                  #:y-label "% of trails with length"
                  #:title #f
-                 #:width (if (equal? mode-name "TR-null")
+                 #:width (if (equal? mode-name null-mode-name)
                              (* 2 (plot-width))
                              (plot-width))
-                 #:x-max (if (equal? mode-name "TR-null") #f (add1 (mode->max-trail-length "TR"))))))
+                 #:x-max (if (equal? mode-name null-mode-name) #f (add1 (mode->max-trail-length (last modes/ordered)))))))
 
   (define plots/ordered
     (for/list ([mode (in-list modes/ordered)])
@@ -683,14 +695,15 @@
 (module+ main
   (make-directory* outdir)
   (define (pict->figure-pdf! pict name)
-    (pict->pdf! pict (build-path outdir (~a plot-name-prefix "-" name ".pdf"))))
+    (pict->pdf! pict (build-path outdir (~a plot-name-prefix (if (equal? plot-name-prefix "") "" "-") name ".pdf"))))
 
   (when (member 'bt-lengths-table to-generate)
     (define bt-lengths-table
       (let ()
-        (define modes/ordered '("TR-null"
+        (define modes/ordered #;'("TR-null"
                                 "TR" "transient-newest" "transient-oldest"
-                                "TR-stack-first" "transient-stack-first" "erasure-stack-first"))
+                                "TR-stack-first" "transient-stack-first" "erasure-stack-first")
+          '("null" "blame" "stack"))
         (generate-figure:bt-lengths-table modes/ordered)))
     (pict->figure-pdf! bt-lengths-table "bt-lengths-table")
     (when (collect-max-error-margin?)
@@ -717,10 +730,11 @@
   (when (member 'avo-bars to-generate)
     (define avo-bars
       (let ()
-        (define modes/ordered '("TR" "transient-newest" "transient-oldest"
-                                     "TR-stack-first" "transient-stack-first" "erasure-stack-first"))
+        (define modes/ordered #;'("TR" "transient-newest" "transient-oldest"
+                                       "TR-stack-first" "transient-stack-first" "erasure-stack-first")
+          '("blame" "stack" #;"null"))
         (generate-figure:avo-bars modes/ordered
-                                  (remove "TR-null" modes))))
+                                  (remove "null" modes))))
     (pict->figure-pdf! avo-bars "avo-bars")
     (when (collect-max-error-margin?)
       (displayln @~a{Max error margin for avo-bars: @(unbox max-error-margin)})
@@ -730,14 +744,15 @@
   (when (member 'success-bars to-generate)
     (define success-bars
       (let ()
-        (define modes/ordered '("TR"
+        (define modes/ordered #;'("TR"
                                 "TR-stack-first"
                                 "transient-newest"
                                 "transient-oldest"
                                 "transient-stack-first"
                                 "erasure-stack-first"
                                 #;"TR-null" ; decided to remove it from this plot
-                                ))
+                                )
+          '("blame" "stack" "null"))
         (generate-figure:success-bars modes/ordered)))
     (pict->figure-pdf! success-bars "success-bars")
     (when (collect-max-error-margin?)

@@ -14,7 +14,7 @@
 
 (define current-mutation-types (make-parameter #f))
 
-(define PLOT-WIDTH 700)
+(define PLOT-WIDTH 400)
 (define SUCCESS-COUNTS-LIMIT 50)
 
 (struct annotated (data points) #:prefab)
@@ -31,7 +31,7 @@
 (define (read-data-files log-files
                          #:data-type data-type)
   (match data-type
-    [(or 'successful-population-count 'successful-population-heatmap)
+    [(or 'successful-population-count 'successful-population-heatmap 'success-counts)
      (define benchmark-success-hashes
        (for/hash ([log-file (in-list log-files)])
          (values (path->benchmark-name log-file)
@@ -174,7 +174,7 @@
                            #:extra extra-renderer-trees
                            ))
 
-(define labels-width 100)
+(define labels-width 150)
 #;(define plot-bars-pict
         (simple-inferred-plotter (curry discrete-histogram
                                         #:add-ticks? #t)
@@ -185,8 +185,13 @@
                               columns
                               #:title [title #f]
                               #:x-max [x-max 1])
+  #;(define labels-width (pict-width ((make-plotter #t)
+                                    (for/first ([{_ d} (in-dict all-data)])
+                                      (for/hash ([{k _} (in-dict (annotated-data d))])
+                                        (values k 0))))))
   (define label-offset
-    (inexact->exact
+    0
+    #;(inexact->exact
      (round
       (let ([x (length (current-mutation-types))])
         (+ (* -8.33333333333 x)
@@ -235,24 +240,40 @@
   (map color-for numbers))
 
 (define (rename-mutator mutator-name)
-  (hash-ref (hash "constant-swap" "constant"
-                  "begin-result-deletion" "deletion"
-                  "top-level-id-swap" "top-level-id"
-                  "imported-id-swap" "imported-id"
-                  "method-id-swap" "method-id"
-                  "field-id-swap" "field-id"
-                  "position-swap" "position"
-                  "nested-list-construction-swap" "list"
-                  "class:initializer-swap" "class:init"
-                  "class:publicity" "class:public"
-                  "class:super-new" "class:super"
-                  "class:parent-swap" "class:parent"
-                  "arithmetic-op-swap" "arithmetic"
-                  "boolean-op-swap" "boolean"
-                  "negate-conditional" "negate-cond"
-                  "force-conditional" "force-cond")
+  (hash-ref (hash
+             "constant-swap" "constant"
+             "arithmetic-op-swap" "arithmetic"
+             "boolean-op-swap" "boolean"
+             "comparison-op-swap" "relational"
+             "negate-conditional" "conditional"
+             "begin-drop" "statement"
+             "position-swap" "argument"
+             "class:publicity" "hide-method"
+
+             ;; "constant-swap" "constant"
+             ;; "begin-result-deletion" "deletion"
+             ;; "top-level-id-swap" "top-level-id"
+             ;; "imported-id-swap" "imported-id"
+             ;; "method-id-swap" "method-id"
+             ;; "field-id-swap" "field-id"
+             ;; "position-swap" "position"
+             ;; "nested-list-construction-swap" "list"
+             ;; "class:initializer-swap" "class:init"
+             ;; "class:publicity" "class:public"
+             ;; "class:super-new" "class:super"
+             ;; "class:parent-swap" "class:parent"
+             ;; "arithmetic-op-swap" "arithmetic"
+             ;; "boolean-op-swap" "boolean"
+             ;; "negate-conditional" "negate-cond"
+             ;; "force-conditional" "force-cond"
+             )
             mutator-name
             mutator-name))
+
+(define (rename-benchmark benchmark-name)
+  (match benchmark-name
+    [(regexp #rx"^(.*)-debug$" (list _ name)) name]
+    [other other]))
 
 (main
  #:arguments {[flags log-files]
@@ -346,32 +367,42 @@
                      empty)))
     (define (sort+rename-mutators mutator-counts)
       (define ordering '("constant"
-                         "deletion"
-                         "position"
-                         "list"
-                         "top-level-id"
-                         "imported-id"
-                         "method-id"
-                         "field-id"
-                         "class:init"
-                         "class:parent"
-                         "class:public"
-                         "class:super"
                          "arithmetic"
-                         "boolean"
-                         "negate-cond"
-                         "force-cond"))
+                         "relational"
+                         "logical"
+                         "conditional"
+                         "statement"
+                         "argument"
+                         "hide-method"
+
+                         ;; "constant"
+                         ;; "deletion"
+                         ;; "position"
+                         ;; "list"
+                         ;; "top-level-id"
+                         ;; "imported-id"
+                         ;; "method-id"
+                         ;; "field-id"
+                         ;; "class:init"
+                         ;; "class:parent"
+                         ;; "class:public"
+                         ;; "class:super"
+                         ;; "arithmetic"
+                         ;; "boolean"
+                         ;; "negate-cond"
+                         ;; "force-cond"
+                         ))
       (define renamed (dict-map mutator-counts
                                 (λ (orig-name count)
                                   (cons (rename-mutator orig-name) count))))
       (sort renamed
             >
-            #:key (match-lambda [(cons name _) (index-of ordering name)])
+            #:key (match-lambda [(cons name _) (or (index-of ordering name) 0)])
             #:cache-keys? #t))
     (define sorted+renamed+annotations
       (for/hash ([{benchmark mutator-counts} (in-hash breakdown-by-benchmark)])
         (define sorted+renamed (sort+rename-mutators mutator-counts))
-        (values benchmark (annotated sorted+renamed empty))))
+        (values (rename-benchmark benchmark) (annotated sorted+renamed empty))))
     (pict->png!
      (plot-benchmark-table sorted+renamed+annotations
                            #f
