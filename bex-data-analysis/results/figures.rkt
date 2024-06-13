@@ -31,8 +31,10 @@
          "bt-ids.rkt")
 
 ;; To run visualization for a different experiment, need to:
-;; - [ ] edit these paths,
-;; - [ ] make sure the configs symlink is right,
+;; - [ ] verify that the success criteria in `blame-trails.rkt` is up to date
+;;       (for a new experiment, highly likely that it needs modification)
+;; - [ ] edit these paths below,
+;; - [ ] make sure the configs symlink is right (bex/configurables/configs),
 ;; - [ ] edit paths in `sizes.rkt`,
 ;; - [ ] make sure `experiment-info.rkt` is right,
 ;; - [ ] make sure gtp-benchmarks is on the right branch
@@ -44,6 +46,8 @@
   [outdir "../../../experiment-data/results/type-api-mutations"]
   [data-cache "./data-cache"]
   [venn-template "venn-template.svg"])
+
+(define plot-name-prefix "")
 
 (define (rename-mode mode-name)
   (hash-ref (hash "TR" "Natural blame"
@@ -81,8 +85,6 @@
 (define (record-error-margin! e)
   (when (> e (unbox max-error-margin))
     (set-box! max-error-margin e)))
-
-(define plot-name-prefix "")
 
 ;; for getting mutator names
 (install-configuration! TR-config)
