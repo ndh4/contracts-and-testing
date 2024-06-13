@@ -12,7 +12,8 @@
          (struct-out blame-trail)
          (struct-out benchmark-data-files)
 
-         read-mutants-by-mutator)
+         read-mutants-by-mutator
+         read-blame-trail-db->df)
 
 (require bex/mutation-analysis/mutation-analysis-summaries
          bex/experiment/blame-trail-data

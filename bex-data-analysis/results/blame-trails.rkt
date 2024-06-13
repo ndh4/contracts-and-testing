@@ -23,6 +23,7 @@
 (define (satisfies-BT-hypothesis?/recompute bt)
   (satisfies-BT-hypothesis? (blame-trail-mutant-summaries bt)
                             (blame-trail-mode-config-name bt)))
+;; lltodo: this really needs to be a configurable instead of something to manually edit every time
 (define (satisfies-BT-hypothesis? mutant-summaries mode)
   (define end-mutant-summary (first mutant-summaries))
   (define type-interface-mod?

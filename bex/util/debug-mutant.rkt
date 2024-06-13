@@ -35,7 +35,7 @@
     [(regexp @~a{^#s\(mutant-summary.+(#hash.+\)\))}
              (list _ hash-string))
      (call-with-input-string hash-string read)]
-    [(and (or 'types 'none) level)
+    [(and (or 'types 'none 'max) level)
      (define mods (map file-name-string-from-path
                        (benchmark-untyped the-benchmark)))
      (for/hash ([mod (in-list mods)])
@@ -67,7 +67,7 @@
                       #:interactive? [interactive? #t]
 
                       #:diff-mutant? [diff-mutant? #f]
-                      #:stop-diff-early? [stop-diff-early? #f]
+                      #:stop-diff-early? [stop-diff-early? #t]
                       #:run? [run? #f]
                       #:run-process? [run-via-process? #f]
                       #:run-process-async? [run-via-process-async? #f]
@@ -85,6 +85,10 @@
   (define bench-path (find-benchmark bench-name-or-path))
   (define the-benchmark (read-benchmark bench-path))
   (define config (read-config identifier the-benchmark))
+  (when (and interactive? (serialized-config? identifier))
+    (displayln "Deserialized config:")
+    (display "  ")
+    (pretty-write config))
   (match-define (and the-benchmark-configuration
                      (struct* benchmark-configuration
                               ([main main-path]

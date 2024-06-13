@@ -19,10 +19,10 @@
 
 (define plot-tree? any/c)
 
-(define (bt-length trail normalize?)
+(define (bt-length trail normalize-for-multi-action-trail-steps?)
   (define base-trail-length
     (sub1 (length (blame-trail-mutant-summaries trail))))
-  (cond [(and normalize?
+  (cond [(and normalize-for-multi-action-trail-steps?
               (> base-trail-length 0))
          (define ordered-configs
            (sort (blame-trail-mutant-summaries trail)
@@ -36,24 +36,25 @@
            (for/sum ([{mod level} (in-hash first-mutant-config)]
                      #:when (not (equal? (hash-ref last-mutant-config mod)
                                          level)))
-             1))
+             (- (index-of (configured:config-levels) (hash-ref last-mutant-config mod))
+                (index-of (configured:config-levels) level))))
          number-of-components-typed]
         [else base-trail-length]))
 
 (define/contract (bt-length-distributions-for key data
-                                              #:normalize? normalize?
+                                              #:normalize-for-multi-action-trail-steps? normalize-for-multi-action-trail-steps?
                                               #:dump-to [dump-port #f]
                                               #:partition-by-success? [partition-by-success? #f])
   ({string?
    (hash/c string? (listof blame-trail?))
-   #:normalize? boolean?}
+   #:normalize-for-multi-action-trail-steps? boolean?}
    {#:dump-to (or/c output-port? #f)
     #:partition-by-success? boolean?}
    . ->* .
    (listof (list/c natural? (list/c real? real?))))
 
   (define (trail-length trail)
-    (bt-length trail normalize?))
+    (bt-length trail normalize-for-multi-action-trail-steps?))
 
   (define trails (hash-ref data key))
   (when dump-port
@@ -96,13 +97,13 @@
   partitioned-trail-proportions-by-length/sorted/with-0)
 
 (define/contract (bt-length-distribution-histogram-for key data
-                                                       #:normalize? normalize?
+                                                       #:normalize-for-multi-action-trail-steps? normalize-for-multi-action-trail-steps?
                                                        #:dump-to [dump-port #f]
                                                        #:color-by-success? [color-by-success? #f]
                                                        #:colors [success-colors '("green" "red")])
   ({string?
    (hash/c string? (listof blame-trail?))
-   #:normalize? boolean?}
+   #:normalize-for-multi-action-trail-steps? boolean?}
    {#:dump-to (or/c output-port? #f)
     #:color-by-success? boolean?
     #:colors (listof any/c)}
@@ -111,7 +112,7 @@
 
   (define partitioned-trail-proportions-by-length/sorted/with-0
     (bt-length-distributions-for key data
-                                 #:normalize? normalize?
+                                 #:normalize-for-multi-action-trail-steps? normalize-for-multi-action-trail-steps?
                                  #:dump-to dump-port
                                  #:partition-by-success? color-by-success?))
 
@@ -119,23 +120,23 @@
                      #:colors success-colors))
 
 (define/contract (bt-length-distribution-plot-for key data
-                                                  #:normalize? normalize?
+                                                  #:normalize-for-multi-action-trail-steps? normalize-for-multi-action-trail-steps?
                                                   #:dump-to [dump-port #f])
   ({string?
    (hash/c string? (listof blame-trail?))
-   #:normalize? boolean?}
+   #:normalize-for-multi-action-trail-steps? boolean?}
    {#:dump-to (or/c output-port? #f)}
    . ->* .
    pict?)
 
   (plot-pict (bt-length-distribution-histogram-for key data
-                                                   #:normalize? normalize?
+                                                   #:normalize-for-multi-action-trail-steps? normalize-for-multi-action-trail-steps?
                                                    #:dump-to dump-port)
              #:x-min 0
              #:y-min 0
              #:y-max 1
              #:x-label (~a "Blame trail length"
-                           (if normalize? " (normalized)" ""))
+                           (if normalize-for-multi-action-trail-steps? " (normalized)" ""))
              #:y-label (~a "Percent of trails")
              #:title key))
 
@@ -195,7 +196,7 @@
      (make-distributions-table (λ (key data #:dump-to [dump-to #f])
                                  (bt-length-distribution-plot-for key
                                                                   data
-                                                                  #:normalize? normalized?
+                                                                  #:normalize-for-multi-action-trail-steps? normalized?
                                                                   #:dump-to dump-to))
                                #:breakdown-by breakdown-dimension
                                #:summaries-db (mutation-analysis-summaries-db)

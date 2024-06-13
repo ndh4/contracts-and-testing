@@ -18,6 +18,13 @@
 (define (variance->margin-of-error variance [confidence-z-value 1.96])
   (* (variance->stderr variance) confidence-z-value))
 
+(define (check-0!/p v name)
+  (when (zero? v)
+    (raise-user-error 'stratified-proportion-estimate
+                      @~a{@name is 0, so we can't calculate the proportion estimate})))
+(define-syntax-rule (check-0! var)
+  (check-0!/p var 'var))
+
 ;; proportion-estimate/c :=
 ;; (hashof 'proportion-estimate (real-in 0 1)
 ;;         'variance            real?
@@ -36,10 +43,15 @@
                              [confidence-z-value 1.96])
   (define sample-size (length sample))
   (define proportion-estimate (/ (count predicate sample) sample-size))
-  ;; variance of a proportion estimate within a sample from
-  ;; https://stattrek.com/survey-research/stratified-sampling-analysis.aspx
-  (define variance (/ (* sample-size proportion-estimate (- 1 proportion-estimate))
-                      (sub1 sample-size)))
+  (check-0! sample-size)
+  (check-0! population-size)
+  (define variance
+    (if (< sample-size 2)
+        0
+        ;; variance of a proportion estimate within a sample from
+        ;; https://stattrek.com/survey-research/stratified-sampling-analysis.aspx
+        (/ (* sample-size proportion-estimate (- 1 proportion-estimate))
+           (sub1 sample-size))))
   (hash 'proportion-estimate proportion-estimate
         'variance variance
         'sample-size sample-size
@@ -77,20 +89,24 @@
 (define (combine-subgroup-estimates estimates)
   ;; Based entirely on:
   ;; https://stattrek.com/survey-research/stratified-sampling-analysis.aspx
-  (cond [(empty? estimates)
+  (define non-empty-subgroup-estimates (filter-not false? estimates))
+  (define total-group-population-size
+    (for/sum ([subgroup-estimate (in-list non-empty-subgroup-estimates)])
+      (hash-ref subgroup-estimate
+                'population-size)))
+  (define total-group-sample-size
+    (for/sum ([subgroup-estimate (in-list non-empty-subgroup-estimates)])
+      (hash-ref subgroup-estimate
+                'sample-size)))
+  (cond [(or (empty? estimates)
+             (and (zero? total-group-sample-size)
+                  (zero? total-group-population-size)))
          #f]
         [else
-         (define non-empty-subgroup-estimates (filter-not false? estimates))
-         (define total-group-population-size
-           (for/sum ([subgroup-estimate (in-list non-empty-subgroup-estimates)])
-             (hash-ref subgroup-estimate
-                       'population-size)))
-         (define total-group-sample-size
-           (for/sum ([subgroup-estimate (in-list non-empty-subgroup-estimates)])
-             (hash-ref subgroup-estimate
-                       'sample-size)))
          (unless (>= total-group-population-size total-group-sample-size)
            (error 'combine @~a{@total-group-population-size < @total-group-sample-size}))
+         (check-0! total-group-sample-size)
+         (check-0! total-group-population-size)
          (define group-proportion-estimate
            (for/sum ([estimate (in-list non-empty-subgroup-estimates)])
              (* (/ (hash-ref estimate 'sample-size)
