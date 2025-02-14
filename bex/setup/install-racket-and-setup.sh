@@ -27,6 +27,11 @@ else
     INSTALLER="racket-${VERSION}-x86_64-linux-cs.sh"
     wget "https://mirror.racket-lang.org/installers/${VERSION}/$INSTALLER"
     chmod u+x ./$INSTALLER
+    # If you are using mac with Apple Silicon chip,
+    # INSTALLER should end with -aarch64-macosx-cs.dmg instead of -x86_64-linux-cs.sh.
+    # If you are using mac, click on the dmg file yourself and move the Racket 8.9 folder into the parent directory
+    # of blame-evaluation-gt instead of into Applications. Then, rename "Racket 8.9" to "racket"
+    # and re-run this script.
     ./$INSTALLER <<EOF
 no
 4
