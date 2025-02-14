@@ -300,6 +300,7 @@
                    (app syntax->datum
                         `(module main racket
                            (#%module-begin
+                            (require (for-syntax racket/base))
                             (define-syntax ctc-level 'max)
                             (define/configurable-ctc a any/c 5)
                             (define/configurable-ctc (f x) any/c 5)))))
@@ -308,6 +309,7 @@
                     (app syntax->datum
                          `(module a racket
                             (#%module-begin
+                             (require (for-syntax racket/base))
                              (define-syntax ctc-level 'types)
                              (define/configurable-ctc y any/c 5)
                              (define/configurable-ctc ((g) x) any/c 5)))))
@@ -315,6 +317,7 @@
                     (app syntax->datum
                          `(module b racket
                             (#%module-begin
+                             (require (for-syntax racket/base))
                              (define-syntax ctc-level 'none)
                              b))))
                (mod (== adapter paths=?)
