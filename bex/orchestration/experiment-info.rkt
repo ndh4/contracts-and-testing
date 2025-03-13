@@ -60,13 +60,13 @@
 (define scenario-samples-per-mutant 100)
 
 (define experiment-benchmarks
-  '("dungeon"
+  '(#;"dungeon"
     "forth"
-    "kcfa"
-    "mbta"
-    "morsecode"
-    "sieve"
-    "snake"))
+    #;"kcfa"
+    #;"mbta"
+    #;"morsecode"
+    #;"sieve"
+    #;"snake"))
 
 (define experiment-modes
   '("blame"
