@@ -15,13 +15,13 @@
 (require setup/getinfo)
 
 (define-runtime-paths
-  [blame-evaluation-gt "../"])
+  [contracts-and-testing "../"])
 (define patterns-to-ignore
-  ((get-info/full blame-evaluation-gt) 'compile-omit-paths))
+  ((get-info/full contracts-and-testing) 'compile-omit-paths))
 (define (ignored-path? p)
   (ormap (λ (pat) (regexp-match? pat p))
          patterns-to-ignore))
-(define raco (build-path blame-evaluation-gt ".." ".." "racket" "bin" "raco"))
+(define raco (build-path contracts-and-testing ".." ".." "racket" "bin" "raco"))
 
 (main
  #:arguments {[(hash-table ['compile compile?]
@@ -38,13 +38,13 @@
                #:record]}
  (when clean-compiled?
    (system* (find-executable-path "find")
-            blame-evaluation-gt
+            contracts-and-testing
             "-name" "compiled"
             "-type" "d"
             "-prune"
             "-exec" "rm" "-rf" "{}" ";"))
  (when compile?
-   (parameterize ([current-directory blame-evaluation-gt])
+   (parameterize ([current-directory contracts-and-testing])
      (apply system*
             raco
             "make"

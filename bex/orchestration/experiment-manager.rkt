@@ -71,7 +71,7 @@
     (field [data-store-path (build-path store-path (~a hostname ".rktd"))]
            [host-racket-path (build-path host-project-path "racket" "bin" "racket")]
            [host-utilities-path
-            (build-path host-project-path "blame-evaluation-gt" "bex" "util")]
+            (build-path host-project-path "contracts-and-testing" "bex" "util")]
            [host-data-path (build-path host-project-path "experiment-output")]
            [host-experiment-runner-script-path
             (build-path host-project-path "generated-run-experiment.sh")]
@@ -706,7 +706,7 @@
                     @(if include-configuration-outcomes?
                          @~a{
                              cp -r @;
-                             ./blame-evaluation-gt/bex/dbs/@(current-remote-host-db-installation-directory-name)/configuration-outcomes @;
+                             ./contracts-and-testing/bex/dbs/@(current-remote-host-db-installation-directory-name)/configuration-outcomes @;
                              ./experiment-output/configuration-outcomes &&@" "
                              }
                          "") @;
@@ -842,7 +842,7 @@
                                          (raise-user-error 'update-host! reason))])
   (define host-dbs-destination
     (build-path (get-field host-project-path a-host)
-                "blame-evaluation-gt"
+                "contracts-and-testing"
                 "bex"
                 "dbs"))
   (displayln "Zipping up dbs archive...")
@@ -863,13 +863,13 @@
                                                  (current-remote-host-db-installation-directory-name)))
   (define host-repo-path
     (build-path (get-field host-project-path a-host)
-                "blame-evaluation-gt"))
+                "contracts-and-testing"))
   (define host-benchmarks-path
     (build-path (get-field host-project-path a-host)
                 "gtp-benchmarks"))
   (define host-setup-config-path
     (build-path (get-field host-project-path a-host)
-                "blame-evaluation-gt"
+                "contracts-and-testing"
                 "bex"
                 "setup"
                 setup-config-name))

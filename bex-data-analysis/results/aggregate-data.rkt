@@ -205,7 +205,7 @@ name NOT NULL
   (user-prompt! @~a{
                     Now going to record the current state of the following repos in the @;
                     database metadata. Make sure they're in the desired state before continuing.
-                    : blame-evaluation-gt, gtp-benchamrks, typed-racket
+                    : contracts-and-testing, gtp-benchamrks, typed-racket
                     })
   (query-exec db-conn
               "CREATE TABLE setup_state (
