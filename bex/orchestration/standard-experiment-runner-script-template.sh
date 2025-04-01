@@ -61,5 +61,5 @@ OUTDIR=experiment-output/$OUTDIR_NAME
 DATA_DIR=$OUTDIR/data
 mkdir -p $DATA_DIR
 hostname >> $OUTDIR/$BENCH.log
-./racket/bin/racket -l errortrace -t blame-evaluation-gt/bex/experiment/mutant-factory.rkt -- -b gtp-benchmarks/benchmarks/$BENCH -o $DATA_DIR -n "$CPUS" -e $OUTDIR/errs.log -l $OUTDIR/$BENCH-progress.log -c blame-evaluation-gt/bex/configurables/configs/$CONFIG_NAME -m $OUTDIR/$BENCH-metadata.rktd $PARITY_FLAG blame-evaluation-gt/bex/dbs/$DB_DIR_NAME/configuration-outcomes/$OUTDIR_NAME.rktd $KEEP_GOING_FLAG >> $OUTDIR/$BENCH.log 2>&1
+./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- -b gtp-benchmarks/benchmarks/$BENCH -o $DATA_DIR -n "$CPUS" -e $OUTDIR/errs.log -l $OUTDIR/$BENCH-progress.log -c contracts-and-testing/bex/configurables/configs/$CONFIG_NAME -m $OUTDIR/$BENCH-metadata.rktd $PARITY_FLAG contracts-and-testing/bex/dbs/$DB_DIR_NAME/configuration-outcomes/$OUTDIR_NAME.rktd $KEEP_GOING_FLAG >> $OUTDIR/$BENCH.log 2>&1
 popd > /dev/null

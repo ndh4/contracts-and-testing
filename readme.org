@@ -1,4 +1,4 @@
-* blame-evaluation-gt
+* contracts-and-testing
 This repo houses the infrastructure implementation for rational programmer experiments.
 
 * Installation
@@ -8,11 +8,11 @@ Clone this repo.
 /Suggestion/: create a new directory and clone it in there.
 
 After cloning, run
-: blame-evaluation-gt/bex/setup/install-racket-and-setup.sh
+: contracts-and-testing/bex/setup/install-racket-and-setup.sh
 with two arguments:
 1. The "project root".
    Typically, this should be the parent directory into which you cloned this repo.
-2. A setup config, typically one of =blame-evaluation-gt/bex/setup/*-setup-config.rkt=.
+2. A setup config, typically one of =contracts-and-testing/bex/setup/*-setup-config.rkt=.
 
 This setup script will
 1. Download and set up a fresh copy of racket dedicated for running the experiment in the "project root",
@@ -144,14 +144,14 @@ To do that, run the mutant factory like this:
 To run the whole experiment, for as many modes as needed:
 1. Make a copy of or modify [[file:bex/orchestration/orchestrate-experiment.rkt][bex/orchestration/orchestrate-experiment.rkt]] to create an experiment orchestration program.
    This program is written in a tiny embedded DSL for describing experiment orchestration plans.
-2. Modify [[file:~/github_sync/grad/projects/blame-gradual-typing/src/blame-evaluation-gt/bex/orchestration/experiment-info.rkt][bex/orchestration/experiment-info.rkt]] as necessary.
+2. Modify [[file:~/github_sync/grad/projects/blame-gradual-typing/src/contracts-and-testing/bex/orchestration/experiment-info.rkt][bex/orchestration/experiment-info.rkt]] as necessary.
 3. Run your version of =orchestrate-experiment.rkt=.
 
 The DSL for experiment orchestration consists primarily of two forms.
 
 =with-configuration= declares a whole-experiment orchestration plan.
 It's first argument is a pair of
-1. a host on which to run the experiment (referring to one of the hosts defined in [[file:~/github_sync/grad/projects/blame-gradual-typing/src/blame-evaluation-gt/bex/orchestration/experiment-manager.rkt][bex/orchestration/experiment-manager.rkt]]), and
+1. a host on which to run the experiment (referring to one of the hosts defined in [[file:~/github_sync/grad/projects/blame-gradual-typing/src/contracts-and-testing/bex/orchestration/experiment-manager.rkt][bex/orchestration/experiment-manager.rkt]]), and
 2. an orchestration config (typically defined in =experiment-info.rkt=, which see for the definition of that config to understand its parts).
 
 The next arguments are options to configure the orchestration, see the subsection below for details.
@@ -168,7 +168,7 @@ Everything outside of =with-configuration= is regular racket code.
 
 **** Hosts
 The host actually encapsulates both a host on which to run the experiment, and details about /how/ to run it.
-The options are defined in [[file:~/github_sync/grad/projects/blame-gradual-typing/src/blame-evaluation-gt/bex/orchestration/experiment-manager.rkt][bex/orchestration/experiment-manager.rkt]] above =main= (the =hosts= and related definitions).
+The options are defined in [[file:~/github_sync/grad/projects/blame-gradual-typing/src/contracts-and-testing/bex/orchestration/experiment-manager.rkt][bex/orchestration/experiment-manager.rkt]] above =main= (the =hosts= and related definitions).
 A good host for just trying things out is =local=.
 
 Depending on your particular needs the details of how the hosts are configured may need to be tweaked.

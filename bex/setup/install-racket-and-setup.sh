@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function help(){
-	echo "First argument must be project root (usually the parent of `blame-evaluation-gt`), and second must be the setup config (one of `blame-evaluation-gt/bex/setup/*-setup-config.rkt`)"
+	echo "First argument must be project root (usually the parent of `contracts-and-testing`), and second must be the setup config (one of `contracts-and-testing/bex/setup/*-setup-config.rkt`)"
 	exit 1
 }
 
@@ -30,7 +30,7 @@ else
     # If you are using mac with Apple Silicon chip,
     # INSTALLER should end with -aarch64-macosx-cs.dmg instead of -x86_64-linux-cs.sh.
     # If you are using mac, click on the dmg file yourself and move the Racket 8.9 folder into the parent directory
-    # of blame-evaluation-gt instead of into Applications. Then, rename "Racket 8.9" to "racket"
+    # of contracts-and-testing instead of into Applications. Then, rename "Racket 8.9" to "racket"
     # and re-run this script.
     ./$INSTALLER <<EOF
 no
@@ -41,9 +41,9 @@ fi
 
 ./racket/bin/raco pkg install --auto "https://github.com/LLazarek/rscript.git"
 
-find blame-evaluation-gt/ -name compiled -type d -prune -exec rm -r '{}' ';'
+find contracts-and-testing/ -name compiled -type d -prune -exec rm -r '{}' ';'
 
 printf "Running setup script\n\n\n"
-./racket/bin/racket blame-evaluation-gt/bex/setup/setup.rkt -c "$2"
+./racket/bin/racket contracts-and-testing/bex/setup/setup.rkt -c "$2"
 
 popd
