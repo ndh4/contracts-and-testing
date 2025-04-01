@@ -1071,19 +1071,19 @@
 ;; ----- these hosts should be used locally -----
 (define zythos (new condor-host%
                     [hostname "zythos"]
-                    [host-project-path "/project/blgt"]
+                    [host-project-path "/project/teco"]
                     [host-jobdir-path "./proj/jobctl"]))
 ;; orchestrates/manages the experiment from the local machine, ssh'ing into zythos to
 ;; run the experiment, one mode at a time, on peroni -- offloading all mutants to condor
 (define zythos-ssh/one-job-per-mutant
   (new direct-access-host%
        [hostname "zythos-direct"]
-       [host-project-path "/project/blgt"]
+       [host-project-path "/project/teco"]
        [cpu-count 150]
        [env-vars "BEX_CONDOR_MACHINES='fix allagash piraat'"]))
 (define benbox (new direct-access-host%
                     [hostname "benbox"]
-                    [host-project-path "./blgt"]))
+                    [host-project-path "./teco"]))
 (define local (new local-direct-host%
                    [cpu-count 2]
                    [hostname "local"]

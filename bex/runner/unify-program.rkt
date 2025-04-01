@@ -272,13 +272,13 @@
     (contract unified-benchmark/c
               (program
                (mod (build-path
-                     "/proj/blgt/gtp-benchmarks/benchmarks/kcfa"
+                     "/proj/teco/gtp-benchmarks/benchmarks/kcfa"
                      unification-directory-name
                      "main.rkt")
                     #'(module main racket
                         (#%module-begin a b c)))
                (list (mod (build-path
-                           "/proj/blgt/gtp-benchmarks/benchmarks/kcfa"
+                           "/proj/teco/gtp-benchmarks/benchmarks/kcfa"
                            unification-directory-name
                            "benv-adapted.rkt")
                           #'(module main racket
@@ -303,5 +303,5 @@
                                   "/foo/bar/baz/benchmarks/sieve/unified/a.rkt"))
     (unified-module-path-of? "/foo/bar/baz/benchmarks/sieve/base/a.rkt"
                              "/foo/bar/baz/benchmarks/sieve/base/a.rkt")
-    (unified-module-path-of? "/project/blgt/gtp-benchmarks/benchmarks/sieve/both/type-interface.rkt"
-                             "/project/blgt/gtp-benchmarks/benchmarks/sieve/unified/type-interface.rkt")))
+    (unified-module-path-of? "/project/teco/gtp-benchmarks/benchmarks/sieve/both/type-interface.rkt"
+                             "/project/teco/gtp-benchmarks/benchmarks/sieve/unified/type-interface.rkt")))
