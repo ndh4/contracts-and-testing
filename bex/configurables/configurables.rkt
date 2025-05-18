@@ -51,6 +51,9 @@
   (define-implementation none
     #:module "module-instrumentation/none.rkt")
 
+  (define-implementation insert-test
+    #:module "module-instrumentation/insert-test.rkt")
+
   (define-implementation transient-types
     #:module "module-instrumentation/type-with-transient.rkt"
     #:parameters [transient-special-cases-db])
@@ -69,6 +72,9 @@
   (define-implementation just-instrument-modules
     #:module "program-instrumentation/just-instrument-modules.rkt")
 
+  (define-implementation insert-test-in-main
+    #:module "program-instrumentation/insert-test-in-main.rkt")
+
   (define-implementation instrument-modules-and-insert-interface-adapter-module
     #:module "program-instrumentation/instrument-modules-and-insert-interface-adapter-module.rkt")
 
@@ -83,6 +89,9 @@
 
   (define-implementation none
     #:module "benchmark-runner/nothing.rkt")
+
+  (define-implementation teco-run
+    #:module "benchmark-runner/teco-run.rkt")
 
   (define-implementation load-pre-computed-result
     #:module "benchmark-runner/load-pre-computed-result.rkt"
