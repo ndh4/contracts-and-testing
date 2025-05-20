@@ -14,7 +14,7 @@
 (configure! bt-root-sampling         pre-selected
             "../dbs/blutil/pre-selected-bt-roots.rktdb")
 (configure! trail-completion         any-type-error/blamed-at-max)
-(configure! configurations           module-export-ctcs)
+(configure! configurations           teco-configs)
 
 (configure! module-instrumentation   insert-test)
 (configure! program-instrumentation  insert-test-in-main)

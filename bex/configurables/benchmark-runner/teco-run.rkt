@@ -9,8 +9,6 @@
 
 (define (make-require-benchmark-runner program mod-name index)
 
-  (printf "Here we are in make-rbr~n")
-
   (λ (main-mod-path)
     ; Below is the code typically used for basic running
     ; Keep in mind that we don't have to worry about namespace because

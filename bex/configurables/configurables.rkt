@@ -164,4 +164,6 @@
   (define-implementation module-export-ctcs
     #:module "configurations/module-export-ctcs.rkt")
   (define-implementation top-level-id-ctcs
-    #:module "configurations/top-level-id-ctcs.rkt"))
+    #:module "configurations/top-level-id-ctcs.rkt")
+  (define-implementation teco-configs
+    #:module "configurations/teco-configs.rkt"))
