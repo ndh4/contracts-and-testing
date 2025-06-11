@@ -36,6 +36,7 @@
          syntax/parse
          mutate/logger
          mutate/traversal
+         racket/date
          "../configurations/configure-benchmark.rkt"
          "../runner/mutation-runner.rkt"
          "../util/path-utils.rkt"
@@ -54,6 +55,32 @@
 
 (define default-memory-limit/gb (make-parameter 3))
 (define default-timeout/s (make-parameter (* 5 60)))
+
+(define-logger mutil)
+(define recvr (make-log-receiver mutil-logger 'info))
+(void
+ (thread
+  (lambda () (let loop()
+               (define v (sync recvr))
+               (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+               (loop)))))
+(define (log-mutil-message level msg . vs)
+  (when (log-level? mutil-logger level)
+    (log-message mutil-logger
+                 level
+                 (apply
+                  format
+                  (string-append "[~a] "
+                                 (if (member level '(fatal error warning))
+                                     (failure-msg level msg)
+                                     msg))
+                  (date->string (current-date) #t)
+                  vs)
+                 #f)))
+(define-syntax-rule (log-mutil level msg v ...)
+  (log-mutil-message 'level msg v ...))
+(define (failure-msg failure-type m)
+  (string-append "***** " (~a failure-type) " *****\n" m "\n**********"))
 
 (define current-mutant-runner-log-mutation-info? (make-parameter #f))
 (define (spawn-mutant-runner a-benchmark-configuration

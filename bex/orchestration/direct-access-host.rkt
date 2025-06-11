@@ -7,7 +7,15 @@
          "host-utils.rkt"
          "host.rkt")
 
-(define-logger experiment-manager) 
+(define-logger experiment-manager)
+(define recvr (make-log-receiver experiment-manager-logger 'debug))
+
+(void
+ (thread
+  (lambda () (let loop()
+               (define v (sync recvr))
+               (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+               (loop)))))
 
 ;; runs one mode of the experiment at a time, each having all `cpu-count` cpus
 (define direct-access-host%
@@ -48,23 +56,27 @@
         (set! queueing-thd (make-direct-access-host-queue-manager))))
 
     (define experiment-script-name (basename host-experiment-runner-script-path))
+    
     (define/public (get-jobs [active? #t] #:with-pid? [with-pid? #f])
       (option-let*
        ([active (match (system/host/string (format "ps -ef | grep ~a" experiment-script-name) ;@~a{ps -ef | grep @experiment-script-name}
        )
-                  [(regexp (pregexp @~a{(?m:^\S+\s+(\d+)\s+(\S+\s+){5}/bin/bash .*@experiment-script-name (\S+) (\S+).rkt)})
+                  [(regexp (pregexp @~a{(?m:^\s*\S+\s+(\d+)\s+(\S+\s+){5}/bin/bash .*@experiment-script-name (\S+) (\S+).rkt)})
                            (list _ script-pid _ benchmark config-name))
+                   (log-experiment-manager-debug "Happy Case")
                    (list (list* benchmark
                                 config-name
                                 (if with-pid?
                                     ;; get the mutant-factory pid, since that's what actually needs to be killed to cancel the job
                                     (regexp-match* (pregexp @~a{\s(\d+)\s+@script-pid .*mutant-factory.rkt})
-                                                   (system/host/string (format "ps -ef | grep ~a" experiment-script-name) ;@~a{ps -ef | grep @script-pid}
+                                                   (system/host/string (format "ps -ef | grep ~a" script-pid) ;@~a{ps -ef | grep @script-pid}
                                                    )
                                                    #:match-select cadr)
                                     empty)))]
-                  [(regexp (pregexp @~a{grep[^@"\n"]+@experiment-script-name})) empty]
-                  [else absent])])
+                  [(regexp (pregexp @~a{grep[^@"\n"]+@experiment-script-name})) 
+                   (log-experiment-manager-debug "Empty Case")
+                   empty]
+                  [else (log-experiment-manager-debug "Absent Case") absent])])
 
        (match active?
          [#t active]
@@ -110,7 +122,8 @@
        ([_ (ensure-screen-setup!)]
         [_ (upload-experiment-script!)]
         [_ (check-success
-            (system/host @~a{screen -S @run-screen-name -p 0 -X stuff "@|run-cmd|\r"}))])
+            (system/host @~a{screen -S @run-screen-name -p 0 -X stuff "@|run-cmd|$(printf \\r)"}))]
+        [_ (log-experiment-manager-debug @~a{Job launched successfully})])
        (void)))
     (define/private (cancel-currently-running-job!)
       (option-let*

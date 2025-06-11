@@ -167,6 +167,10 @@
                                 @~a{
                                     Unexpected dirty state on @host, summary:
                                     @(format-status host)
+                                    host: @host
+                                    download-dir: @download-dir
+                                    name: @name
+                                    expected-benchmarks: @benchmark-names
                                     You can go clean it up manually now and then continue, @;
                                     or go ahead anyway now.
                                     Continue to run the mode? (Say no to abort)

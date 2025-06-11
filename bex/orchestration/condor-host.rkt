@@ -46,6 +46,7 @@
            (filter-map (match-lambda [(job id (== active?)) (find-job id)]
                                      [else #f])
                        info))))
+    
     (define/private (all-job-info)
       (define condor-dump (system/host/string "condor_q"))
       (match condor-dump
@@ -131,10 +132,12 @@
       (ensure-store!)
       (with-output-to-file data-store-path #:exists 'append
         (thunk (writeln (cons (list benchmark config-name) id)))))
+    
     (define/private (read-job benchmark config-name) ; -> (option/c id?)
       (dict-ref (read-data-store)
                 (list benchmark config-name)
                 absent))
+    
     (define/private (find-job target-id) ; -> (option/c (list/c benchmark config-name))
       (ensure-store!)
       (for*/option ([{bench+config id} (in-dict (file->list data-store-path))]

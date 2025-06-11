@@ -4,7 +4,7 @@
 
 (define-runtime-path status-file "../../../experiment-status.txt")
 
-(with-configuration [zythos-ssh/one-job-per-mutant
+(with-configuration [local
                      blutil]
   #:status-in status-file
   #:manual-outcome-recording

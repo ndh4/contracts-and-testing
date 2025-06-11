@@ -5,7 +5,7 @@
 (configure! mutation                 code-mistakes)
 (configure! mutant-sampling          pre-selected
             "../dbs/blutil/mutant-samples.rktdb")
-(configure! mutant-filtering         none)
+(configure! mutant-filtering         dont-care-about-blame-trails)
 (configure! module-selection-for-mutation all-regular-modules)
 (configure! benchmark-runner         teco-run) ;; TODO Change this to interpret result possibly
 (configure! blame-translation

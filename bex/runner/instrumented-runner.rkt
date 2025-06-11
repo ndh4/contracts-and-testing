@@ -22,6 +22,19 @@
          "../util/optional-contracts.rkt"
          "../configurables/configurables.rkt")
 
+(define-logger instrumented-runner)
+
+(define recvr (make-log-receiver instrumented-runner-logger 'debug))
+
+#;(void
+ (thread
+  (lambda () (let loop()
+               (define v (sync recvr))
+               (parameterize ([print-syntax-width +inf.0])
+               (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+               )
+               (loop)))))
+
 (define (module-path-resolve mod-path [load? #f])
   ((current-module-name-resolver) mod-path #f #f load?))
 
@@ -163,6 +176,19 @@
                 (module-path-resolve (resolved-module-module-path m))]
                [current-directory
                 (resolved-module-containing-directory m)])
+
+               (log-instrumented-runner-debug "Point AAAAA")
+
+
+            #;(log-instrumented-runner-debug (format "mapped symbols: ~a~n" (namespace-mapped-symbols ns)))
+              (parameterize ([print-syntax-width +inf.0])
+                   (log-instrumented-runner-debug (format "~a~n" (resolved-module-stx m))))
+;               (log-instrumented-runner-debug "Point AA")
+;               (log-instrumented-runner-debug (resolved-module-stx m))
+;               (log-instrumented-runner-debug "Point B")
+;               (parameterize ([print-syntax-width +inf.0])
+;                 (log-instrumented-runner-debug (pretty-format "~a~n" (resolved-module-stx m))))
+;               (log-instrumented-runner-debug "Point C")
             (eval (resolved-module-stx m)))))
 
       ;; Run the main module

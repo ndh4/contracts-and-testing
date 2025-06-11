@@ -70,4 +70,40 @@
                            config)))
     (test-round-trip #hash(("main.rkt" . types) ("a.rkt" . none) ("b.rkt" . types)))
     (test-round-trip #hash(("main.rkt" . none) ("a.rkt" . none) ("b.rkt" . types)))
-    (test-round-trip #hash(("main.rkt" . none) ("a.rkt" . types) ("b.rkt" . none)))))
+    (test-round-trip #hash(("main.rkt" . none) ("a.rkt" . types) ("b.rkt" . none))))
+
+    (test-begin
+        #:name serialize/deserialize-3levels
+        #:short-circuit
+        #:before (setup!)
+        #:after (cleanup!)
+        (ignore (define-values {level->digit digit->level}
+                  (1-to-1-map->converters 'max #\2
+                                          'types #\1
+                                          'none  #\0))
+                (define serialize-config (make-config-serializer level->digit))
+                (define deserialize-config (make-config-deserializer digit->level
+                                                                     (λ (b)
+                                                                       (map file-name-string-from-path
+                                                                            (benchmark-typed b)))))
+
+                (define a-benchmark (read-benchmark a-benchmark-dir)))
+        (test-equal? (serialize-config #hash(("main.rkt" . max)
+                                             ("a.rkt" . none)
+                                             ("b.rkt" . max)))
+                     22)
+        (test-equal? (serialize-config #hash(("main.rkt" . none)
+                                             ("a.rkt" . none)
+                                             ("b.rkt" . types)))
+                     10)
+        (test-equal? (serialize-config #hash(("main.rkt" . none)
+                                             ("a.rkt" . types)
+                                             ("b.rkt" . max)))
+                     120)
+        (ignore (define-simple-test (test-round-trip config)
+                  (test-equal? (deserialize-config (serialize-config config)
+                                                   #:benchmark a-benchmark)
+                               config)))
+        (test-round-trip #hash(("main.rkt" . max) ("a.rkt" . none) ("b.rkt" . max)))
+        (test-round-trip #hash(("main.rkt" . none) ("a.rkt" . none) ("b.rkt" . types)))
+        (test-round-trip #hash(("main.rkt" . none) ("a.rkt" . types) ("b.rkt" . max)))))

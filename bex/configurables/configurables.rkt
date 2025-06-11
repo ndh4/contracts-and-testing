@@ -30,6 +30,8 @@
 
   (define-implementation none
     #:module "mutant-filtering/none.rkt")
+  (define-implementation dont-care-about-blame-trails
+    #:module "mutant-filtering/dont-care-about-blame-trails.rkt")
   (define-implementation select-type-erroring-max-config-mutants
     #:module "mutant-filtering/type-error.rkt")
   (define-implementation select-type/runtime/ctc-erroring-max-config-mutants

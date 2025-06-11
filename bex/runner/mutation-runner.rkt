@@ -17,12 +17,15 @@
          "../configurables/configurables.rkt"
          mutate/low-level
          mutate/traversal
+         mutate/logger
+         rackunit
          "../util/path-utils.rkt"
          "../util/ctc-utils.rkt"
          "../util/read-module.rkt"
          "../configurations/config.rkt"
          "sandbox-runner.rkt"
          "../util/program.rkt"
+         "../util/tests.rkt"
          "../util/experiment-exns.rkt"
          "../util/transient-wrapper.rkt"
          "instrumented-runner.rkt"
@@ -32,6 +35,16 @@
          "error-extractors/extract-blamed-locations.rkt")
 
 (define-logger mutation-runner)
+
+(define recvr1 (make-log-receiver mutation-runner-logger 'debug))
+(define recvr2 (make-log-receiver mutate-logger 'debug))
+
+(void
+ (thread
+  (lambda () (let loop()
+               (define v (sync recvr1 recvr2))
+               (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+               (loop)))))
 
 (define current-mutated-program-exn-recordor (make-parameter #f))
 
@@ -88,6 +101,7 @@
                                               mutation-index
                                               #:modules-base-path [base-path #f]
                                               #:write-modules-to [write-to-dir #f]
+                                              #:test-id [test-id #f]
                                               #:on-module-exists [on-module-exists 'error]
                                               #:mutator [mutate mutate-module])
   (->i ([a-program program/c]
@@ -95,6 +109,7 @@
         [mutation-index natural?])
        (#:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
+        #:test-id [test-id (or/c natural? #f)]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)]
         #:mutator [mutate (mod/c natural? #:in program/c . -> . (values syntax? mutated-identifier?))])
        #:pre/desc {base-path write-to-dir}
@@ -118,6 +133,10 @@
             (mod path stx))
        (define-values (mutated-stx mutated-id)
          (mutate a-mod mutation-index #:in a-program))
+
+         (log-mutation-runner-info @~a{})
+         #;(parameterize ([print-syntax-width +inf.0]) (log-mutation-runner-info (pretty-format (syntax->datum mutated-stx))))
+         (log-mutation-runner-info @~a{Mutation index is @mutation-index})
 
        ;; ll: see above...
        (set-box! mutated-id-box mutated-id)
@@ -155,6 +174,7 @@
                     make-configured-runner:  @make-configured-runner})
 
   (define runner
+  (parameterize ([current-test-id test-id])
     (make-instrumented-runner
      a-program
      (compose1 mod-stx
@@ -183,6 +203,7 @@
      #:modules-base-path base-path
      #:write-modules-to write-to-dir
      #:on-module-exists on-module-exists))
+     )
   (define mutated-id (unbox mutated-id-box))
 
   (values runner mutated-id))
@@ -204,6 +225,7 @@
                                           #:memory/gb [memory/gb 3]
                                           #:modules-base-path [base-path #f]
                                           #:write-modules-to [write-to-dir #f]
+                                          #:test-id [test-id #f]
                                           #:on-module-exists [on-module-exists 'error]
                                           #:mutator [mutate mutate-module])
   (->i ([a-program program/c]
@@ -215,6 +237,7 @@
         #:memory/gb [memory/gb number?]
         #:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
+        #:test-id [test-id (or/c natural? #f)]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)]
         #:mutator [mutate (mod/c natural? #:in program/c . -> . (values syntax? mutated-identifier?))])
 
@@ -247,6 +270,7 @@
                                    mutation-index
                                    #:modules-base-path base-path
                                    #:write-modules-to write-to-dir
+                                   #:test-id test-id
                                    #:on-module-exists on-module-exists
                                    #:mutator mutate))
     (define ((make-status* status-sym) [blamed #f]
@@ -332,6 +356,8 @@
       (when (current-mutated-program-exn-recordor) ((current-mutated-program-exn-recordor) e))
       (match e
         [(? runtime-error-with-blame?)
+        (log-mutation-runner-info
+               @~a{Type = runtime-error-with-blame})
          ((make-status* 'runtime-error)
           (extract-blamed e)
           (extract-errortrace-stack e)
@@ -343,7 +369,26 @@
           (extract-context-stack e))]
         [(? exn:fail:syntax?) ; don't think should ever happen?
          ((make-status* 'syntax-error))]
+        [(? exn:test?)
+         (log-mutation-runner-info
+          @~a{Type = exn:test})
+          ((make-status* 'runtime-error)
+                    #f
+                    (extract-errortrace-stack e)
+                    (extract-context-stack e))]
+        [(? exn:test:check?)
+         (log-mutation-runner-info
+          @~a{Type = exn:test:check})
+          ((make-status* 'runtime-error)
+                    #f
+                    (extract-errortrace-stack e)
+                    (extract-context-stack e))]
         [(? exn:fail?)
+         (log-mutation-runner-info
+          @~a{Type = exn:fail,
+          value = @e
+          exn:test? result: @(exn:test? e)
+          exn:test:check? result: @(exn:test:check? e)})
          ((make-status* 'runtime-error)
           #f
           (extract-errortrace-stack e)

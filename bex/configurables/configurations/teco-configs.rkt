@@ -2,6 +2,7 @@
 
 (require "../../util/optional-contracts.rkt"
          "../../util/ctc-utils.rkt")
+
 (provide serialize-config
          deserialize-config
          config-at-max-precision-for?
@@ -19,7 +20,7 @@
            (->i ([bench benchmark/c]
                  [config {bench}
                          (config-for-benchmark/c bench)])
-                [result benchmark-configuration/c])]))
+                [result benchmark-config-with-test/c])]))
 
 (define config-levels '(none types max))
 
@@ -46,8 +47,18 @@
          "../../configurations/config.rkt"
          "../../util/path-utils.rkt"
          "../../util/program.rkt"
+         "../../runner/modgraph.rkt"
          "common.rkt"
          syntax/parse)
+
+(struct benchmark-config-with-test
+  benchmark-configuration [test])
+
+(define test/c natural?)
+
+(define benchmark-config-with-test/c
+  (and/c benchmark-configuration/c
+         (struct/dc benchmark-config-with-test [test test/c])))
 
 (define (config-at-max-precision-for? name config)
   (equal? (hash-ref config name) 'max))
@@ -196,14 +207,15 @@
   (match-define (benchmark typed untyped base both)
     bench)
   (match-define-values {(list main) others}
-                       (partition (path-ends-with "main.rkt")
+                       (partition (path-ends-with "eval.rkt") ; for example
                                   untyped))
   (define adapters (benchmark-both->files both))
-  (benchmark-configuration main
-                           (append others
-                                   adapters)
-                           base
-                           config))
+  (benchmark-config-with-test main
+                              (append (module-dependencies main others)
+                                      adapters)
+                              base
+                              config
+                              3)) ; for example
 
 (define (benchmark-both->files both)
   (match both
@@ -217,20 +229,19 @@
                                           (benchmark-configuration-config c-bench)))
 
 (define (insert-program-configuration-selection a-program program-config)
-  (program (insert-mod-configuration-selection (program-main a-program)
-                                               (hash-ref program-config
-                                                         "main.rkt"))
-           (map (λ (m)
-                  (match m
-                    [(mod (app explode-path/string (list _ ... "both" _))
-                          _)
-                     m]
-                    [(mod path _)
-                     (insert-mod-configuration-selection
-                      m
-                      (hash-ref program-config
-                                (file-name-string-from-path path)))]))
-                (program-others a-program))))
+  (define (do-insert m)
+          (match m
+            [(mod (app explode-path/string (list _ ... "both" _))
+                  _)
+             m]
+            [(mod path _)
+             (insert-mod-configuration-selection
+              m
+              (hash-ref program-config
+                        (file-name-string-from-path path)))]))
+  (program
+       (do-insert (program-main   a-program))
+   (map do-insert (program-others a-program))))
 
 (define (insert-mod-configuration-selection a-mod level)
   (mod (mod-path a-mod)

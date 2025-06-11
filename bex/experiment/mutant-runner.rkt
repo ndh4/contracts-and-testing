@@ -7,6 +7,11 @@
          racket/cmdline
          racket/port
          racket/format
+         racket/runtime-path
+         db
+         racket/path
+         racket/function
+;         bex/configurables/configurables
          "../runner/mutation-runner.rkt"
          "../runner/unify-program.rkt"
          "../util/program.rkt"
@@ -19,10 +24,36 @@
          fmt-args)
   (exit 1))
 
+(define-runtime-path db-path "../dbs/sqlite/teco.sqlite3")
+
+(define dbc
+  (sqlite3-connect #:database db-path
+                   #:mode 'create))
+
+(define (bool->int b)
+  (if b 1 0))
+
+(query-exec dbc "CREATE TABLE IF NOT EXISTS mutant_test_table (
+configuration INTEGER,
+module_under_test TEXT,
+test_index INTEGER,
+mutant_module TEXT,
+mutation_index INTEGER,
+test_passed INTEGER,
+outcome TEXT,
+blamed TEXT,
+errortrace_stack TEXT,
+context_stack TEXT,
+result_value TEXT,
+PRIMARY KEY (configuration, module_under_test, test_index, mutant_module, mutation_index)
+ON CONFLICT REPLACE
+)")
+
 (module+ main
   (define the-benchmark-configuration (make-parameter #f))
   (define module-to-mutate (make-parameter #f))
   (define mutation-index (make-parameter #f))
+  (define test-id (make-parameter #f))
   (define write-modules-to (make-parameter #f))
   (define on-module-exists (make-parameter 'error))
   (define timeout/s (make-parameter #f))
@@ -43,16 +74,21 @@
                             Unable to read benchmark configuration
                             Provided: @~v[benchmark-configuration-str]}))])
       (the-benchmark-configuration (with-input-from-string benchmark-configuration-str read)))]
+   [("-T" "--test-id")
+    t-index
+    ("Test index."
+     "This is a mandatory argument.")
+    (test-id (string->number t-index))]
    [("-M" "--module-to-mutate")
     mutate-path
     ("Module to mutate path."
      "This is a mandatory argument.")
     (module-to-mutate mutate-path)]
    [("-i" "--mutation-index")
-    index
+    m-index
     ("Mutation index."
      "This is a mandatory argument.")
-    (mutation-index (string->number index))]
+    (mutation-index (string->number m-index))]
    [("-w" "--write-modules-to")
     output-path
     "Path to output mutated modules to"
@@ -136,6 +172,7 @@
          the-module-to-mutate
          (mutation-index)
          (benchmark-configuration-config (the-benchmark-configuration))
+         #:test-id (test-id)
          #:timeout/s (timeout/s)
          #:memory/gb (memory/gb)
          #:modules-base-path (find-program-base-path the-program)
@@ -144,6 +181,22 @@
          #:suppress-output? (not (mutant-output-path)))))
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
+
+(query-exec dbc "INSERT OR REPLACE INTO mutant_test_table
+(configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_stack, context_stack, result_value)
+VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
+                           ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
+                           (path->string (file-name-from-path (mod-path (program-main the-program))))
+                           (test-id)
+                           (path->string (file-name-from-path (module-to-mutate)))
+                           (mutation-index)
+                           (bool->int (eq? (run-status-outcome the-run-status) 'completed))
+                           (~a (run-status-outcome the-run-status))
+                           (~a (run-status-blamed the-run-status))
+                           (~a (run-status-errortrace-stack the-run-status))
+                           (~a (run-status-context-stack the-run-status))
+                           (~a (run-status-result-value the-run-status))
+                           )
 
   (writeln the-run-status))
 
