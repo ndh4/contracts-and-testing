@@ -8,13 +8,15 @@
          racket/port
          racket/format
          racket/runtime-path
-         db
          racket/path
          racket/function
 ;         bex/configurables/configurables
          "../runner/mutation-runner.rkt"
          "../runner/unify-program.rkt"
          "../util/program.rkt"
+         "../util/log-controls.rkt"
+         "../util/path-utils.rkt"
+         "../util/sql-db.rkt"
          "../configurables/configurables.rkt"
          "../configurations/configure-benchmark.rkt")
 
@@ -24,30 +26,16 @@
          fmt-args)
   (exit 1))
 
-(define-runtime-path db-path "../dbs/sqlite/teco.sqlite3")
+(define-logger mutant-runner)
 
-(define dbc
-  (sqlite3-connect #:database db-path
-                   #:mode 'create))
+(define recvr (make-log-receiver mutant-runner-logger mutant-runner-log-level))
 
-(define (bool->int b)
-  (if b 1 0))
-
-(query-exec dbc "CREATE TABLE IF NOT EXISTS mutant_test_table (
-configuration INTEGER,
-module_under_test TEXT,
-test_index INTEGER,
-mutant_module TEXT,
-mutation_index INTEGER,
-test_passed INTEGER,
-outcome TEXT,
-blamed TEXT,
-errortrace_stack TEXT,
-context_stack TEXT,
-result_value TEXT,
-PRIMARY KEY (configuration, module_under_test, test_index, mutant_module, mutation_index)
-ON CONFLICT REPLACE
-)")
+(when print-mutant-runner-logs?
+ (void (thread (lambda ()
+                 (let loop ()
+                   (define v (sync recvr))
+                   (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+                   (loop))))))
 
 (module+ main
   (define the-benchmark-configuration (make-parameter #f))
@@ -60,6 +48,7 @@ ON CONFLICT REPLACE
   (define memory/gb (make-parameter #f))
   (define mutant-output-path (make-parameter #f))
   (define configuration-path (make-parameter #f))
+  (define write-to-database? (make-parameter #f))
 
   (command-line
    #:once-each
@@ -80,10 +69,10 @@ ON CONFLICT REPLACE
      "This is a mandatory argument.")
     (test-id (string->number t-index))]
    [("-M" "--module-to-mutate")
-    mutate-path
-    ("Module to mutate path."
+    mutant-mod
+    ("Name of the module to mutate."
      "This is a mandatory argument.")
-    (module-to-mutate mutate-path)]
+    (module-to-mutate mutant-mod)]
    [("-i" "--mutation-index")
     m-index
     ("Mutation index."
@@ -114,7 +103,11 @@ ON CONFLICT REPLACE
     path
     ("The configuration with which to run the mutant."
      "This is a mandatory argument.")
-    (configuration-path path)])
+    (configuration-path path)]
+
+   [("-d" "--database")
+    "Should the result be written to a database?"
+    (write-to-database? #t)])
 
   (define mutant-output-path-port
     (match (mutant-output-path)
@@ -140,6 +133,11 @@ ON CONFLICT REPLACE
     (fail
      @~a{Error: Missing mandatory argument: @missing-arg}))
 
+  (define db-table-name (and (write-to-database?) (benchmark->name (the-benchmark-configuration))))
+
+  (when (write-to-database?)
+    (ensure-table! db-table-name))
+
   (install-configuration! (configuration-path))
 
   (define the-program
@@ -149,17 +147,15 @@ ON CONFLICT REPLACE
 
   (define the-program-mods (program->mods the-program))
 
-  (define the-module-to-mutate
-    (find-unified-module-to-mutate (module-to-mutate)
-                                   the-program-mods))
+  (define module-to-mutate-path
+    (resolve-configured-benchmark-module (the-benchmark-configuration)
+                                         (module-to-mutate)))
 
-  (unless (member the-module-to-mutate the-program-mods)
-    (fail
-     @~a{
-         Error: Module to mutate not in given program.
-         Program: @the-program
-         Module: @(module-to-mutate)
-         }))
+  (cond [module-to-mutate-path
+
+  (define the-module-to-mutate
+    (find-unified-module-to-mutate module-to-mutate-path
+                                   the-program-mods))
 
   (define the-run-status
       (parameterize ([current-output-port (mutant-output-or current-output-port)]
@@ -181,24 +177,55 @@ ON CONFLICT REPLACE
          #:suppress-output? (not (mutant-output-path)))))
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
+  (when (write-to-database?)
+   (add-entry! db-table-name
+      #:configuration ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
+      #:module_under_test (path->string (file-name-from-path (mod-path (program-main the-program))))
+      #:test_index (test-id)
+      #:mutant_module (module-to-mutate)
+      #:mutation_index (mutation-index)
+      #:test_passed (bool->int (eq? (run-status-outcome the-run-status) 'completed))
+      #:outcome (~a (run-status-outcome the-run-status))
+      #:blamed (~a (run-status-blamed the-run-status))
+      #:errortrace_stack (~a (run-status-errortrace-stack the-run-status))
+      #:context_stack (~a (run-status-context-stack the-run-status))
+      #:result_value (~a (run-status-result-value the-run-status))))
 
-(query-exec dbc "INSERT OR REPLACE INTO mutant_test_table
-(configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_stack, context_stack, result_value)
-VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
-                           ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
-                           (path->string (file-name-from-path (mod-path (program-main the-program))))
-                           (test-id)
-                           (path->string (file-name-from-path (module-to-mutate)))
-                           (mutation-index)
-                           (bool->int (eq? (run-status-outcome the-run-status) 'completed))
-                           (~a (run-status-outcome the-run-status))
-                           (~a (run-status-blamed the-run-status))
-                           (~a (run-status-errortrace-stack the-run-status))
-                           (~a (run-status-context-stack the-run-status))
-                           (~a (run-status-result-value the-run-status))
-                           )
 
-  (writeln the-run-status))
+  (writeln the-run-status)]
+
+   [else
+   ;; The mutant module is not the module under test,
+   ;; nor is the mutant module a dependency of the module under test.
+   ;; So, we assume that the test passes.
+
+;(printf "Mutant-module is ~a~n" (path->string (file-name-from-path (module-to-mutate))))
+   (when (write-to-database?)
+      (add-entry! db-table-name
+         #:configuration ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
+         #:module_under_test (path->string (file-name-from-path (mod-path (program-main the-program))))
+         #:test_index (test-id)
+         #:mutant_module (module-to-mutate)
+         #:mutation_index (mutation-index)
+         #:test_passed (bool->int #t)
+         #:outcome "skipped"
+         #:blamed (~a #f)
+         #:errortrace_stack (~a #f)
+         #:context_stack (~a #f)
+         #:result_value (~a #f)))
+
+   (define the-run-status
+   (run-status (module-to-mutate)
+              (mutation-index) #f 'skipped #f #f #f #f))
+
+  (writeln the-run-status)
+   ]))
+
+(define (resolve-configured-benchmark-module a-benchmark-configuration
+                                          a-module-name)
+   (findf (path-ends-with a-module-name)
+      (list* (benchmark-configuration-main a-benchmark-configuration)
+          (benchmark-configuration-others a-benchmark-configuration))))
 
 
 (module+ test

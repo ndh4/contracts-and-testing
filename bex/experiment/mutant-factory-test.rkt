@@ -12,6 +12,7 @@
          "../configurations/configure-benchmark.rkt"
          "../util/program.rkt"
          "../util/path-utils.rkt"
+         "../util/log-controls.rkt"
          (rename-in process-queue/mock
                     [make-process-queue           make-mock-Q]
                     [make-recording-process-queue make-recording-mock-Q])

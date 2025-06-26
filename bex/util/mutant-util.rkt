@@ -8,9 +8,11 @@
              path-string?
              path-string?}
             {#:timeout/s (or/c #f number?)
+             #:test-id (or/c #f natural?)
              #:memory/gb (or/c #f number?)
              #:log-mutation-info? boolean?
              #:save-output (or/c #f path-string?)
+             #:write-to-sql? boolean?
              #:write-modules-to (or/c #f path-string?)
              #:force-module-write? boolean?}
             . ->* .
@@ -44,6 +46,8 @@
          "../util/binary-search.rkt"
          "../util/program.rkt"
          "../util/condor.rkt"
+         "../util/log-controls.rkt"
+         "../util/sql-db.rkt"
          "../configurables/configurables.rkt"
          "experiment-exns.rkt")
 
@@ -57,13 +61,13 @@
 (define default-timeout/s (make-parameter (* 5 60)))
 
 (define-logger mutil)
-(define recvr (make-log-receiver mutil-logger 'info))
-(void
- (thread
-  (lambda () (let loop()
-               (define v (sync recvr))
-               (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
-               (loop)))))
+(define recvr (make-log-receiver mutil-logger mutant-util-log-level))
+(when print-mutant-util-logs?
+  (void (thread (lambda ()
+                  (let loop ()
+                    (define v (sync recvr))
+                    (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+                    (loop))))))
 (define (log-mutil-message level msg . vs)
   (when (log-level? mutil-logger level)
     (log-message mutil-logger
@@ -84,20 +88,22 @@
 
 (define current-mutant-runner-log-mutation-info? (make-parameter #f))
 (define (spawn-mutant-runner a-benchmark-configuration
-                             module-to-mutate-name
+                             module-to-mutate
                              mutation-index
                              outfile
                              config-path
                              #:timeout/s [timeout/s #f]
+                             #:test-id [test-id #f]
                              #:memory/gb [memory/gb #f]
                              #:log-mutation-info? [log-mutation-info? (current-mutant-runner-log-mutation-info?)]
                              #:save-output [output-path #f]
-
+                             #:write-to-sql? [write-to-sql? #f]
                              #:write-modules-to [dump-dir-path #f]
                              #:force-module-write? [force-module-write? #f])
-  (define module-to-mutate
-    (resolve-configured-benchmark-module a-benchmark-configuration
-                                         module-to-mutate-name))
+; TODO: move this step to somewhere lower-down
+;  (define module-to-mutate
+;    (resolve-configured-benchmark-module a-benchmark-configuration
+;                                         module-to-mutate-name))
   (cond
     [(current-run-with-condor-machines)
      (spawn-condor-mutant-runner a-benchmark-configuration
@@ -108,6 +114,7 @@
                                  mutant-runner-path
                                  (mutant-error-log)
                                  #:timeout/s (or timeout/s (default-timeout/s))
+                                 #:test-id test-id
                                  #:memory/gb (or memory/gb (default-memory-limit/gb))
                                  #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
                                  #:save-output output-path
@@ -137,13 +144,17 @@
                        (list "--"
                              mutant-runner-path
                              "-b" (serialize-benchmark-configuration a-benchmark-configuration)
-                             "-M" module-to-mutate
+                             "-T" (~a test-id)
+                             "-M" (~a module-to-mutate)
                              "-i" (~a mutation-index)
                              "-t" (~a (or timeout/s
                                           (default-timeout/s)))
                              "-g" (~a (or memory/gb
                                           (default-memory-limit/gb)))
                              "-c" config-path)
+                       (if write-to-sql?
+                           (list "-d")
+                           empty)
                        (if output-path
                            (list "-O" output-path)
                            empty)
@@ -154,13 +165,10 @@
                            '("-f")
                            empty))))
              (close-output-port runner-in)
-             runner-ctl))))]))
+             runner-ctl))))
+             ]))
 
-(define (resolve-configured-benchmark-module a-benchmark-configuration
-                                             a-module-name)
-  (findf (path-ends-with a-module-name)
-         (list* (benchmark-configuration-main a-benchmark-configuration)
-                (benchmark-configuration-others a-benchmark-configuration))))
+
 
 (define (in-mutation-indices module-to-mutate-name bench)
   (define max-index (max-mutation-index module-to-mutate-name bench))

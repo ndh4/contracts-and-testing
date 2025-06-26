@@ -10,6 +10,12 @@
          racket/hash)
 
 (define-logger mutation-analysis)
+(define recvr (make-log-receiver mutation-analysis-logger 'debug))
+(void (thread (lambda ()
+                  (let loop ()
+                    (define v (sync recvr))
+                    (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
+                    (loop)))))
 
 (define/contract type-error-results
   (listof run-outcome/c)
@@ -144,6 +150,7 @@
                ("Consider a mutant that causes any kind of error in the top lattice-config to be good."
                 "By default, only mutants that cause *type errors* are considered good.")
                #:record]}
+ (log-mutation-analysis-info "Beginning one mutation analysis.")
  (install-configuration! (hash-ref flags 'config-path))
  (define data-output-dir (hash-ref flags 'data-output-dir))
  (make-directory* data-output-dir)

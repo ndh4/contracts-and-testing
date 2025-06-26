@@ -20,20 +20,20 @@
          "../util/program.rkt"
          "../util/path-utils.rkt"
          "../util/optional-contracts.rkt"
+         "../util/log-controls.rkt"
          "../configurables/configurables.rkt")
 
 (define-logger instrumented-runner)
 
-(define recvr (make-log-receiver instrumented-runner-logger 'debug))
+(define recvr (make-log-receiver instrumented-runner-logger instrumented-runner-log-level))
 
-#;(void
- (thread
-  (lambda () (let loop()
-               (define v (sync recvr))
-               (parameterize ([print-syntax-width +inf.0])
-               (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1))
-               )
-               (loop)))))
+(when print-instrumented-runner-logs?
+  (void (thread (lambda ()
+                  (let loop ()
+                    (define v (sync recvr))
+                    (parameterize ([print-syntax-width +inf.0])
+                      (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1)))
+                    (loop))))))
 
 (define (module-path-resolve mod-path [load? #f])
   ((current-module-name-resolver) mod-path #f #f load?))

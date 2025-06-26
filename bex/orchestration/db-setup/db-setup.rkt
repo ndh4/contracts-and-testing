@@ -242,9 +242,9 @@
                                              mutation-analysis:check-for-any-error?))
          (displayln "Summarizing mutation analysis...")
          (define type-err-summaries.rktdb (summarize-mutation-analyses! outdir progress-logs))
-         (displayln "Filtering mutants for dynamic errors...")
-         (define dyn-err-summaries.rktdb
-           (filter-mutants-for-dynamic-errors! outdir
+         (displayln "Filtering mutants for dynamic errors...NOT!")
+         (define dyn-err-summaries.rktdb type-err-summaries.rktdb
+           #;(filter-mutants-for-dynamic-errors! outdir
                                                type-err-summaries.rktdb
                                                experiment-config-with-which-analyze-mutants-dynamic-errors
                                                dynamic-error-filtering-lattice-config-id

@@ -14,12 +14,12 @@
 
 (define recvr (make-log-receiver insert-test-logger 'debug))
 
-(void (thread (lambda ()
-                (let loop ()
-                  (define v (sync recvr))
-                  (parameterize ([print-syntax-width +inf.0])
-                    (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1)))
-                  (loop)))))
+#;(void (thread (lambda ()
+                  (let loop ()
+                    (define v (sync recvr))
+                    (parameterize ([print-syntax-width +inf.0])
+                      (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1)))
+                    (loop)))))
 
 (define (instrument-module a-mod)
 

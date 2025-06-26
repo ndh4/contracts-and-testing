@@ -9,41 +9,29 @@
 
   (define contents (file->list progress-log-path))
   ;; Tracking max-indices just for sanity checking
-  (define-values {mutation-info-by-module
-                  max-indices-by-module}
+  (define-values (mutation-info-by-module max-indices-by-module)
     (for/fold ([info (hash)]
                [max-indices (hash)])
               ([mutation (in-list contents)])
       (define new-max-indices
         (match mutation
           [(list (list benchmark mod-name index) _ _)
-           (hash-update max-indices
-                        mod-name
-                        (λ (x) (max x index))
-                        -1)]))
+           (hash-update max-indices mod-name (λ (x) (max x index)) -1)]))
       (match mutation
-        [(list (list benchmark mod-name index) (not #f) mutator)
-         (values (hash-update info
-                              mod-name
-                              (add-to-list (list index mutator))
-                              empty)
-                 new-max-indices)]
+        [(list
+          (list benchmark mod-name index)
+          _ ;;This is where no-runtime-error mutant filtering happens. Use (not #f) to make sure mutants that pass get ignored
+          mutator)
+         (values (hash-update info mod-name (add-to-list (list index mutator)) empty) new-max-indices)]
         [else (values info new-max-indices)])))
   (for/hash ([{mod-name mutations} (in-hash mutation-info-by-module)])
     (define mutator-indices
-      (for/fold ([mutator-indices (hash)])
-                ([mutation (in-list mutations)])
+      (for/fold ([mutator-indices (hash)]) ([mutation (in-list mutations)])
         (match-define (list index mutator) mutation)
-        (hash-update mutator-indices
-                     mutator
-                     (add-to-list index)
-                     empty)))
+        (hash-update mutator-indices mutator (add-to-list index) empty)))
     (define max-index (hash-ref max-indices-by-module mod-name))
     (define triggered-mutators (hash-keys mutator-indices))
-    (values mod-name
-            (summary mutator-indices
-                     max-index
-                     triggered-mutators))))
+    (values mod-name (summary mutator-indices max-index triggered-mutators))))
 
 (define (progress-log-path->bench-name progress-log-path)
   (match (basename progress-log-path)
@@ -81,4 +69,5 @@
              the-summary)))
  (void (db:write! db data)))
 
-(module test racket/base)
+(module test racket/base
+  )

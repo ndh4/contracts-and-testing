@@ -1,7 +1,8 @@
 #lang at-exp racket
 
 (require "../../util/optional-contracts.rkt"
-         "../../util/ctc-utils.rkt")
+         "../../util/ctc-utils.rkt"
+         "../../util/tests.rkt")
 
 (provide serialize-config
          deserialize-config
@@ -20,7 +21,8 @@
            (->i ([bench benchmark/c]
                  [config {bench}
                          (config-for-benchmark/c bench)])
-                [result benchmark-config-with-test/c])]))
+                (#:test-mod [test-mod module-name?])
+                [result benchmark-configuration/c])]))
 
 (define config-levels '(none types max))
 
@@ -51,14 +53,8 @@
          "common.rkt"
          syntax/parse)
 
-(struct benchmark-config-with-test
-  benchmark-configuration [test])
 
 (define test/c natural?)
-
-(define benchmark-config-with-test/c
-  (and/c benchmark-configuration/c
-         (struct/dc benchmark-config-with-test [test test/c])))
 
 (define (config-at-max-precision-for? name config)
   (equal? (hash-ref config name) 'max))
@@ -198,24 +194,18 @@
                           "a.rkt" 'types
                           "b.rkt" 'none))))
 
-
-
-
-
-
-(define (configure-benchmark bench config)
+(define (configure-benchmark bench config #:test-mod test-mod)
   (match-define (benchmark typed untyped base both)
     bench)
   (match-define-values {(list main) others}
-                       (partition (path-ends-with "eval.rkt") ; for example
+                       (partition (path-ends-with test-mod)
                                   untyped))
   (define adapters (benchmark-both->files both))
-  (benchmark-config-with-test main
+  (benchmark-configuration main
                               (append (module-dependencies main others)
                                       adapters)
                               base
-                              config
-                              3)) ; for example
+                              config))
 
 (define (benchmark-both->files both)
   (match both

@@ -2,6 +2,7 @@
 
 (require "benchmark-runner.rkt"
          "../../util/optional-contracts.rkt"
+         "../../util/log-controls.rkt"
          racket/runtime-path
          db)
 
@@ -11,14 +12,15 @@
 
 (define-logger teco-run)
 
-(define recvr (make-log-receiver teco-run-logger 'debug))
+(define recvr (make-log-receiver teco-run-logger teco-run-log-level))
 
-(void (thread (lambda ()
-                (let loop ()
-                  (define v (sync recvr))
-                  (parameterize ([print-syntax-width +inf.0])
-                    (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1)))
-                  (loop)))))
+(when print-teco-run-logs?
+  (void (thread (lambda ()
+                  (let loop ()
+                    (define v (sync recvr))
+                    (parameterize ([print-syntax-width +inf.0])
+                      (printf "[~a] ~a~n" (vector-ref v 0) (vector-ref v 1)))
+                    (loop))))))
 
 (define (make-require-benchmark-runner program mod-name index)
 

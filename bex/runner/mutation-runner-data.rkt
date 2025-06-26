@@ -13,23 +13,18 @@
          "../util/path-utils.rkt")
 
 (define index-exceeded-outcome 'index-exceeded)
-(define outcomes `(,index-exceeded-outcome
-                   blamed
-                   runtime-error
-                   type-error
-                   oom
-                   timeout
-                   syntax-error
-                   completed))
+(define outcomes
+  `(,index-exceeded-outcome blamed
+                            runtime-error
+                            type-error
+                            oom
+                            timeout
+                            syntax-error
+                            completed
+                            skipped))
 
-(struct run-status (mutated-module
-                    index
-                    mutated-id
-                    outcome
-                    blamed
-                    errortrace-stack
-                    context-stack
-                    result-value)
+(struct run-status
+        (mutated-module index mutated-id outcome blamed errortrace-stack context-stack result-value)
   #:prefab)
 
 (define module-name-or-library-path?
@@ -45,31 +40,32 @@
 
 (define run-status/c
   (struct/dc run-status
-             [mutated-module    module-name?]
-             [index             natural?]
-             [mutated-id        {outcome}
-                                (if (equal? outcome index-exceeded-outcome)
-                                    #f
-                                    mutated-identifier?)]
-             [outcome           run-outcome/c]
-             [blamed            {outcome}
-                                (cond [(member outcome '(blamed type-error))
-                                       (listof module-name-or-library-path?)]
-                                      [(equal? outcome 'runtime-error)
-                                       ;; Some runtime errors come with blame, if the
-                                       ;; primitive has a real contract,
-                                       ;; and type errors identify a location too
-                                       (or/c (listof module-name-or-library-path?) #f )]
-                                      [else #f])]
-             [errortrace-stack  {outcome}
-                                (if (member outcome '(blamed runtime-error))
-                                    (listof module-name-or-library-path?)
-                                    #f)]
-             [context-stack     {outcome}
-                                (if (member outcome '(blamed runtime-error))
-                                    (listof module-name-or-library-path?)
-                                    #f)]
-             [result-value      any/c]))
+             [mutated-module module-name?]
+             [index natural?]
+             [mutated-id
+              {outcome}
+              (if (member outcome (list index-exceeded-outcome 'skipped)) #f mutated-identifier?)]
+             [outcome run-outcome/c]
+             [blamed
+              {outcome}
+              (cond
+                [(member outcome '(blamed type-error)) (listof module-name-or-library-path?)]
+                ;; Some runtime errors come with blame, if the
+                ;; primitive has a real contract,
+                ;; and type errors identify a location too
+                [(equal? outcome 'runtime-error) (or/c (listof module-name-or-library-path?) #f)]
+                [else #f])]
+             [errortrace-stack
+              {outcome}
+              (if (member outcome '(blamed runtime-error))
+                  (listof module-name-or-library-path?)
+                  #f)]
+             [context-stack
+              {outcome}
+              (if (member outcome '(blamed runtime-error))
+                  (listof module-name-or-library-path?)
+                  #f)]
+             [result-value any/c]))
 
 ;; run-status -> bool
 (define (index-exceeded? rs)
