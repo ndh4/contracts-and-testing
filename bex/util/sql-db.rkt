@@ -5,7 +5,8 @@
 
 (provide ensure-table!
          add-entry!
-         bool->int)
+         bool->int
+         dbc)
 
 (define-runtime-path db-path "../dbs/sqlite/teco.sqlite3")
 
