@@ -175,6 +175,11 @@
   (in-range (add1 max-index)))
 
 (define (max-mutation-index module-to-mutate-name bench)
+  ;; The config here is irrelevant. It's really just used in
+  ;; order to fully instantiate a "benchmark configuration"
+  ;; object, which is in turn in order to take advantage of
+  ;; its full-path utility. Yes, there's gotta be a better
+  ;; way.
   (define max-config (make-max-bench-config bench))
   (define the-benchmark-configuration
     (configure-benchmark bench

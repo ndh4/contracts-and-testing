@@ -55,7 +55,7 @@
            test-mutant-flag
            current-result-cache
 
-           run-all-mutants*configs
+           run-all-mutants*config
            run-mutant*tests
            mutant-data-file-name
            spawn-mutant*test
@@ -78,11 +78,11 @@
 (define MAX-TYPE-ERROR-REVIVALS 3)
 (struct no-recorded-outcome () #:transparent)
 
-(define (make-min-bench-config a-benchmark)
+(define (make-bench-config a-benchmark setting)
   (define mods (benchmark-untyped a-benchmark))
   (for/hash ([path (in-list mods)])
     (values (file-name-string-from-path path)
-            'none)))
+            setting)))
 
 ;; Outcomes in a blame trail that aren't one of these will go straight to the no-blame-handler
 (define/contract normal-blame-trail-outcomes
@@ -134,9 +134,10 @@
                     (loop))))))
 
 ;; Main entry point of the factory
-(define/contract (run-all-mutants*configs bench
-                                          #:log-progress log-progress!
-                                          #:load-progress load-result-cache)
+(define/contract (run-all-mutants*config bench
+                                         config
+                                         #:log-progress log-progress!
+                                         #:load-progress load-result-cache)
   (benchmark/c
    ; first  module-name?+natural? is the mutant
    ; second module-name?+natural? is the test
@@ -153,7 +154,6 @@
 
     (define select-modules (configured:select-modules-to-mutate))
     (define mutatable-module-names (select-modules bench))
-    (define max-config (make-max-bench-config bench))
     (log-factory info "Benchmark has mutatable modules:~n~a" mutatable-module-names)
 
     (unless (directory-exists? (data-output-dir))
@@ -165,7 +165,7 @@
       (for/fold ([process-q
                   (make-process-queue
                    (process-limit)
-                   (factory (bench-info bench max-config) (hash) (hash) 0)
+                   (factory (bench-info bench config) (hash) (hash) 0)
                    < ;; lower priority value means schedule sooner (this was
                    ;; unconfigurable with the original implementation, now just
                    ;; stick to that original default)
@@ -180,7 +180,7 @@
                 ([module-to-mutate-name mutatable-module-names]
                  #:when #t
                  [mutation-index (select-mutants module-to-mutate-name bench)])
-        (run-mutant*tests bench max-config process-q (mutant #f module-to-mutate-name mutation-index))))
+        (run-mutant*tests bench config process-q (mutant #f module-to-mutate-name mutation-index))))
 
     (log-factory info "Finished enqueing all test mutants. Waiting...")
     (define process-q-finished (process-queue-wait process-q))
@@ -250,7 +250,7 @@
 ;; and spawns mutants for each samples point
 ;; Note that sampling the precision lattice is done indirectly by
 ;; just generating random configs
-(define/contract (run-mutant*tests benchmark max-config process-q mutant-program)
+(define/contract (run-mutant*tests benchmark config process-q mutant-program)
   (benchmark/c process-queue? #;(process-queue/c factory/c) mutant/c . -> . (process-queue/c factory/c))
 
   (match-define (mutant #f module-to-mutate-name mutation-index) mutant-program)
@@ -259,7 +259,7 @@
                module-to-mutate-name
                mutation-index)
   (define bench (factory-bench (process-queue-get-data process-q)))
-;  (define max-config (make-max-bench-config bench))
+;  (define config (make-max-bench-config bench))
 
   (define testable-modules (benchmark->testable-modules benchmark))
 
@@ -296,7 +296,7 @@
                    mutation-index
                    test-mod
                    test-id
-                   max-config
+                   config
                    will:do-nothing
                    #:test-mutant? #t)])))
 
@@ -962,9 +962,12 @@ Mutant: [~a] ~a @ ~a with config:
 
   (define completed+checks-pass?
     (parameterize ([date-display-format 'iso-8601])
-      (run-all-mutants*configs bench-to-run
-                               #:log-progress (make-progress-logger log-progress!/raw)
-                               #:load-progress make-cached-results-function)))
+      (for/last ([setting '(none max)])
+        (define config (make-bench-config bench-to-run setting))
+        (run-all-mutants*config bench-to-run
+                              config
+                              #:log-progress (make-progress-logger log-progress!/raw)
+                              #:load-progress make-cached-results-function))))
 
   (finalize-log!)
   (finalize-configuration-outcomes!)
