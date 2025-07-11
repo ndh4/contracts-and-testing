@@ -8,7 +8,7 @@
          bool->int
          dbc)
 
-(define-runtime-path db-path "../dbs/sqlite/teco.sqlite3")
+(define-runtime-path db-path "../dbs/sqlite/teco2.sqlite3")
 
 (define dbc (sqlite3-connect #:database db-path #:mode 'create))
 
@@ -28,6 +28,7 @@
   errortrace_stack TEXT,
   context_stack TEXT,
   result_value TEXT,
+  cmd_line_args TEXT,
   PRIMARY KEY (configuration, module_under_test, test_index, mutant_module, mutation_index)
   ON CONFLICT REPLACE
   )"
@@ -44,13 +45,14 @@
                     #:blamed blamed
                     #:errortrace_stack errortrace_stack
                     #:context_stack context_stack
-                    #:result_value result_value)
+                    #:result_value result_value
+                    #:cmd_line_args cmd_line_args)
   (query-exec
    dbc
    (format
     "INSERT OR REPLACE INTO ~a
-                    (configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_stack, context_stack, result_value)
-                    VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"
+                    (configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_stack, context_stack, result_value, cmd_line_args)
+                    VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)"
     table-name)
    configuration
    module_under_test
@@ -62,7 +64,8 @@
    blamed
    errortrace_stack
    context_stack
-   result_value))
+   result_value
+   cmd_line_args))
 
 (define (bool->int b)
   (if b 1 0))

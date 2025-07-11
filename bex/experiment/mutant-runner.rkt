@@ -189,7 +189,8 @@
       #:blamed (~a (run-status-blamed the-run-status))
       #:errortrace_stack (~a (run-status-errortrace-stack the-run-status))
       #:context_stack (~a (run-status-context-stack the-run-status))
-      #:result_value (~a (run-status-result-value the-run-status))))
+      #:result_value (~a (run-status-result-value the-run-status))
+      #:cmd_line_args (~a (current-command-line-arguments))))
 
 
   (writeln the-run-status)]

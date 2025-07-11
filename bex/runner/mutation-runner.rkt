@@ -339,7 +339,7 @@
  }))
     (define (handle-module-evaluation-error runner-e)
       (define e (exn:fail:runner:module-evaluation-error runner-e))
-      (log-mutation-runner-info
+      (log-mutation-runner-warning
        @~a{Run raised a module evaluation error with message: @(exn-message e)})
       (when (current-mutated-program-exn-recordor) ((current-mutated-program-exn-recordor) e))
       (match e
