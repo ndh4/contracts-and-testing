@@ -5,17 +5,41 @@
 ;; But for the specific case of the programs in gtp-benchmarks, it works ok.
 
 (provide order-by-dependencies
-         module-dependencies)
+         module-dependencies-transitive)
 
 (require syntax/to-string
          "../util/read-module.rkt"
          "../util/path-utils.rkt")
 
+(define (fixed-point-reached? l1 l2)
+  (equal? (length l1) (length l2)))
+
+(define (coerce-path-to-string thing)
+  (if (path? thing)
+      (path->string thing)
+      thing))
+
+(define (module-dependencies-transitive m possible-depends
+                                        [read-module read-module]
+                                        [get-path-string coerce-path-to-string])
+  (define (get-imm-deps mod possible-deps)
+    (module-dependencies mod possible-deps read-module get-path-string))
+  
+  (define level1-deps (get-imm-deps m possible-depends))
+  (let loop ([deps-so-far level1-deps]
+             [remaining-possibilities (set-subtract possible-depends level1-deps)])
+    (define new-dep-list
+      (for/fold ([accum deps-so-far])
+                ([dep deps-so-far])
+                (set-union accum (get-imm-deps dep remaining-possibilities))))
+    (if (fixed-point-reached? deps-so-far new-dep-list)
+        new-dep-list
+        (loop new-dep-list (set-subtract remaining-possibilities new-dep-list)))))
 
 
 (define/contract (module-dependencies m possible-depends
                                       [read-module read-module]
-                                      [get-path-string identity])
+                                      [get-path-string coerce-path-to-string])
   (->i ([m any/c]
         [possible-depends (listof any/c)])
        ([read-module (any/c . -> . syntax?)]
@@ -68,6 +92,53 @@
                   (provide foo)
                   }]
 
+             [a1.rkt
+              "a1.rkt"
+              @~a{#lang racket
+                  (require bar
+                           \"a2.rkt\"
+                           foo
+                           \"a3.rkt\")
+                  (+ 2 2)
+                  }]
+             [a2.rkt
+              "a2.rkt"
+              @~a{#lang racket
+                  (require bar
+                           foo)
+                  (+ 2 2)
+                  }]
+             [a3.rkt
+              "a3.rkt"
+              @~a{#lang racket
+                  (require bar
+                           \"a4.rkt\"
+                           foo
+                           \"a5.rkt\")
+                  (+ 2 2)
+                  }]
+             [a4.rkt
+              "a4.rkt"
+              @~a{#lang racket
+                  (require bar
+                           foo)
+                  (+ 2 2)
+                  }]
+             [a5.rkt
+              "a5.rkt"
+              @~a{#lang racket
+                  (require bar
+                           foo)
+                  (+ 2 2)
+                  }]
+             [a6.rkt
+              "a6.rkt"
+              @~a{#lang racket
+                  (require bar
+                           foo)
+                  (+ 2 2)
+                  }]
+
              ;; The essence of the forth benchmark, a good test because it's a
              ;; bit pathological with requires frequently split up, and
              ;; modifiers like only-in
@@ -111,10 +182,21 @@
     ;; Test artifical programs
     (test-equal? (module-dependencies "a.rkt" '("a.rkt" "b.rkt" "c.rkt" "another-a.rkt"))
                  '("c.rkt" "b.rkt"))
+    (test-equal? (module-dependencies-transitive "a.rkt" '("a.rkt" "b.rkt" "c.rkt" "another-a.rkt"))
+                 '("another-a.rkt" "c.rkt" "b.rkt"))
     (test-equal? (module-dependencies "b.rkt" '("a.rkt" "b.rkt" "c.rkt" "another-a.rkt"))
+                 '("another-a.rkt" "c.rkt"))
+    (test-equal? (module-dependencies-transitive "b.rkt" '("a.rkt" "b.rkt" "c.rkt" "another-a.rkt"))
                  '("another-a.rkt" "c.rkt"))
     (test-equal? (module-dependencies "c.rkt" '("a.rkt" "b.rkt" "c.rkt" "another-a.rkt"))
                  '())
+    (test-equal? (module-dependencies-transitive "c.rkt" '("a.rkt" "b.rkt" "c.rkt" "another-a.rkt"))
+                 '())
+    
+    (test-equal? (module-dependencies "a1.rkt" '("a2.rkt" "a3.rkt" "a4.rkt" "a5.rkt" "a6.rkt"))
+                 '("a3.rkt" "a2.rkt"))
+    (test-equal? (module-dependencies-transitive "a1.rkt" '("a2.rkt" "a3.rkt" "a4.rkt" "a5.rkt" "a6.rkt"))
+                 '("a5.rkt" "a4.rkt" "a3.rkt" "a2.rkt"))
 
     (test-equal? (module-dependencies "forth-main.rkt"
                                       '("forth-main.rkt"
@@ -122,7 +204,21 @@
                                         "forth-eval.rkt"
                                         "forth-stack.rkt"))
                  '("forth-eval.rkt"))
+    (test-equal? (module-dependencies-transitive "forth-main.rkt"
+                                      '("forth-main.rkt"
+                                        "forth-command.rkt"
+                                        "forth-eval.rkt"
+                                        "forth-stack.rkt"))
+                 '("forth-stack.rkt"
+                   "forth-command.rkt"
+                   "forth-eval.rkt"))
     (test-equal? (module-dependencies "forth-command.rkt"
+                                      '("forth-main.rkt"
+                                        "forth-command.rkt"
+                                        "forth-eval.rkt"
+                                        "forth-stack.rkt"))
+                 '("forth-stack.rkt"))
+    (test-equal? (module-dependencies-transitive "forth-command.rkt"
                                       '("forth-main.rkt"
                                         "forth-command.rkt"
                                         "forth-eval.rkt"
@@ -135,7 +231,20 @@
                                         "forth-stack.rkt"))
                  '("forth-stack.rkt"
                    "forth-command.rkt"))
+    (test-equal? (module-dependencies-transitive "forth-eval.rkt"
+                                      '("forth-main.rkt"
+                                        "forth-command.rkt"
+                                        "forth-eval.rkt"
+                                        "forth-stack.rkt"))
+                 '("forth-stack.rkt"
+                   "forth-command.rkt"))
     (test-equal? (module-dependencies "forth-stack.rkt"
+                                      '("forth-main.rkt"
+                                        "forth-command.rkt"
+                                        "forth-eval.rkt"
+                                        "forth-stack.rkt"))
+                 '())
+    (test-equal? (module-dependencies-transitive "forth-stack.rkt"
                                       '("forth-main.rkt"
                                         "forth-command.rkt"
                                         "forth-eval.rkt"

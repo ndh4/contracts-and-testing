@@ -202,7 +202,7 @@
                                   untyped))
   (define adapters (benchmark-both->files both))
   (benchmark-configuration main
-                              (append (module-dependencies main others)
+                              (append (module-dependencies-transitive main others)
                                       adapters)
                               base
                               config))
