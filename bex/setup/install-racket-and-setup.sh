@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function help(){
-	echo "First argument must be project root (usually the parent of `contracts-and-testing`), and second must be the setup config (one of `contracts-and-testing/bex/setup/*-setup-config.rkt`)"
+	echo "First argument must be project root (usually the parent of contracts-and-testing), and second must be the setup config (one of contracts-and-testing/bex/setup/*-setup-config.rkt)"
 	exit 1
 }
 
