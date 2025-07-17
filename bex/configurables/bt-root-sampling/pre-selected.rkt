@@ -11,7 +11,7 @@
          "make-bt-root-sampler.rkt")
 
 (provide (contract-out [make-bt-root-sampler make-bt-root-sampler/c]
-                       [pre-selected-bt-root-db (parameter/c (db-path-relative-to? configurables))]
+                       [pre-selected-bt-root-db (parameter/c absolute-path?)]
                        [root-missing-blame-response root-missing-blame-response/c]))
 
 ;; A root that terminates in erasure (for pre-selection) may timeout in TR or Transient!
@@ -24,8 +24,7 @@
 (define pre-selected-bt-root-db (make-parameter #f))
 
 (define (make-bt-root-sampler bench-info mutant)
-  (define resolved-db-path (build-path configurables
-                                       (pre-selected-bt-root-db)))
+  (define resolved-db-path (pre-selected-bt-root-db))
   (define db (db:get resolved-db-path))
   (define the-benchmark (bench-info-benchmark bench-info))
   (define pre-selected-roots-by-mutant

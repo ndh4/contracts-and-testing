@@ -1,6 +1,7 @@
 #lang racket
 
 (require "../../bex/util/sql-db.rkt"
+         "../../bex/orchestration/experiment-info.rkt"
          db)
 
 (define (get-num-mutants result-table-name)
@@ -36,6 +37,6 @@
                           #:serialized-configuration configuration))
   (/ num-dead-mutants num-mutants))
 
-(get-mutation-score #:result-table-name "forth"
-                    #:test-suite-table-name "temp_test_suite"
-                    #:serialized-configuration 2222)
+(get-mutation-score #:result-table-name experiment-name
+                    #:test-suite-table-name (string-append experiment-name "_tests")
+                    #:serialized-configuration 0)

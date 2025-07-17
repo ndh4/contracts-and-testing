@@ -179,6 +179,7 @@
   ../../configurables/bt-root-sampling/pre-select-bt-roots.rkt
   -d (~a mutant-samples.rktdb)
   -c (~a experiment-config-from-which-to-get-mutator/mutant-info)
+  -b (~a benchmarks-dir)
   (if interesting-scenarios.rktdb
       (list "-i" interesting-scenarios.rktdb)
       empty)

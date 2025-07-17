@@ -39,10 +39,15 @@
 
 (define (wrap-test test)
   (define datum (test-datum test))
-  `(parameterize ([current-check-around (lambda (t)
-                                          (t)
-                                          (void))])
-     ,datum))
+  `(begin
+     (require test-engine/test-engine)
+     (require test-engine/racket-tests)
+     (test-execute #f)
+     (test-silence #t)
+     ,datum
+     (run-tests!)
+     (define t-obj (current-test-object))
+     (or (empty? (test-object-failed-checks t-obj)) (error 'HTDP-test-failure))))
 
 (define (assemble-test test-id test-database #:rest [accum null])
   (define record (get-record test-id test-database))

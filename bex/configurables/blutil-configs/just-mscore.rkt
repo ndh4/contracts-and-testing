@@ -2,15 +2,16 @@
 "../configurables.rkt"
 
 (require "blame-following-common.rkt")
+(require "../../orchestration/experiment-info.rkt")
 
 (configure! mutation code-mistakes)
-(configure! mutant-sampling pre-selected "../../user-scripts/output-dir/mutant-samples.rktdb")
+(configure! mutant-sampling pre-selected (build-path dbs:blutil "mutant-samples.rktdb"))
 (configure! mutant-filtering dont-care-about-blame-trails)
 (configure! module-selection-for-mutation all-regular-modules)
 (configure! benchmark-runner teco-run) ;; TODO Change this to interpret result possibly
 (configure! blame-translation configurable-ctc-middleman-mod-to-source)
 (configure! blame-following null)
-(configure! bt-root-sampling pre-selected "../../user-scripts/output-dir/pre-selected-bt-roots.rktdb")
+(configure! bt-root-sampling pre-selected (build-path dbs:blutil "pre-selected-bt-roots.rktdb"))
 (configure! trail-completion any-type-error/blamed-at-max)
 (configure! configurations teco-configs)
 

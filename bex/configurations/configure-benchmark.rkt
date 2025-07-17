@@ -45,24 +45,25 @@
 
 #;(define benchmark-cache (make-weak-hash '()))
 (define (read-benchmark path)
-  (cond
-    #;[(hash-ref benchmark-cache path #f) => values]
-    [else
-     (define-values (typed untyped) (read-typed-untyped-dirs path))
-     (define base (simple-form-path (build-path path "base")))
-     (define both (simple-form-path (build-path path "both")))
-     (match (and typed untyped)
-       [#f
-        (log-warning (~a path))
-        #f]
-       [else
-        (define result
-          (benchmark typed
-                     untyped
-                     (and (directory-exists? base) base)
-                     (and (directory-exists? both) both)))
-        #;(hash-set! benchmark-cache path result)
-        result])]))
+  (or (cond
+        #;[(hash-ref benchmark-cache path #f) => values]
+        [else
+         (define-values (typed untyped) (read-typed-untyped-dirs path))
+         (define base (simple-form-path (build-path path "base")))
+         (define both (simple-form-path (build-path path "both")))
+         (match (and typed untyped)
+           [#f
+            (log-warning (~a path))
+            #f]
+           [else
+            (define result
+              (benchmark typed
+                         untyped
+                         (and (directory-exists? base) base)
+                         (and (directory-exists? both) both)))
+            #;(hash-set! benchmark-cache path result)
+            result])])
+      (error 'read-benchmark "read-benchmark returns false for ~a~n" path)))
 
 (define (has-.rkt-extension? path)
   (path-has-extension? path ".rkt"))

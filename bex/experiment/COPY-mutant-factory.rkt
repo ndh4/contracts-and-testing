@@ -42,7 +42,6 @@
            (struct-out blame-trail)
            process-limit
            data-output-dir
-           benchmarks-dir-path
            factory-logger
            abort-on-failure?
            default-memory-limit/gb
@@ -88,8 +87,6 @@
 (define/contract normal-blame-trail-outcomes
   (listof run-outcome/c)
   '(type-error runtime-error blamed))
-
-(define-runtime-path benchmarks-dir-path "../../gtp-benchmarks/benchmarks/")
 
 (define process-limit (make-parameter 3))
 (define data-output-dir (make-parameter "./mutant-data"))
@@ -962,7 +959,7 @@ Mutant: [~a] ~a @ ~a with config:
 
   (define completed+checks-pass?
     (parameterize ([date-display-format 'iso-8601])
-      (for/last ([setting '(none max)])
+      (for/last ([setting '(none)])
         (define config (make-bench-config bench-to-run setting))
         (run-all-mutants*config bench-to-run
                               config

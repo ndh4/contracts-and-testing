@@ -237,7 +237,7 @@
   (mod (mod-path a-mod)
        (syntax-parse (mod-stx a-mod)
          [(module name lang (mod-begin . rest))
-          #`(module name lang (mod-begin (require (for-syntax racket/base)) (define-syntax ctc-level '#,level) . rest))])))
+          #`(module name lang (mod-begin #,@(if (equal? (syntax->datum #'lang) 'lang/htdp-intermediate-lambda) null (list #`(require (for-syntax racket/base)) #`(define-syntax ctc-level '#,level))) . rest))])))
 
 ;; lltodo: will need this when supporting import contracts
 (define-syntax-class configurable-provide

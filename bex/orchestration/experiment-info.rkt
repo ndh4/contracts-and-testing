@@ -5,6 +5,10 @@
 
 (require racket/runtime-path)
 
+; Please, no slashes or spaces in experiment-name
+(define-for-syntax experiment-name "phase2__cs111_exercise_6")
+(define experiment-name "phase2__cs111_exercise_6")
+
 (struct orchestration-config (dbs-dir dbs-dir-name download-dir setup-config))
 
 (define-runtime-path dbs:icfp "../../../experiment-data/dbs/code-mutations-icfp")
@@ -14,7 +18,7 @@
 (define-runtime-path dbs:blgt-erasure-biased-thesis
                      "../../../experiment-data/dbs/code-mutations-erasure-biased-thesis")
 (define-runtime-path dbs:type-api-mutations "../../../experiment-data/dbs/type-api-mutations")
-(define-runtime-path dbs:blutil "../../../experiment-data/dbs/blutil")
+(define-runtime-path dbs:blutil (build-path "../dbs" experiment-name))
 
 (define-runtime-path data:natural-biased
                      "../../../experiment-data/results/code-mutations-natural-biased")
