@@ -5,31 +5,29 @@
 
 (require racket/runtime-path)
 
+; Please, no slashes or spaces in experiment-name
+(define-for-syntax experiment-name "phase2__cs111_exercise_6")
+(define experiment-name "phase2__cs111_exercise_6")
+
 (struct orchestration-config (dbs-dir dbs-dir-name download-dir setup-config))
 
-(define-runtime-path dbs:icfp
-  "../../../experiment-data/dbs/code-mutations-icfp")
-(define-runtime-path dbs:natural-biased
-  "../../../experiment-data/dbs/code-mutations-natural-biased")
+(define-runtime-path dbs:icfp "../../../experiment-data/dbs/code-mutations-icfp")
+(define-runtime-path dbs:natural-biased "../../../experiment-data/dbs/code-mutations-natural-biased")
 (define-runtime-path dbs:erasure-biased-2
-  "../../../experiment-data/dbs/code-mutations-erasure-biased-2")
+                     "../../../experiment-data/dbs/code-mutations-erasure-biased-2")
 (define-runtime-path dbs:blgt-erasure-biased-thesis
-  "../../../experiment-data/dbs/code-mutations-erasure-biased-thesis")
-(define-runtime-path dbs:type-api-mutations
-  "../../../experiment-data/dbs/type-api-mutations")
-(define-runtime-path dbs:blutil
-  "../../../experiment-data/dbs/blutil")
+                     "../../../experiment-data/dbs/code-mutations-erasure-biased-thesis")
+(define-runtime-path dbs:type-api-mutations "../../../experiment-data/dbs/type-api-mutations")
+(define-runtime-path dbs:blutil (build-path "../dbs" experiment-name))
 
 (define-runtime-path data:natural-biased
-  "../../../experiment-data/results/code-mutations-natural-biased")
+                     "../../../experiment-data/results/code-mutations-natural-biased")
 (define-runtime-path data:erasure-biased-2
-  "../../../experiment-data/results/code-mutations-erasure-biased-2")
-(define-runtime-path data:type-api-mistakes
-  "../../../experiment-data/results/type-api-mutations")
+                     "../../../experiment-data/results/code-mutations-erasure-biased-2")
+(define-runtime-path data:type-api-mistakes "../../../experiment-data/results/type-api-mutations")
 (define-runtime-path data:blgt-erasure-biased-thesis
-  "../../../experiment-data/results/code-mutations-erasure-biased-thesis")
-(define-runtime-path data:blutil
-  "../../../experiment-data/results/blutil")
+                     "../../../experiment-data/results/code-mutations-erasure-biased-thesis")
+(define-runtime-path data:blutil "../../../experiment-data/results/blutil")
 
 (define setup:bltym "bltym-setup-config.rkt")
 (define setup:blgt "blgt-setup-config.rkt")
@@ -49,26 +47,12 @@
                         data:blgt-erasure-biased-thesis
                         setup:blgt))
 
-(define blutil
-  (orchestration-config dbs:blutil
-                        "blutil"
-                        data:blutil
-                        setup:blutil))
+(define blutil (orchestration-config dbs:blutil "blutil" data:blutil setup:blutil))
 
-(define-runtime-path benchmarks-dir "../../../gtp-benchmarks/benchmarks")
+(define-runtime-path benchmarks-dir "../../../code_lens_test_samples/phase2")
 
 (define scenario-samples-per-mutant 100)
 
-(define experiment-benchmarks
-  '(#;"dungeon"
-    "forth"
-    #;"kcfa"
-    #;"mbta"
-    #;"morsecode"
-    #;"sieve"
-    #;"snake"))
+(define experiment-benchmarks '("cs111_exercise_6"))
 
-(define experiment-modes
-  '("blame"
-    "stack"
-    "null"))
+(define experiment-modes '("blame" "stack" "null"))

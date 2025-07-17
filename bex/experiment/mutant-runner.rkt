@@ -18,7 +18,8 @@
          "../util/path-utils.rkt"
          "../util/sql-db.rkt"
          "../configurables/configurables.rkt"
-         "../configurations/configure-benchmark.rkt")
+         "../configurations/configure-benchmark.rkt"
+         "../orchestration/experiment-info.rkt")
 
 (define (fail fmt-str . fmt-args)
   (apply eprintf
@@ -133,7 +134,7 @@
     (fail
      @~a{Error: Missing mandatory argument: @missing-arg}))
 
-  (define db-table-name (and (write-to-database?) (benchmark->name (the-benchmark-configuration))))
+  (define db-table-name (and (write-to-database?) experiment-name))
 
   (when (write-to-database?)
     (ensure-table! db-table-name))
@@ -213,7 +214,8 @@
          #:blamed (~a #f)
          #:errortrace_stack (~a #f)
          #:context_stack (~a #f)
-         #:result_value (~a #f)))
+         #:result_value (~a #f)
+         #:cmd_line_args (~a (current-command-line-arguments))))
 
    (define the-run-status
    (run-status (module-to-mutate)

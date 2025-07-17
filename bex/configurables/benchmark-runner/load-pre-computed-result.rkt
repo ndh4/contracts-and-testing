@@ -15,7 +15,7 @@
 (provide (contract-out [rename make-pre-computed-result-benchmark-runner
                                make-benchmark-runner
                                make-benchmark-runner/c]
-                       [pre-computed-results-db (parameter/c (db-path-relative-to? configurables))]))
+                       [pre-computed-results-db (parameter/c absolute-path?)]))
 
 (define-runtime-path configurables "..")
 (define default-pre-computed-results-db
@@ -29,8 +29,7 @@
   (λ (mod-path)
     (define path (second mod-path))
     (define bench (first (benchmark-mod-relative-path-parts path)))
-    (define resolved-db-path (build-path configurables
-                                         (pre-computed-results-db)))
+    (define resolved-db-path (pre-computed-results-db))
     (define db (db:get resolved-db-path))
     (match (db:read db
                     bench

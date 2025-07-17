@@ -13,7 +13,7 @@
 
 (provide (contract-out
           [instrument-module module-instrumenter/c]
-          [transient-special-cases-db (parameter/c (db-path-relative-to? configurables))]))
+          [transient-special-cases-db (parameter/c absolute-path?)]))
 
 (define-runtime-path configurables "..")
 (define default-transient-special-cases-db
@@ -59,8 +59,7 @@
 (define (mod-stx/replace-special-cases a-mod)
   (define mod-relative-path
     (benchmark-mod-relative-path (mod-path a-mod)))
-  (define resolved-db-path (build-path configurables
-                                       (transient-special-cases-db)))
+  (define resolved-db-path (transient-special-cases-db))
   (define replacement-mod
     (cond [(db:path-to-db? resolved-db-path)
            (define db (db:get resolved-db-path))
