@@ -32,9 +32,10 @@
 ;   test_index))
 
 (define (make-test-suite! src-table dest-table)
-  (query-exec dbc
-              (format "CREATE TABLE ~a AS SELECT DISTINCT module_under_test, test_index from ~a"
-                      dest-table
-                      src-table)))
+  (query-exec
+   dbc
+   (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT DISTINCT module_under_test, test_index from ~a"
+           dest-table
+           src-table)))
 
 (make-test-suite! experiment-name (string-append experiment-name "_tests"))
