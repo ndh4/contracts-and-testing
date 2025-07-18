@@ -37,6 +37,19 @@
                           #:serialized-configuration configuration))
   (/ num-dead-mutants num-mutants))
 
-(get-mutation-score #:result-table-name experiment-name
-                    #:test-suite-table-name (string-append experiment-name "_tests")
-                    #:serialized-configuration 0)
+(define (get-mscore-from-config config experiment-name)
+  (get-mutation-score #:result-table-name experiment-name
+                      #:test-suite-table-name (string-append experiment-name "_tests")
+                      #:serialized-configuration config))
+
+(define (get-all-configs experiment-name)
+  (query-list dbc (format "SELECT configuration from ~a GROUP BY configuration" experiment-name)))
+
+(define (print-all-mscores experiment-name)
+  (define configs (get-all-configs experiment-name))
+  (for ([config configs])
+    (printf "Mutation score for ~a configuration: ~a~n"
+            config
+            (get-mscore-from-config config experiment-name))))
+
+(print-all-mscores experiment-name)
