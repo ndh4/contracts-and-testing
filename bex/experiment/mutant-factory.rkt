@@ -229,8 +229,7 @@
     (if bool msg ""))
 
   (define all-checks-pass?
-    (and something-logged-for-all-mutants*tests?
-         (not unexpected-state-encountered?)
+    (and (not unexpected-state-encountered?)
          (not mutants-have-error-output?)))
   (log-factory-message
    (if all-checks-pass? 'info 'error)

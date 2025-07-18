@@ -5,9 +5,8 @@
 
 (require racket/runtime-path)
 
-; Please, no slashes or spaces in experiment-name
-(define-for-syntax experiment-name "one_button_run")
-(define experiment-name "one_button_run")
+(define-for-syntax experiment-name (getenv "EXPERIMENT_NAME"))
+(define experiment-name (getenv "EXPERIMENT_NAME"))
 
 (struct orchestration-config (dbs-dir dbs-dir-name download-dir setup-config))
 
@@ -49,10 +48,10 @@
 
 (define blutil (orchestration-config dbs:blutil "blutil" data:blutil setup:blutil))
 
-(define-runtime-path benchmarks-dir "../../../gtp-benchmarks/benchmarks")
+(define-runtime-path benchmarks-dir (build-path "../../.." (getenv "BENCHMARKS_PATH")))
 
 (define scenario-samples-per-mutant 100)
 
-(define experiment-benchmarks '("forth"))
+(define experiment-benchmarks (list (getenv "BENCHMARK_NAME")))
 
 (define experiment-modes '("blame" "stack" "null"))

@@ -7,9 +7,13 @@ RACKET_BASE="$PARENT_DIR/racket/bin"
 RACKET="$RACKET_BASE/racket"
 RACO="$RACKET_BASE/raco"
 
-SOURCE_CODE_DIR="benchmarks/forth"
-EXPERIMENT_NAME="one_button_run"
-SOURCE_CODE_BASE="$PARENT_DIR/gtp-benchmarks/$SOURCE_CODE_DIR"
+export BENCHMARKS_PATH="gtp-benchmarks/benchmarks"
+export BENCHMARK_NAME="abm_test"
+
+# Please, no slashes or spaces in experiment-name
+export EXPERIMENT_NAME="abm"
+
+SOURCE_CODE_BASE="$PARENT_DIR/$BENCHMARKS_PATH/$BENCHMARK_NAME"
 SOURCE_CODE_WITH_TESTS="$SOURCE_CODE_BASE/original"
 TEST_DIR="$SOURCE_CODE_BASE/tests"
 UNTYPED_DIR="$SOURCE_CODE_BASE/untyped"
