@@ -14,35 +14,33 @@
 
 (require setup/getinfo)
 
-(define-runtime-paths
-  [contracts-and-testing "../"])
-(define patterns-to-ignore
-  ((get-info/full contracts-and-testing) 'compile-omit-paths))
+(define-runtime-paths [contracts-and-testing "../"])
+(define patterns-to-ignore ((get-info/full contracts-and-testing) 'compile-omit-paths))
 (define (ignored-path? p)
-  (ormap (λ (pat) (regexp-match? pat p))
-         patterns-to-ignore))
-(define raco (build-path contracts-and-testing ".." ".." "racket" "bin" "raco"))
+  (ormap (λ (pat) (regexp-match? pat p)) patterns-to-ignore))
+(define raco
+  (build-path (let-values ([(base name must-be-dir?) (split-path (find-system-path 'exec-file))])
+                base)
+              "raco"))
 
 (main
- #:arguments {[(hash-table ['compile compile?]
-                           ['clean-compiled clean-compiled?])
-               args]
-              #:once-each
-              [("-c" "--compile")
-               'compile
-               "Compile project code."
-               #:record]
-              [("-C" "--clean-compiled")
-               'clean-compiled
-               "Clean all previously compiled project code."
-               #:record]}
+ #:arguments
+ {[(hash-table ['compile compile?] ['clean-compiled clean-compiled?]) args]
+  #:once-each [("-c" "--compile") 'compile "Compile project code." #:record]
+  [("-C" "--clean-compiled") 'clean-compiled "Clean all previously compiled project code." #:record]}
  (when clean-compiled?
    (system* (find-executable-path "find")
             contracts-and-testing
-            "-name" "compiled"
-            "-type" "d"
+            "-name"
+            "compiled"
+            "-type"
+            "d"
             "-prune"
-            "-exec" "rm" "-rf" "{}" ";"))
+            "-exec"
+            "rm"
+            "-rf"
+            "{}"
+            ";"))
  (when compile?
    (parameterize ([current-directory contracts-and-testing])
      (apply system*
@@ -50,7 +48,6 @@
             "make"
             "-v"
             (for/list ([f (in-directory)]
-                       #:when (and (path-has-extension? f ".rkt")
-                                   (file-exists? f)
-                                   (not (ignored-path? f))))
+                       #:when
+                       (and (path-has-extension? f ".rkt") (file-exists? f) (not (ignored-path? f))))
               f)))))

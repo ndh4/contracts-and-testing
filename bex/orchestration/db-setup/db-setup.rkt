@@ -45,7 +45,7 @@
     (define head
       helper-def ...
       (unless (system @~a{
-                          @racket-path @(string-join (map ~a (flatten (list {~? {~@ pre-flag.parsed ...}})))) @;
+                          @(format "\"~a\"" racket-path) -y @(string-join (map ~a (flatten (list {~? {~@ pre-flag.parsed ...}})))) @;
                           @script-path @(string-join (map ~a (flatten (list {~? script-arg.parsed} ...))))
                           })
         (raise-user-error 'setup-all-dbs
