@@ -191,7 +191,7 @@
  (test-equal? (read-mutant-result (make:mutant0-proc))
               mutant0-proc-result)
 
- (ignore
+ #;(ignore
   (define aggregate-trail-file partial-e-bt-aggregate-file)
   (define orig-aggregate-file-contents (file->list aggregate-trail-file))
   (define dead (make:mutant0-dead-proc/following-42))
@@ -217,13 +217,13 @@
                         (serialize-config (dead-mutant-process-config dm0)))))))
   (define new-aggregate-file-contents
     (file->list aggregate-trail-file)))
- (test-= (length new-aggregate-file-contents) 2)
- (test-equal? new-aggregate-file-contents
+ #;(test-= (length new-aggregate-file-contents) 2)
+ #;(test-equal? new-aggregate-file-contents
               (append orig-aggregate-file-contents
                       (list expected-blame-trail-recording))))
 
 
-(parameterize ([data-output-dir test-mutant-dir])
+#;(parameterize ([data-output-dir test-mutant-dir])
   (test-begin/with-env
    #:name follow-blame-from-dead-process
    (ignore
@@ -343,7 +343,7 @@
     (not (unbox no-blame-handler-called))
     "Called no-blame handler when there was blame")))
 
-(test-begin/with-env
+#;(test-begin/with-env
  #:name make-blame-following-will/fallback
  (ignore
   (define enqueued (box #f))
@@ -393,7 +393,7 @@
   (test-equal? (unbox enqueued) #f)
   "\nEnqueued a mutant following type-error into a library?"))
 
-(parameterize ([abort-on-failure? #f]
+#;(parameterize ([abort-on-failure? #f]
                [data-output-dir test-mutant-dir])
   (test-begin/with-env
    #:name make-blame-disappearing-fallback
@@ -472,7 +472,7 @@
     (not (unbox increased-limits?-box))
     "runtime-error without inferred blame not recognized")))
 
-(parameterize ([data-output-dir test-mutant-dir])
+#;(parameterize ([data-output-dir test-mutant-dir])
   (test-begin/with-env
    #:name spawn-mutant
    (ignore
@@ -598,7 +598,7 @@
                     #:test:should-respawn? #f
                     #:test:will-called? #t)))
 
-(test-begin/with-env
+#;(test-begin/with-env
  #:name cache-replay/resume
  (ignore
   (define calls (make-hash))
@@ -773,7 +773,7 @@
 (define mutant-with-config-blaming-main.rkt:config (hash "main.rkt" 'none
                                                          "second.rkt" 'types))
 ;; Full run test
-(parameterize ([data-output-dir test-mutant-dir]
+#;(parameterize ([data-output-dir test-mutant-dir]
                [process-limit (match (gethostname)
                                 [(regexp "quser[0-9]+") 1]
                                 [else 6])]

@@ -35,8 +35,8 @@ mkdir -p "$DB_DIR"
 "$RACO" make "$PROJECT_PATH/bex/orchestration/db-setup/blutil.rkt" || exit
 "$RACKET" "$PROJECT_PATH/bex/orchestration/db-setup/blutil.rkt" -j $NUM_CORES --no-viz "$DB_DIR" || exit
 
-"$RACO" make "$PROJECT_PATH/bex/experiment/COPY-mutant-factory.rkt" || exit
-"$RACKET" -l errortrace -t "$PROJECT_PATH/bex/experiment/COPY-mutant-factory.rkt" -- -b "$SOURCE_CODE_BASE" -o "$DB_DIR/data" -n $NUM_CORES -e "$DB_DIR/errs.log" -l "$DB_DIR/$EXPERIMENT_NAME-progress.log" -c "$PROJECT_PATH/bex/configurables/configs/teco-prime.rkt" -P "$DB_DIR/configuration-outcomes/$EXPERIMENT_NAME.rktd" -k || exit
+"$RACO" make "$PROJECT_PATH/bex/experiment/mutant-factory.rkt" || exit
+"$RACKET" -l errortrace -t "$PROJECT_PATH/bex/experiment/mutant-factory.rkt" -- -b "$SOURCE_CODE_BASE" -o "$DB_DIR/data" -n $NUM_CORES -e "$DB_DIR/errs.log" -l "$DB_DIR/$EXPERIMENT_NAME-progress.log" -c "$PROJECT_PATH/bex/configurables/configs/teco-prime.rkt" -P "$DB_DIR/configuration-outcomes/$EXPERIMENT_NAME.rktd" -k || exit
 
 "$RACO" make "$PROJECT_PATH/bex/util/make-test-suite.rkt" || exit
 "$RACKET" "$PROJECT_PATH/bex/util/make-test-suite.rkt" || exit
