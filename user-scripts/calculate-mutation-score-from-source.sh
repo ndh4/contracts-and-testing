@@ -32,9 +32,9 @@ popd || exit
 mkdir -p "$DB_DIR"
 # In this case, typed is just a copy of untyped, with no additional type information
 
-"$RACO" make "$PROJECT_PATH/bex/util/enumerate-tests.rkt" || exit
+"$RACO" make "$PROJECT_PATH/bex/util/enumerate-tests-simple.rkt" || exit
 
-"$RACKET" "$PROJECT_PATH/bex/util/enumerate-tests.rkt" --source "$SOURCE_CODE_WITH_TESTS" --test-dir "$TEST_DIR" --untyped-dest-dir "$UNTYPED_DIR" || exit
+"$RACKET" "$PROJECT_PATH/bex/util/enumerate-tests-simple.rkt" --source "$SOURCE_CODE_WITH_TESTS" --test-dir "$TEST_DIR" --untyped-dest-dir "$UNTYPED_DIR" || exit
 
 "$RACO" make "$PROJECT_PATH/bex/orchestration/db-setup/blutil.rkt" || exit
 "$RACKET" "$PROJECT_PATH/bex/orchestration/db-setup/blutil.rkt" -j $NUM_CORES --no-viz "$DB_DIR" || exit
