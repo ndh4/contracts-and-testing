@@ -68,7 +68,9 @@
          (program->mods a-program)))
   (define main (first files))
   (define candidate-subpath-parts
-    (in-combinations (explode-path main)))
+    ;; don't include the racket file itself in candidate-subpath-parts,
+    ;; just the directory structure
+    (in-combinations (explode-path (path-only main))))
   (define ((path-prefix?-of a-path) subpath)
     (string-prefix? (path->string a-path)
                     (path->string subpath)))
