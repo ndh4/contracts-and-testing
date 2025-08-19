@@ -81,7 +81,7 @@
 
 (define (benchmark->name b)
   (match b
-    [(struct* benchmark ([typed (list* (app explode-path/string (list _ ... name "typed" _)) _)]))
+    [(struct* benchmark ([untyped (list* (app explode-path/string (list _ ... name "untyped" _)) _)]))
      name]
     [(struct* benchmark-configuration
               ([main (app explode-path/string (list _ ... name (or "typed" "untyped") _))]))
