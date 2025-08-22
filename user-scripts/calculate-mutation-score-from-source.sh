@@ -7,11 +7,11 @@ RACKET_BASE="$PARENT_DIR/racket/bin"
 RACKET="$RACKET_BASE/racket"
 RACO="$RACKET_BASE/raco"
 
-export BENCHMARKS_PATH="gtp-benchmarks/benchmarks"
-export BENCHMARK_NAME="abm_test"
+export BENCHMARKS_PATH="gtp-benchmarks/benchmarks-mutation"
+export BENCHMARK_NAME="mbta"
 
 # Please, no slashes or spaces in experiment-name
-export EXPERIMENT_NAME="abm"
+export EXPERIMENT_NAME="mbta_test_4"
 
 SOURCE_CODE_BASE="$PARENT_DIR/$BENCHMARKS_PATH/$BENCHMARK_NAME"
 SOURCE_CODE_WITH_TESTS="$SOURCE_CODE_BASE/original"

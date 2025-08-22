@@ -1,4 +1,5 @@
 compiled/
 bex/dbs/blutil/mutation-analyses/
-*.rkt~bex/dbs/
+*.rkt~
+bex/dbs/
 inspected-mutants/

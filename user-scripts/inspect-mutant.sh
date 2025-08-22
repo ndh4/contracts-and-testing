@@ -6,15 +6,16 @@ PROJECT_PATH="$PARENT_DIR/$PROJECT_NAME"
 RACKET_BASE="$PARENT_DIR/racket/bin"
 RACKET="$RACKET_BASE/racket"
 
-export BENCHMARKS_PATH="gtp-benchmarks/benchmarks_mutation"
+export BENCHMARKS_PATH="gtp-benchmarks/benchmarks-mutation"
 
 # Please, no slashes or spaces in experiment-name
-export EXPERIMENT_NAME="mbta_test"
+export EXPERIMENT_NAME="dungeon_test_1"
 
 MUTANTS_DIR="$PROJECT_PATH/inspected-mutants"
 
 MUTANT_RUNNER="$PROJECT_PATH/bex/experiment/mutant-runner.rkt"
 
-mkdir -p "$MUTANTS_DIR"
+rm -rf "$MUTANTS_DIR"
+mkdir "$MUTANTS_DIR"
 
 "$RACKET" "$MUTANT_RUNNER" -w "$MUTANTS_DIR" "$@"
