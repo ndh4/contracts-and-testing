@@ -35,7 +35,7 @@
     [(regexp @~a{^#s\(mutant-summary.+(#hash.+\)\))}
              (list _ hash-string))
      (call-with-input-string hash-string read)]
-    [(and (or 'types 'none 'max) level)
+    [(and (or 'types 'none 'max 'trace) level)
      (define mods (map file-name-string-from-path
                        (benchmark-untyped the-benchmark)))
      (for/hash ([mod (in-list mods)])

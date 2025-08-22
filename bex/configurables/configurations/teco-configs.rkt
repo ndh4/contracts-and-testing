@@ -24,7 +24,7 @@
                 (#:test-mod [test-mod module-name?])
                 [result benchmark-configuration/c])]))
 
-(define config-levels '(none types max))
+(define config-levels '(none types max trace))
 
 ;; e.g.
 ;; (hash "main.rkt" (hash 'f 'max 'g 'none 'main 'types))
@@ -57,7 +57,7 @@
 (define test/c natural?)
 
 (define (config-at-max-precision-for? name config)
-  (equal? (hash-ref config name) 'max))
+  (equal? (hash-ref config name) 'trace))
 
 (define (increment-config-precision-for name config
                                         #:increment-max-error?
@@ -65,6 +65,7 @@
   (match (hash-ref config name)
     ['none (hash-set config name 'types)]
     ['types (hash-set config name 'max)]
+    ['max (hash-set config name 'trace)]
     [else
      #:when error-if-already-max?
      (error 'increment-config-precision-for
@@ -82,7 +83,8 @@
             'max)))
 
 (define-values {level->digit digit->level}
-  (1-to-1-map->converters 'max   #\2
+  (1-to-1-map->converters 'trace #\3
+                          'max   #\2
                           'types #\1
                           'none  #\0))
 (define serialize-config (make-config-serializer level->digit))
@@ -105,13 +107,17 @@
                  (hash "main.rkt" 'max))
     (test-equal? (increment-config-precision-for
                   "main.rkt"
-                  (hash "main.rkt" 'max)
+                  (hash "main.rkt" 'max))
+                 (hash "main.rkt" 'trace))
+    (test-equal? (increment-config-precision-for
+                  "main.rkt"
+                  (hash "main.rkt" 'trace)
                   #:increment-max-error? #f)
-                 (hash "main.rkt" 'max))
+                 (hash "main.rkt" 'trace))
     (test-exn exn:fail?
               (increment-config-precision-for
                "main.rkt"
-               (hash "main.rkt" 'max))))
+               (hash "main.rkt" 'trace))))
 
   (test-begin
     #:name config-at-max-precision-for?
@@ -123,7 +129,7 @@
                (hash "main.rkt" 'types)))
     (config-at-max-precision-for?
      "main.rkt"
-     (hash "main.rkt" 'max)))
+     (hash "main.rkt" 'trace)))
 
 
   (define-test-env

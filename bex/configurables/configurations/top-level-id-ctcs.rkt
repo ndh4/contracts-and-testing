@@ -20,7 +20,7 @@
                          (config-for-benchmark/c bench)])
                 [result benchmark-configuration/c])]))
 
-(define config-levels '(none types max))
+(define config-levels '(none types max trace))
 
 ;; e.g.
 ;; (hash "main.rkt" (hash 'f 'max 'g 'none 'main 'types))
