@@ -4,6 +4,8 @@
          "../../bex/orchestration/experiment-info.rkt"
          db)
 
+(provide get-mutation-score)
+
 (define (get-num-mutants result-table-name)
   (query-value dbc
                (format "SELECT COUNT(*) from (SELECT DISTINCT mutant_module, mutation_index from ~a)"
@@ -52,4 +54,4 @@
             config
             (get-mscore-from-config config experiment-name))))
 
-(print-all-mscores experiment-name)
+;(print-all-mscores experiment-name)
