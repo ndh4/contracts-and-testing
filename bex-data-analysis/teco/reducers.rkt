@@ -40,9 +40,12 @@
              #:choose-test choose-test)))
 
 (define (get-random-order tests)
-  (random-seed 12345)
-  ;; TODO return tests in a randomized order
-  tests)
+  (do-with-seed 12345 (lambda () (shuffle tests))))
+
+(define (do-with-seed seed func)
+  (parameterize ([current-pseudo-random-generator (make-pseudo-random-generator)])
+    (random-seed seed)
+    (func)))
 
 (run-reducers (list reduce-by-lin-search)
               #:test-suite "morsecode_tests"
