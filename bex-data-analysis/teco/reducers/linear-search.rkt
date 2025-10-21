@@ -46,6 +46,6 @@
     WHERE module_under_test != $1 OR test_index != $2"
     new-name
     suite)
-   (test-modul test)
-   (test-index test))
+   (test-id-modul test)
+   (test-id-index test))
   new-name)
