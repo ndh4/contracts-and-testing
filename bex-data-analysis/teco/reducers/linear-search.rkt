@@ -22,30 +22,47 @@
 
   (printf "[GOAL] ~a has mutation score ~a~n~n" suite goal-score)
 
-  (for/fold ([accum suite])
-            ([counter (in-naturals)]
-             [current-test (get-total-order)])
+  (define starting-point (format "~a_~a_~a" suite conf "linsearch_start"))
 
-    (define new-suite
-      (remove-test #:remove current-test
-                   #:from accum
-                   #:to-create (string-append suite (number->string counter))))
+  (copy-table! #:src suite #:dest starting-point)
 
-    (define new-score (get-mscore new-suite))
+  (define winner
+    (for/fold ([accum starting-point])
+              ([counter (in-naturals)]
+               [current-test (get-total-order)])
 
-    (printf "~a has mutation score ~a~n~n" new-suite new-score)
+      (define new-suite
+        (remove-test #:remove current-test
+                     #:from accum
+                     #:to-create (format "~a_~a_temp~a" suite conf (number->string counter))))
 
-    (if (= goal-score new-score) new-suite accum)))
+      (define new-score (get-mscore new-suite))
 
-(define (remove-test #:remove test #:from suite #:to-create new-name)
+      (printf "~a has mutation score ~a~n~n" new-suite new-score)
+
+      (cond
+        [(= goal-score new-score)
+         (drop-table! accum)
+         new-suite]
+        [else
+         (drop-table! new-suite)
+         accum])))
+
+  (define result-name (format "~a_~a_linsearch_result" suite conf))
+  (copy-table! #:src winner #:dest result-name)
+  (drop-table! winner)
+  result-name)
+
+(define (remove-test #:remove test #:from suite #:to-create dest)
+  (drop-table! dest)
   (query-exec
    dbc
    (format
     "CREATE TABLE ~a AS
-    SELECT module_under_test, test_index from ~a
+    SELECT module_under_test, test_index FROM ~a
     WHERE module_under_test != $1 OR test_index != $2"
-    new-name
+    dest
     suite)
    (test-id-modul test)
    (test-id-index test))
-  new-name)
+  dest)

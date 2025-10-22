@@ -27,12 +27,13 @@
   (define kills-table
     (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf))
 
-  (define result-suite
-    (make-result-suite #:start-suite suite #:test-mutant-mapping mapping #:configuration conf))
+  (define result-suite (make-result-suite #:start-suite suite #:configuration conf))
 
   (let loop ()
     (cond
-      [(empty-table? kills-table) result-suite]
+      [(empty-table? kills-table)
+       (drop-table! kills-table)
+       result-suite]
       [else
        ; let best-tests be the set of tests with max aura
        (define best-tests-vec (get-best-tests #:kills-table kills-table))
@@ -51,7 +52,7 @@
 (define (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   ; SQL SELECT [mutant-id] [test-id] [conf] WHERE test_passed = 0
   (define new-name (format "~a_~a_kills" mapping conf))
-  (query-exec dbc (format "DROP TABLE IF EXISTS ~a" new-name))
+  (drop-table! new-name)
   (query-exec
    dbc
    (format
@@ -77,8 +78,8 @@
     kills-table
     kills-table)))
 
-(define (make-result-suite #:start-suite suite #:test-mutant-mapping mapping #:configuration conf)
-  (define new-name (format "~a_~a_greedy_result" mapping conf))
+(define (make-result-suite #:start-suite suite #:configuration conf)
+  (define new-name (format "~a_~a_greedy_result" suite conf))
   (query-exec dbc (format "DROP TABLE IF EXISTS ~a" new-name))
   (query-exec dbc (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)

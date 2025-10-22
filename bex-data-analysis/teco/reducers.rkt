@@ -46,7 +46,9 @@
     (random-seed seed)
     (func)))
 
-(run-reducers (list reduce-by-vanilla-greedy)
-              #:test-suite "morsecode_tests"
-              #:test-mutant-mapping "morsecode"
-              #:configuration 0)
+(for ([conf (list 0 2222 0 22222)]
+      [bm (list "morsecode" "morsecode" "dungeon" "dungeon")])
+  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy)
+                #:test-suite (string-append bm "_tests")
+                #:test-mutant-mapping bm
+                #:configuration conf))
