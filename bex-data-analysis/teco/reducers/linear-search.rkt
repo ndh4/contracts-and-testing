@@ -5,7 +5,7 @@
          "../../../bex/util/sql-db.rkt"
          "../common.rkt")
 
-(provide reduce-by-lin-search)
+(provide (contract-out [reduce-by-lin-search reducer/c]))
 
 (define (reduce-by-lin-search #:test-suite suite
                               #:test-mutant-mapping mapping
@@ -20,7 +20,7 @@
 
   (define goal-score (get-mscore suite))
 
-  (printf "[GOAL] ~a has mutation score ~a~n~n" suite goal-score)
+  ;  (printf "[GOAL] ~a has mutation score ~a~n~n" suite goal-score)
 
   (define starting-point (format "~a_~a_~a" suite conf "linsearch_start"))
 
@@ -38,7 +38,7 @@
 
       (define new-score (get-mscore new-suite))
 
-      (printf "~a has mutation score ~a~n~n" new-suite new-score)
+      ;      (printf "~a has mutation score ~a~n~n" new-suite new-score)
 
       (cond
         [(= goal-score new-score)

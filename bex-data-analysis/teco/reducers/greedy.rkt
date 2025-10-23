@@ -5,18 +5,7 @@
          "../../../bex/util/sql-db.rkt"
          "../common.rkt")
 
-(provide reduce-by-vanilla-greedy)
-
-; Implementation:
-; Keep count of num mutants that each test kills?
-; OR generate that count dynamically every time.
-; U should be a table of test-ids.
-; R should be a table of test-ids as well.
-; We need a way to remove mutants from M_t sets.
-; - Keep one table of mutants per test
-; - How to name it then?
-; OR keep a table of the kills relation.
-; -- only have kills=#t things in that table
+(provide (contract-out [reduce-by-vanilla-greedy reducer/c]))
 
 (define (reduce-by-vanilla-greedy #:test-suite suite
                                   #:test-mutant-mapping mapping
