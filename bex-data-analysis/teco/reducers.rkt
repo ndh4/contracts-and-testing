@@ -5,7 +5,8 @@
          "calculate-teco-score.rkt"
          "common.rkt"
          "reducers/linear-search.rkt"
-         "reducers/greedy.rkt")
+         "reducers/greedy.rkt"
+         "reducers/harrold.rkt")
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   (define tests
@@ -46,9 +47,10 @@
     (random-seed seed)
     (func)))
 
-(for ([conf (list 0 2222 0 22222)]
-      [bm (list "morsecode" "morsecode" "dungeon" "dungeon")])
-  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy)
+(for ([conf (list 0 2222 #;0 #;22222)]
+      [bm (list "morsecode" "morsecode" #;"dungeon" #;"dungeon")])
+  ;; PREREQ: ../../bex/util/make-test-suite.rkt
+  (run-reducers (list reduce-by-harrold #;reduce-by-lin-search #;reduce-by-vanilla-greedy)
                 #:test-suite (string-append bm "_tests")
                 #:test-mutant-mapping bm
                 #:configuration conf))
