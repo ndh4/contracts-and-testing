@@ -5,7 +5,8 @@
          "calculate-teco-score.rkt"
          "common.rkt"
          "reducers/linear-search.rkt"
-         "reducers/greedy.rkt")
+         "reducers/greedy.rkt"
+         "reducers/delayed-greedy.rkt")
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   (define tests
@@ -48,7 +49,11 @@
 
 (for ([conf (list 0 2222 0 22222)]
       [bm (list "morsecode" "morsecode" "dungeon" "dungeon")])
-  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy)
+
+  #;(make-kills-table #:test-suite (string-append bm "_tests")
+                      #:test-mutant-mapping bm
+                      #:configuration conf)
+  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy)
                 #:test-suite (string-append bm "_tests")
                 #:test-mutant-mapping bm
                 #:configuration conf))
