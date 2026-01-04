@@ -6,7 +6,8 @@
          "common.rkt"
          "reducers/linear-search.rkt"
          "reducers/greedy.rkt"
-         "reducers/harrold.rkt")
+         "reducers/harrold.rkt"
+         "reducers/delayed-greedy.rkt")
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   (define tests
@@ -32,12 +33,19 @@
                   '(#f +inf.0)
                   tests)))
 
-  (for/list ([reducer red-list])
-    (reducer #:test-suite suite
-             #:test-mutant-mapping mapping
-             #:configuration conf
-             #:get-total-order get-total-order
-             #:choose-test choose-test)))
+  (let ([result (for/list ([reducer red-list])
+                (reducer #:test-suite suite
+                         #:test-mutant-mapping mapping
+                         #:configuration conf
+                         #:get-total-order get-total-order
+                         #:choose-test choose-test))])
+    (for ([result-table result])
+      (displayln (format "~a: ~a"
+                         result-table
+                         (get-mutation-score #:result-table-name mapping
+                                             #:test-suite-table-name result-table
+                                             #:serialized-configuration conf))))
+    result))
 
 (define (get-random-order tests)
   (do-with-seed 12345 (lambda () (shuffle tests))))
@@ -50,7 +58,10 @@
 (for ([conf (list 0 2222 #;0 #;22222)]
       [bm (list "morsecode" "morsecode" #;"dungeon" #;"dungeon")])
   ;; PREREQ: ../../bex/util/make-test-suite.rkt
-  (run-reducers (list reduce-by-harrold #;reduce-by-lin-search #;reduce-by-vanilla-greedy)
+  #;(make-kills-table #:test-suite (string-append bm "_tests")
+                      #:test-mutant-mapping bm
+                      #:configuration conf)
+  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
                 #:test-suite (string-append bm "_tests")
                 #:test-mutant-mapping bm
                 #:configuration conf))
