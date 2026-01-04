@@ -46,7 +46,7 @@
                            #:choose-test choose-test)
 
   (parameterize ([created-tables (mutable-set)]
-                 [table-prefix (format "~a_~a_harrold_" mapping conf)])
+                 [table-prefix (format "~a_~a_harrold_" suite conf)])
     ;; "kills" binary relation
     (define kills-table
       (make-kills-table #:test-suite suite
@@ -75,7 +75,7 @@
     (let card-loop ([cur-card 2])
       (define max-card (get-max-card #:mutant-card-table mutant-card-table))
       (displayln (format "assessing cardinality ~a (max-card: ~a)" cur-card max-card))
-      (when (cur-card . < . max-card)
+      (when (cur-card . <= . max-card)
         ;; add tests until all tests of this cardinality are killed
         (let add-tests-loop ()
           ;; list of tests killing unkilled mutants of cardinality CARD
@@ -102,7 +102,7 @@
                                    #:kills-table kills-table)
             
             ;; add the selected test to result-table
-            (add-test! #:to result-suite #:test-id best-test)
+            (add-test! #:suite result-suite #:test best-test)
             
             ;; continue adding tests
             (add-tests-loop)))
@@ -124,25 +124,6 @@
   (query-exec dbc (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)
 
-;; Create a table for the "kills" relation, showing each test/mutant pairing
-;; where the mutant is killed
-;; nat table... -> table
-(define (make-kills-table #:configuration conf #:test-suite suite #:test-mutant-mapping mapping)
-  (define new-name (prepare-table-name! "kills"))
-  (query-exec
-   dbc
-   (format
-    "CREATE TABLE ~a AS
-      SELECT module_under_test, test_index, mutant_module, mutation_index from ~a
-      WHERE (module_under_test, test_index) IN ~a AND test_passed = 0 AND configuration = $1"
-    ;; won't (module_under_test, test_index) always be in the test suite, since
-    ;; the test suite is defined as the unique module/test pairs of the mapping?
-    new-name
-    mapping
-    suite)
-   conf)
-  new-name)
-
 ;; Create a table with information on each mutant, including cardinality and
 ;; whether it is killed by the existing tests in the result table
 ;; table -> table
@@ -161,12 +142,14 @@
 ;; Query the maximum cardinality of any unkilled mutant from MUTANT-CARD
 ;; table -> nat
 (define (get-max-card #:mutant-card-table mutant-card)
-  (query-value
-   dbc
-   (format
-    "SELECT MAX(card) FROM ~a
-     WHERE killed = FALSE"
-    mutant-card)))
+  (define card
+    (query-value
+     dbc
+     (format
+      "SELECT MAX(card) FROM ~a
+       WHERE killed = FALSE"
+      mutant-card)))
+  (if (sql-null? card) 0 card))
 
 ;; query the number of rows in TBL
 ;; table -> nat
@@ -244,18 +227,6 @@
       SELECT * FROM ~a"
     to-table
     testlist)))
-
-;; Add test TEST-ID to TO-TABLE
-;; table test-id -> void
-(define (add-test! #:to to-table #:test-id test-id)
-  (query-exec
-   dbc
-   (format
-    "INSERT INTO ~a (test_index, module_under_test)
-      VALUES (~a, \"~a\")"
-    to-table
-    (test-id-index test-id)
-    (test-id-modul test-id))))
 
 ;; Mark all mutants killed by tests in TESTLIST as killed
 ;; table... -> void
