@@ -33,19 +33,21 @@
                   '(#f +inf.0)
                   tests)))
 
-  (let ([result (for/list ([reducer red-list])
-                (reducer #:test-suite suite
-                         #:test-mutant-mapping mapping
-                         #:configuration conf
-                         #:get-total-order get-total-order
-                         #:choose-test choose-test))])
-    (for ([result-table result])
-      (displayln (format "~a: ~a"
-                         result-table
-                         (get-mutation-score #:result-table-name mapping
-                                             #:test-suite-table-name result-table
-                                             #:serialized-configuration conf))))
-    result))
+  (define result (for/list ([reducer red-list])
+                   (reducer #:test-suite suite
+                            #:test-mutant-mapping mapping
+                            #:configuration conf
+                            #:get-total-order get-total-order
+                            #:choose-test choose-test)))
+
+  ;; debug mutation scores for result suites
+  (for ([result-table result])
+    (displayln (format "~a: ~a"
+                       result-table
+                       (get-mutation-score #:result-table-name mapping
+                                           #:test-suite-table-name result-table
+                                           #:serialized-configuration conf))))
+  result)
 
 (define (get-random-order tests)
   (do-with-seed 12345 (lambda () (shuffle tests))))
