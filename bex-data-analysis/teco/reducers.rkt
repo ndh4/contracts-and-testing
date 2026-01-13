@@ -6,6 +6,7 @@
          "common.rkt"
          "reducers/linear-search.rkt"
          "reducers/greedy.rkt"
+         "reducers/harrold.rkt"
          "reducers/delayed-greedy.rkt")
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
@@ -32,12 +33,21 @@
                   '(#f +inf.0)
                   tests)))
 
-  (for/list ([reducer red-list])
-    (reducer #:test-suite suite
-             #:test-mutant-mapping mapping
-             #:configuration conf
-             #:get-total-order get-total-order
-             #:choose-test choose-test)))
+  (define result (for/list ([reducer red-list])
+                   (reducer #:test-suite suite
+                            #:test-mutant-mapping mapping
+                            #:configuration conf
+                            #:get-total-order get-total-order
+                            #:choose-test choose-test)))
+
+  ;; debug mutation scores for result suites
+  (for ([result-table result])
+    (displayln (format "~a: ~a"
+                       result-table
+                       (get-mutation-score #:result-table-name mapping
+                                           #:test-suite-table-name result-table
+                                           #:serialized-configuration conf))))
+  result)
 
 (define (get-random-order tests)
   (do-with-seed 12345 (lambda () (shuffle tests))))
@@ -47,13 +57,13 @@
     (random-seed seed)
     (func)))
 
-(for ([conf (list 0 2222 0 22222)]
-      [bm (list "morsecode" "morsecode" "dungeon" "dungeon")])
-
+(for ([conf (list 0 2222 #;0 #;22222)]
+      [bm (list "morsecode" "morsecode" #;"dungeon" #;"dungeon")])
+  ;; PREREQ: ../../bex/util/make-test-suite.rkt
   #;(make-kills-table #:test-suite (string-append bm "_tests")
                       #:test-mutant-mapping bm
                       #:configuration conf)
-  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy)
+  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
                 #:test-suite (string-append bm "_tests")
                 #:test-mutant-mapping bm
                 #:configuration conf))
