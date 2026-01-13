@@ -8,10 +8,10 @@ RACKET="$RACKET_BASE/racket"
 RACO="$RACKET_BASE/raco"
 
 export BENCHMARKS_PATH="gtp-benchmarks/benchmarks"
-export BENCHMARK_NAME="morsecode"
+export BENCHMARK_NAME="kcfa"
 
 # Please, no slashes or spaces in experiment-name
-export EXPERIMENT_NAME="morsecode"
+export EXPERIMENT_NAME="kcfa"
 
 SOURCE_CODE_BASE="$PARENT_DIR/$BENCHMARKS_PATH/$BENCHMARK_NAME"
 SOURCE_CODE_WITH_TESTS="$SOURCE_CODE_BASE/original"

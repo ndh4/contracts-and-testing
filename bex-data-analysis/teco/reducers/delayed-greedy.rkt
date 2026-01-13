@@ -36,7 +36,7 @@
           (drop-table! kills-table)
           result-suite]
          [else
-          (printf "[~a] Heuristic Use~n" suite)
+          ;          (printf "[~a] Heuristic Use~n" suite)
           (one-greedy-step! #:kills-table kills-table
                             #:result-suite result-suite
                             #:choose-test choose-test)
@@ -105,7 +105,7 @@
        ;; We need to avoid cases where both sides of an =-subsumption get dropped
        ;; Right now, we're doing this with LIMIT 1. There might be a smarter way though.
        (define tst-id (vec->test-id row))
-       (printf "Object reduction found!~n")
+       ;       (printf "Object reduction found!~n")
        (delete-test! #:test tst-id #:kills-table kills-table))
      ;; Try to reduce more, but return true no matter what
      (object-reduce!? kills-table)
@@ -157,7 +157,7 @@
        ;; We need to avoid cases where both sides of an =-subsumption get dropped
        ;; Right now, we're doing this with LIMIT 1. There might be a smarter way though.
        (define mut-id (vec->mutant-id row))
-       (printf "Attribute reduction found!~n")
+       ;       (printf "Attribute reduction found!~n")
        (delete-mutant! #:mutant mut-id #:kills-table kills-table))
      ;; Try to reduce more, but return true no matter what
      (attribute-reduce!? kills-table)
@@ -187,7 +187,7 @@
        ;; We need to avoid cases where both sides of an =-subsumption get dropped
        ;; Right now, we're doing this with LIMIT 1. There might be a smarter way though.
        (define tst-id (vec->test-id row))
-       (printf "Owner reduction found!~n")
+       ;       (printf "Owner reduction found!~n")
 
        ; add t to result suite
        (add-test! #:test tst-id #:suite result-suite)
