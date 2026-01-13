@@ -13,6 +13,19 @@
   (define tests
     (map vec->test-id (query-rows dbc (format "SELECT module_under_test, test_index from ~a" suite))))
 
+  ;  (printf "~n~a (~a contracts)~n"
+  ;          mapping
+  ;          (cond
+  ;            [(= conf 0) "no"]
+  ;            [(or (= conf 2222) (= conf 22222)) "full"]
+  ;            [else "some"])) ;; code smell, but who really cares
+  ;  (printf "Mutation score: ~a~n"
+  ;          (real->decimal-string (get-mutation-score #:result-table-name mapping
+  ;                                                    #:test-suite-table-name suite
+  ;                                                    #:serialized-configuration conf)
+  ;                                6))
+  ;  (printf "Test suite size: ~a~n" (length tests))
+
   (define ordering (get-random-order tests)) ; sequence of test-ids
   (define ordering-map
     (for/hash ([test ordering]
@@ -33,21 +46,24 @@
                   '(#f +inf.0)
                   tests)))
 
-  (define result (for/list ([reducer red-list])
-                   (reducer #:test-suite suite
-                            #:test-mutant-mapping mapping
-                            #:configuration conf
-                            #:get-total-order get-total-order
-                            #:choose-test choose-test)))
+  (for/list ([reducer red-list])
+    (define reduction-result
+      (reducer #:test-suite suite
+               #:test-mutant-mapping mapping
+               #:configuration conf
+               #:get-total-order get-total-order
+               #:choose-test choose-test))
 
-  ;; debug mutation scores for result suites
-  (for ([result-table result])
-    (displayln (format "~a: ~a"
-                       result-table
-                       (get-mutation-score #:result-table-name mapping
-                                           #:test-suite-table-name result-table
-                                           #:serialized-configuration conf))))
-  result)
+    (printf "Reduced test suite size: ~a~n"
+            (length (query-rows dbc
+                                (format "SELECT module_under_test, test_index from ~a"
+                                        reduction-result))))
+
+    #;(displayln (format "~a: ~a"
+                         result-table
+                         (get-mutation-score #:result-table-name mapping
+                                             #:test-suite-table-name result-table
+                                             #:serialized-configuration conf)))))
 
 (define (get-random-order tests)
   (do-with-seed 12345 (lambda () (shuffle tests))))
@@ -57,13 +73,11 @@
     (random-seed seed)
     (func)))
 
-(for ([conf (list 0 2222 #;0 #;22222)]
-      [bm (list "morsecode" "morsecode" #;"dungeon" #;"dungeon")])
-  ;; PREREQ: ../../bex/util/make-test-suite.rkt
-  #;(make-kills-table #:test-suite (string-append bm "_tests")
-                      #:test-mutant-mapping bm
-                      #:configuration conf)
-  (run-reducers (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
-                #:test-suite (string-append bm "_tests")
-                #:test-mutant-mapping bm
-                #:configuration conf))
+(for ([conf (list 0 2222222 0 2222 0 2222 0 22222)]
+      [bm (list "kcfa" "kcfa" "morsecode" "morsecode" "forth" "forth" "dungeon" "dungeon")])
+
+  (run-reducers
+   (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
+   #:test-suite (string-append bm "_tests")
+   #:test-mutant-mapping bm
+   #:configuration conf))
