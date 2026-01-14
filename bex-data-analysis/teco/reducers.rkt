@@ -13,18 +13,18 @@
   (define tests
     (map vec->test-id (query-rows dbc (format "SELECT module_under_test, test_index from ~a" suite))))
 
-  ;  (printf "~n~a (~a contracts)~n"
-  ;          mapping
-  ;          (cond
-  ;            [(= conf 0) "no"]
-  ;            [(or (= conf 2222) (= conf 22222)) "full"]
-  ;            [else "some"])) ;; code smell, but who really cares
-  ;  (printf "Mutation score: ~a~n"
-  ;          (real->decimal-string (get-mutation-score #:result-table-name mapping
-  ;                                                    #:test-suite-table-name suite
-  ;                                                    #:serialized-configuration conf)
-  ;                                6))
-  ;  (printf "Test suite size: ~a~n" (length tests))
+  (printf "~n~a (~a contracts)~n"
+          mapping
+          (cond
+            [(= conf 0) "no"]
+            [(or (= conf 2222) (= conf 22222)) "full"]
+            [else "some"])) ;; code smell, but who really cares
+  (printf "Mutation score: ~a~n"
+          (real->decimal-string (get-mutation-score #:result-table-name mapping
+                                                    #:test-suite-table-name suite
+                                                    #:serialized-configuration conf)
+                                6))
+  (printf "Test suite size: ~a~n" (length tests))
 
   (define ordering (get-random-order tests)) ; sequence of test-ids
   (define ordering-map
@@ -77,7 +77,7 @@
       [bm (list "kcfa" "kcfa" "morsecode" "morsecode" "forth" "forth" "dungeon" "dungeon")])
 
   (run-reducers
-   (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
+   (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy #;reduce-by-harrold)
    #:test-suite (string-append bm "_tests")
    #:test-mutant-mapping bm
    #:configuration conf))
