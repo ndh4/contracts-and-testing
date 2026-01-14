@@ -50,6 +50,7 @@
   (define mutant-output-path (make-parameter #f))
   (define configuration-path (make-parameter #f))
   (define write-to-database? (make-parameter #f))
+  (define fake-mutation? (make-parameter #f))
 
   (command-line
    #:once-each
@@ -105,6 +106,10 @@
     ("The configuration with which to run the mutant."
      "This is a mandatory argument.")
     (configuration-path path)]
+
+   [("-z" "--fake-mutation")
+    "Is this a sanity check with no actual mutation?"
+    (fake-mutation? #t)]
 
    [("-d" "--database")
     "Should the result be written to a database?"
@@ -175,6 +180,7 @@
          #:modules-base-path (find-program-base-path the-program)
          #:write-modules-to (write-modules-to)
          #:on-module-exists (on-module-exists)
+         #:fake-mutation? (fake-mutation?)
          #:suppress-output? (not (mutant-output-path)))))
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
@@ -183,7 +189,7 @@
       #:configuration ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
       #:module_under_test (path->string (file-name-from-path (mod-path (program-main the-program))))
       #:test_index (test-id)
-      #:mutant_module (module-to-mutate)
+      #:mutant_module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
       #:mutation_index (mutation-index)
       #:test_passed (bool->int (eq? (run-status-outcome the-run-status) 'completed))
       #:outcome (~a (run-status-outcome the-run-status))
@@ -207,7 +213,7 @@
          #:configuration ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
          #:module_under_test (path->string (file-name-from-path (mod-path (program-main the-program))))
          #:test_index (test-id)
-         #:mutant_module (module-to-mutate)
+         #:mutant_module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
          #:mutation_index (mutation-index)
          #:test_passed (bool->int #t)
          #:outcome "skipped"

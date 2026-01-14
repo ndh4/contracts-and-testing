@@ -1,4 +1,16 @@
-../racket/bin/racket ./bex-data-analysis/teco/reducers.rkt
+kcfa (no contracts)
+Mutation score: 0.855670
+Test suite size: 39
+Reduced test suite size: 4
+Reduced test suite size: 4
+Reduced test suite size: 4
+
+kcfa (some contracts)
+Mutation score: 1.000000
+Test suite size: 39
+Reduced test suite size: 1
+Reduced test suite size: 1
+Reduced test suite size: 1
 
 morsecode (no contracts)
 Mutation score: 0.627193
