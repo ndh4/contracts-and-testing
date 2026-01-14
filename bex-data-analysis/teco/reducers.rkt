@@ -76,6 +76,7 @@
 (for ([conf (list 0 2222222 0 2222 0 2222 0 22222)]
       [bm (list "kcfa" "kcfa" "morsecode" "morsecode" "forth" "forth" "dungeon" "dungeon")])
 
+  (maybe-move-sanity! bm)
   (run-reducers
    (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy #;reduce-by-harrold)
    #:test-suite (string-append bm "_tests")

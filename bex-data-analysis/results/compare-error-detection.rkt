@@ -141,7 +141,8 @@
                               (mutant-module mutant)
                               (mutant-index mutant)
                               outfile
-                              mode-to-run)))
+                              mode-to-run
+                              #:fake-mutation? #f)))
      (log-comparison-info
       @~a{
           @mutant [@id] checker attempt @retry-count / @CONFIG-SAMPLE-MAX-RETRIES @;

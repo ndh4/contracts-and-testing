@@ -164,7 +164,8 @@
                              (mutant-module mutant)
                              (mutant-index mutant)
                              outfile
-                             (current-parameterizing-config))))
+                             (current-parameterizing-config)
+                             #:fake-mutation? #f)))
     (process-info outfile ctl will))
 
   (define (will:record-outcome! q info)
