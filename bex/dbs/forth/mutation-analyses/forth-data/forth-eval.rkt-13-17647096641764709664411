@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:81:33 (defn*-any list?)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:81:33 (list? defn*-any)>
+#s(run-status "eval.rkt" 13 defn-command completed #f #f #f #f)

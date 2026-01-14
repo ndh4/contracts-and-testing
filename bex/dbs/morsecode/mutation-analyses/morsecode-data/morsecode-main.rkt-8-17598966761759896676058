@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : 42 -> 0
+#s(run-status "main.rkt" 8 words-smaller completed #f #f #f #f)

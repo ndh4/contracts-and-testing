@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:280:18 (exact-integer? n)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:280:18 (n exact-integer?)>
+#s(run-status "command.rkt" 87 CMD* syntax-error #f #f #f #f)

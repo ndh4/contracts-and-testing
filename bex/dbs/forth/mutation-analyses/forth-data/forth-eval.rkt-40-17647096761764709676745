@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:113:3 (begin (match (for/or ((c (in-list E))) ((get-field exec c) E S token*)) ((quote EXIT) (values #f S)) (#f (printf "Unrecognized command '~a'.\n" token*) (values E S)) ((? pair? E+S) (values (car E+S) (cdr E+S)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:113:3 (begin)>
+#s(run-status "eval.rkt" 40 forth-eval syntax-error #f #f #f #f)

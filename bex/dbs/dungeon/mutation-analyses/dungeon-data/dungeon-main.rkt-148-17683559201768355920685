@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:167:29 (poss->cells free-cells)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:167:29 (free-cells poss->cells)>
+#s(run-status "main.rkt" 148 try-add-rectangle completed #f #f #f #f)

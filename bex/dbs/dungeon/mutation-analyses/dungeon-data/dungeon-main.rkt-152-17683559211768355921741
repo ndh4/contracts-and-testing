@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:173:3 (begin (random-from (list left right up down)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:173:3 (begin)>
+#s(run-status "main.rkt" 152 random-direction syntax-error #f #f #f #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:207:15 (singleton-list? v)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:207:15 (not (singleton-list? v))>
+#s(run-status "command.rkt" 10 binop-command% completed #f #f #f #f)

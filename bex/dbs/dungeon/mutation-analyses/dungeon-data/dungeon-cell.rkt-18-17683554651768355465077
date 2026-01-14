@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : #f -> 0
+#s(run-status "cell.rkt" 18 empty-cell% runtime-error #f ("cell.rkt") ("cell.rkt") #f)

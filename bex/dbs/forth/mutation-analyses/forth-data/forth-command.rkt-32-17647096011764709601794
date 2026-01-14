@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:240:18 ((eof-object? v) (and (symbol? v) (exit? v)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:240:18 ((and (symbol? v) (exit? v)) (eof-object? v))>
+#s(run-status "command.rkt" 32 CMD* completed #f #f #f #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:72:60 ((car S) (cdr S))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:72:60 ((cdr S) (car S))>
+#s(run-status "stack.rkt" 14 stack-pop completed #f #f #f #f)

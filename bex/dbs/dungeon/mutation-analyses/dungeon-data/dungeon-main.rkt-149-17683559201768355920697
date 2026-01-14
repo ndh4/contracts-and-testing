@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:168:3 (begin (for ((pos+cell% (in-list (room-poss->cells room)))) (match-define (cons pos cell%) pos+cell%) (array-set! grid pos (new cell%))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:168:3 (begin)>
+#s(run-status "main.rkt" 149 commit-room syntax-error #f #f #f #f)

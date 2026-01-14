@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:114:16 ((or occupant (raise-user-error (quote show))) show)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:114:16 (show (or occupant (raise-user-error (quote show))))>
+#s(run-status "cell.rkt" 20 empty-cell% syntax-error #f #f #f #f)
