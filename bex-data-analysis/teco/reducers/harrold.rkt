@@ -209,7 +209,7 @@
            List.test_index=CardKillCounts.test_index)
       )
       SELECT module_under_test, test_index FROM ListCardKillCounts
-      WHERE count=(SELECT COALESCE(MAX(count), 0) FROM CardKillCounts)"
+      WHERE count=(SELECT COALESCE(MAX(count), 0) FROM ListCardKillCounts)"
     new-name
     kills
     mutant-card
