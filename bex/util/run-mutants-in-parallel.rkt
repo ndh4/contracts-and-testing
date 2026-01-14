@@ -153,7 +153,8 @@
                              mod-to-mutate
                              index
                              outfile
-                             experiment-config-path)))
+                             experiment-config-path
+                             #:fake-mutation? #f)))
     (process-info outfile ctl will))
   (define ((make-will:record-outcome! failure-retries-so-far other-retries-so-far) q info)
     (log-mutant-results-debug @~a{

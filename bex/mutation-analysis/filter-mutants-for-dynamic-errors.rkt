@@ -130,7 +130,8 @@
                              (mutant-module mutant)
                              (mutant-index mutant)
                              outfile
-                             config-path)))
+                             config-path
+                             #:fake-mutation? #f)))
     (process-info outfile ctl will))
 
   (define (will:record-outcome! q info)
