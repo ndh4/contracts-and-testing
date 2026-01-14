@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:240:14 (or (eof-object? v) (and (symbol? v) (exit? v)) (and (list? v) (not (null? v)) (exit? (car v))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:240:14 (not (or (eof-object? v) (and (symbol? v) (exit? v)) (and (list? v) (not (null? v)) (exit? (car v)))))>
+#s(run-status "command.rkt" 31 CMD* completed #f #f #f #f)

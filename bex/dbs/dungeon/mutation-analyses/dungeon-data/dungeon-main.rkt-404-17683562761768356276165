@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:326:9 (hash-ref wall-cache pos #f)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:326:9 (not (hash-ref wall-cache pos #f))>
+#s(run-status "main.rkt" 404 smooth-single-wall completed #f #f #f #f)

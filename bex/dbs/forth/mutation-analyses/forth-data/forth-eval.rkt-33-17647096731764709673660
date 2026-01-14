@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:101:3 (begin (for/fold ((e (cons defn-command CMD*)) (s (stack-init))) ((ln (in-list lines))) (define token* (forth-tokenize ln)) (cond ((or (null? token*) (not (list? e))) (values (quote ()) s)) (else (forth-eval e s token*)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:101:3 (begin)>
+#s(run-status "eval.rkt" 33 forth-eval* syntax-error #f #f #f #f)

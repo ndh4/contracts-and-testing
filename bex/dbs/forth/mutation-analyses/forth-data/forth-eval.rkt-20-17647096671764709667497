@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:89:21 (equal? v (list w))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:89:21 (not (equal? v (list w)))>
+#s(run-status "eval.rkt" 20 defn-command completed #f #f #f #f)

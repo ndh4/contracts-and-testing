@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:296:21 ((counts-as-free? grid (up pos)) (counts-as-free? grid (down pos)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:296:21 ((counts-as-free? grid (down pos)) (counts-as-free? grid (up pos)))>
+#s(run-status "main.rkt" 362 generate-dungeon completed #f #f #f #f)

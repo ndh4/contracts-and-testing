@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:85:26 (w symbol?)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:85:26 (symbol? w)>
+#s(run-status "eval.rkt" 16 defn-command completed #f #f #f #f)

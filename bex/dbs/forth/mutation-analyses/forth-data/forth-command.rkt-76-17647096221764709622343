@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:270:26 (swap "Swap the first two numbers on the stack")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:270:26 ("Swap the first two numbers on the stack" swap)>
+#s(run-status "command.rkt" 76 CMD* syntax-error #f #f #f #f)

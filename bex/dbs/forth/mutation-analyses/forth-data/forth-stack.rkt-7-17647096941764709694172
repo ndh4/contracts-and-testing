@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:68:3 (begin (let*-values (((v1 S1) (stack-pop S)) ((v2 S2) (stack-pop S1))) (stack-push (stack-push (stack-push S2 v1) v2) v1)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:68:3 (begin)>
+#s(run-status "stack.rkt" 7 stack-over syntax-error #f #f #f #f)
