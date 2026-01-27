@@ -2,10 +2,22 @@
 
 (provide read-module
          read-module/port
-         replace-stx-location)
+         replace-stx-location
+         get-data)
 
 (require syntax/modread
          racket/pretty)
+
+
+(define (get-data)
+  (read-language)
+  (read-rest))
+
+(define (read-rest)
+  (define s (read))
+  (if (eof-object? s)
+      null
+      (cons s (read-rest))))
 
 (define (read-module path)
   (call-with-input-file path

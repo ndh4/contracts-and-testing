@@ -5,11 +5,13 @@
 ;; But for the specific case of the programs in gtp-benchmarks, it works ok.
 
 (provide order-by-dependencies
-         module-dependencies-transitive)
+         module-dependencies-transitive
+         add-relevant-adaptors)
 
 (require syntax/to-string
          "../util/read-module.rkt"
-         "../util/path-utils.rkt")
+         "../util/path-utils.rkt"
+         "../util/read-module.rkt")
 
 (define (fixed-point-reached? l1 l2)
   (equal? (length l1) (length l2)))
@@ -36,6 +38,31 @@
         new-dep-list
         (loop new-dep-list (set-subtract remaining-possibilities new-dep-list)))))
 
+; Returns original module list with relevant adaptors added
+(define (add-relevant-adaptors modules adaptors)
+  (append modules (get-relevant-adaptors modules adaptors)))
+
+; Returns sublist of adaptors
+(define (get-relevant-adaptors modules adaptors)
+  (filter (is-relevant-for modules) adaptors))
+
+; Returns true if the adaptor adapts one of the modules
+(define ((is-relevant-for modules) adaptor)
+  (define adaptees (get-adaptees adaptor))
+  (for/or ([adaptee adaptees])
+    (for/or ([module modules])
+      (equal? (file-name-from-path (string->path adaptee))
+              (file-name-from-path module)))))
+
+; adaptor -> name of the file(s) it adapts
+(define (get-adaptees adaptor)
+  (with-input-from-file adaptor get-reqtypchk-names))
+
+(define (get-reqtypchk-names)
+  (map second (filter is-rtc? (get-data))))
+
+(define (is-rtc? sexp)
+  (eq? (first sexp) 'require/typed/check))
 
 (define/contract (module-dependencies m possible-depends
                                       [read-module read-module]
