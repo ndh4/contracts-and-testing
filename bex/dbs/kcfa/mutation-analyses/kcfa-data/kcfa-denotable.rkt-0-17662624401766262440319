@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:109:3 (begin (hash-ref s a (lambda () d-bot)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:109:3 (begin)>
+#s(run-status "denotable.rkt" 0 store-lookup syntax-error #f #f #f #f)

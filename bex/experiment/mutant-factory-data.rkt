@@ -63,7 +63,7 @@
 (struct mutant-process (mutant config file id blame-trail revival-counts increased-limits?)
   #:transparent)
 
-(struct mutant*test-process mutant-process (test-mod test-id) #:transparent)
+(struct mutant*test-process mutant-process (test-mod test-id fake-mutation?) #:transparent)
 
 ;; result: result/c
 (struct dead-mutant-process

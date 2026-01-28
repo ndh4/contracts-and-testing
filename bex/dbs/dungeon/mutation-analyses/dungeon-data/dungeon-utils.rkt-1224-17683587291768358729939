@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/utils.rkt:318:3 (begin (begin0 (car (unbox r*)) (set-box! r* (cdr (unbox r*)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/utils.rkt:318:3 (begin)>
+#s(run-status "utils.rkt" 1224 random syntax-error #f #f #f #f)

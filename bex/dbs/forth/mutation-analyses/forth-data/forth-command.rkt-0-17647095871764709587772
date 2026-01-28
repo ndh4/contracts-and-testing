@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:154:3 (begin (unless (p v) (error (quote assert))) v)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:154:3 (begin v)>
+#s(run-status "command.rkt" 0 assert completed #f #f #f #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:253:17 ((list? v) (not (null? v)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:253:17 ((not (null? v)) (list? v))>
+#s(run-status "command.rkt" 51 CMD* completed #f #f #f #f)

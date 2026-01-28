@@ -71,6 +71,7 @@
                              (mutant-index mutant)
                              outcome-file
                              TR-config
+                             #:fake-mutation? #f
                              #:save-output output-file)))
     (log-type-error-verification-info @~a{@mutant checker launched})
     (process-info (list outcome-file output-file) ctl will))))

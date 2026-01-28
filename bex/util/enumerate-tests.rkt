@@ -1,5 +1,7 @@
 #lang racket
 
+(require "read-module.rkt")
+
 (provide (struct-out target-file)
          (struct-out context)
          (struct-out test))
@@ -49,16 +51,6 @@
   (apply
    append
    (map cddr (filter (lambda (x) (and (eq? (first x) 'module+) (eq? (second x) 'test))) (get-data)))))
-
-(define (get-data)
-  (read-language)
-  (read-rest))
-
-(define (read-rest)
-  (define s (read))
-  (if (eof-object? s)
-      null
-      (cons s (read-rest))))
 
 (define (create-dir-if-not-exists! path)
   (unless (directory-exists? path)

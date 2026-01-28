@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:289:3 (begin (and (memq sym (quote (exit quit q leave bye))) #t))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:289:3 (begin)>
+#s(run-status "command.rkt" 101 exit? syntax-error #f #f #f #f)

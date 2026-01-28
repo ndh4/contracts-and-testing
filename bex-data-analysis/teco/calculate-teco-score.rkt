@@ -1,10 +1,14 @@
 #lang racket
 
 (require "../../bex/util/sql-db.rkt"
-         "../../bex/orchestration/experiment-info.rkt"
+         ;         "../../bex/orchestration/experiment-info.rkt"
          db)
 
 (provide get-mutation-score)
+
+(define (printx x)
+  (printf "~a~n" x)
+  x)
 
 (define (get-num-mutants result-table-name)
   (query-value dbc

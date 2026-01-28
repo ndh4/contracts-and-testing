@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:200:26 ((length encounters) (random-between 6 9))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:200:26 ((random-between 6 9) (length encounters))>
+#s(run-status "main.rkt" 252 generate-dungeon completed #f #f #f #f)

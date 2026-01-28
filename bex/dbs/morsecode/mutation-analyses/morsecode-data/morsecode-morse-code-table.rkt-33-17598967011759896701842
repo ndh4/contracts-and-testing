@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : "broken regexp 2" -> #"broken regexp 2"
+#s(run-status "morse-code-table.rkt" 33 char-table completed #f #f #f #f)

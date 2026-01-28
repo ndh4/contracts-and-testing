@@ -18,7 +18,8 @@
          add-test!
          delete-test!
          delete-mutant!
-         make-result-suite)
+         make-result-suite
+         maybe-move-sanity!)
 
 (define-struct test-id [modul index]
   #:transparent)
@@ -126,3 +127,22 @@
            kills-table)
    (mutant-id-modul mutant)
    (mutant-id-index mutant)))
+
+(define (maybe-move-sanity! mapping)
+  (call-with-transaction
+   dbc
+   (lambda ()
+     (when (not (zero? (query-value
+                        dbc
+                        (format "SELECT COUNT(*) FROM ~a WHERE mutant_module='NO_MUTATIONS'"
+                                mapping))))
+
+       (query-exec dbc (format "DROP TABLE IF EXISTS ~a_sanity" mapping))
+
+       (query-exec
+        dbc
+        (format "CREATE TABLE ~a_sanity AS SELECT * FROM ~a WHERE mutant_module='NO_MUTATIONS'"
+                mapping
+                mapping))
+
+       (query-exec dbc (format "DELETE FROM ~a WHERE mutant_module='NO_MUTATIONS'" mapping))))))

@@ -106,6 +106,7 @@
 (define/contract (make-mutated-program-runner a-program
                                               module-to-mutate
                                               mutation-index
+                                              #:fake-mutation? fake-mutation?
                                               #:modules-base-path [base-path #f]
                                               #:write-modules-to [write-to-dir #f]
                                               #:test-id [test-id #f]
@@ -113,7 +114,8 @@
                                               #:mutator [mutate mutate-module])
   (->i ([a-program program/c]
         [module-to-mutate mod/c]
-        [mutation-index natural?])
+        [mutation-index natural?]
+        #:fake-mutation? [fake-mutation? boolean?])
        (#:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
         #:test-id [test-id (or/c natural? #f)]
@@ -133,9 +135,11 @@
                [mutated-id mutated-identifier?]))
 
   ;; ll: Ugly hack to get the mutated id out of the instrumentor
-  (define mutated-id-box (box #f))
+  (define mutated-id-box (box "NO_MUTATIONS"))
   (define (mutate-and-record-id a-mod)
-    (match a-mod
+    (cond
+     [fake-mutation? a-mod]
+     [else (match a-mod
       [(and (== module-to-mutate)
             (mod path stx))
        (define-values (mutated-stx mutated-id)
@@ -149,7 +153,7 @@
        (set-box! mutated-id-box mutated-id)
 
        (mod path (replace-stx-location mutated-stx path))]
-      [other other]))
+      [other other])]))
 
   (define (setup-namespace! ns)
     ;; Make racket/contract come from the same namespace so that
@@ -228,6 +232,7 @@
                                           mutation-index
                                           program-config
                                           #:suppress-output? [suppress-output? #t]
+                                          #:fake-mutation? fake-mutation?
                                           #:timeout/s [timeout/s (* 3 60)]
                                           #:memory/gb [memory/gb 3]
                                           #:modules-base-path [base-path #f]
@@ -238,7 +243,8 @@
   (->i ([a-program program/c]
         [module-to-mutate mod/c]
         [mutation-index natural?]
-        [program-config config/c])
+        [program-config config/c]
+        #:fake-mutation? [fake-mutation? boolean?])
        (#:suppress-output? [suppress-output? boolean?]
         #:timeout/s [timeout/s number?]
         #:memory/gb [memory/gb number?]
@@ -275,6 +281,7 @@
       (make-mutated-program-runner a-program
                                    module-to-mutate
                                    mutation-index
+                                   #:fake-mutation? fake-mutation?
                                    #:modules-base-path base-path
                                    #:write-modules-to write-to-dir
                                    #:test-id test-id

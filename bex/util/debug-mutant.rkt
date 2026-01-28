@@ -176,7 +176,8 @@
              outfile
              experiment-config
              #:write-modules-to dump-dir-path*
-             #:force-module-write? #t)))
+             #:force-module-write? #t
+             #:fake-mutation? #f)))
         (define (cleanup-and-get-results)
           (begin0 (match (ctl 'status)
                     ['running

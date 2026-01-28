@@ -158,26 +158,32 @@
       (make-directory (data-output-dir)))
 
     (define select-mutants (configured:select-mutants))
+    (define starting-q
+                      (make-process-queue
+                       (process-limit)
+                       (factory (bench-info bench config) (hash) (hash) 0)
+                       < ;; lower priority value means schedule sooner (this was
+                       ;; unconfigurable with the original implementation, now just
+                       ;; stick to that original default)
+                       #:kill-older-than
+                       (if (current-run-with-condor-machines)
+                           (*
+                            2
+                            60
+                            60) ;; condor ought to run jobs pretty quick, so after 2h it's very likely stuck
+                           (let-values ([{max-timeout _} (increased-limits bench)])
+                             (+ max-timeout 30)))))
+
+    (define starting-q-with-sanity
+      (run-mutant*tests bench config starting-q #f))
+
     (define process-q
-      (for/fold ([process-q
-                  (make-process-queue
-                   (process-limit)
-                   (factory (bench-info bench config) (hash) (hash) 0)
-                   < ;; lower priority value means schedule sooner (this was
-                   ;; unconfigurable with the original implementation, now just
-                   ;; stick to that original default)
-                   #:kill-older-than
-                   (if (current-run-with-condor-machines)
-                       (*
-                        2
-                        60
-                        60) ;; condor ought to run jobs pretty quick, so after 2h it's very likely stuck
-                       (let-values ([{max-timeout _} (increased-limits bench)])
-                         (+ max-timeout 30))))])
+      (for/fold ([process-q starting-q-with-sanity])
                 ([module-to-mutate-name mutatable-module-names]
                  #:when #t
                  [mutation-index (select-mutants module-to-mutate-name bench)])
         (run-mutant*tests bench config process-q (mutant #f module-to-mutate-name mutation-index))))
+
 
     (log-factory info "Finished enqueing all test mutants. Waiting...")
     (define process-q-finished (process-queue-wait process-q))
@@ -247,9 +253,11 @@
 ;; Note that sampling the precision lattice is done indirectly by
 ;; just generating random configs
 (define/contract (run-mutant*tests benchmark config process-q mutant-program)
-  (benchmark/c process-queue? #;(process-queue/c factory/c) mutant/c . -> . (process-queue/c factory/c))
+  (benchmark/c process-queue? #;(process-queue/c factory/c) (or/c mutant/c #f) . -> . (process-queue/c factory/c))
 
-  (match-define (mutant #f module-to-mutate-name mutation-index) mutant-program)
+  (define module-to-mutate-name (and mutant-program (mutant-module mutant-program)))
+  (define mutation-index        (and mutant-program (mutant-index mutant-program)))
+
   (log-factory info
                "  Trying to spawn mutant for ~a @ ~a."
                module-to-mutate-name
@@ -288,13 +296,14 @@
           because nothing found in cache
           })
      (spawn-mutant*test process-q
-                   module-to-mutate-name
-                   mutation-index
+                   (or module-to-mutate-name test-mod)
+                   (or mutation-index 0)
                    test-mod
                    test-id
                    config
                    will:do-nothing
-                   #:test-mutant? #t)])))
+                   #:test-mutant? #t
+                   #:fake-mutation? (not mutant-program))])))
 
 (define (increased-limits bench)
   (values (* 2 (default-timeout/s))
@@ -308,6 +317,7 @@
                                     precision-config
                                     mutant-will
                                     [revival-counts (revivals 0 0)]
+                                    #:fake-mutation? fake-mutation?
                                     #:timeout/s [timeout/s #f]
                                     #:memory/gb [memory/gb #f]
                                     #:following-trail [trail-being-followed #f]
@@ -318,10 +328,12 @@
         [test-mod    module-name?]
         [test-id                natural?]
         [precision-config       config/c]
-        [mutant-will            mutant-will/c])
+        [mutant-will            mutant-will/c]
+        #:fake-mutation? [fake-mutation? boolean?])
        ([revival-counts revivals/c]
         #:following-trail [trail-being-followed  (or/c #f blame-trail/c)]
         #:test-mutant?    [test-mutant?          boolean?]
+        #:fake-mutation?  [fake-mutation?        boolean?]
         #:timeout/s       [t/s                   (or/c #f number?)]
         #:memory/gb       [m/gb                  (or/c #f number?)])
        #:pre/desc {trail-being-followed test-mutant?}
@@ -363,6 +375,7 @@
                            #:timeout/s timeout/s
                            #:memory/gb memory/gb
                            #:test-id test-id
+                           #:fake-mutation? fake-mutation?
                            #:write-to-sql? #t
                            #:save-output (and debug:save-individual-mutant-outputs?
                                               (build-path (data-output-dir)
@@ -378,7 +391,8 @@
                       ;; coerce to bool
                       (and (or timeout/s memory/gb) #t)
                       test-mod
-                      test-id))
+                      test-id
+                      fake-mutation?))
     (log-factory
      info
      "    Spawned mutant runner with id [~a] for ~a @ ~a, testing ~a @ ~a > ~a."
@@ -510,7 +524,8 @@
 
   (match-define (struct* mutant*test-process
                        ([test-mod test-mod]
-                        [test-id test-id]))
+                        [test-id test-id]
+                        [fake-mutation? fake-mutation?]))
     a-mutant-process)
 
   (cond [(>= for-failure MAX-FAILURE-REVIVALS)
@@ -547,6 +562,7 @@ Attempting revival ~a / ~a
                        mutant-will
                        (revivals (add1 for-failure)
                                  for-type-error)
+                       #:fake-mutation? fake-mutation?
                        #:following-trail (match the-blame-trail
                                            [(? blame-trail? bt) bt]
                                            [else                #f])

@@ -6,7 +6,8 @@
              module-name?
              natural?
              path-string?
-             path-string?}
+             path-string?
+             #:fake-mutation? boolean?}
             {#:timeout/s (or/c #f number?)
              #:test-id (or/c #f natural?)
              #:memory/gb (or/c #f number?)
@@ -92,6 +93,7 @@
                              mutation-index
                              outfile
                              config-path
+                             #:fake-mutation? fake-mutation?
                              #:timeout/s [timeout/s #f]
                              #:test-id [test-id #f]
                              #:memory/gb [memory/gb #f]
@@ -152,6 +154,9 @@
                              "-g" (~a (or memory/gb
                                           (default-memory-limit/gb)))
                              "-c" config-path)
+                       (if fake-mutation?
+                           (list "-z")
+                           empty)
                        (if write-to-sql?
                            (list "-d")
                            empty)
