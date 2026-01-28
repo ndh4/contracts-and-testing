@@ -974,7 +974,7 @@ Mutant: [~a] ~a @ ~a with config:
 
   (define completed+checks-pass?
     (parameterize ([date-display-format 'iso-8601])
-      (for ([setting '(none max)])
+      (for ([setting '(max none)])
         (define config (make-bench-config bench-to-run setting))
         (run-all-mutants*config bench-to-run
                               config
