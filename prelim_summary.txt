@@ -1,20 +1,23 @@
-kcfa (no contracts)
-Mutation score: 0.855670
+kcfa2 (no contracts)
+Mutation score: 0.835052
 Test suite size: 39
-Reduced test suite size: 4
-Reduced test suite size: 4
-Reduced test suite size: 4
+Reduced test suite size: 3
+Reduced test suite size: 3
+Reduced test suite size: 3
+Reduced test suite size: 3
 
-kcfa (some contracts)
-Mutation score: 1.000000
+kcfa2 (full contracts)
+Mutation score: 0.835052
 Test suite size: 39
-Reduced test suite size: 1
-Reduced test suite size: 1
-Reduced test suite size: 1
+Reduced test suite size: 3
+Reduced test suite size: 3
+Reduced test suite size: 3
+Reduced test suite size: 3
 
 morsecode (no contracts)
 Mutation score: 0.627193
 Test suite size: 22
+Reduced test suite size: 5
 Reduced test suite size: 5
 Reduced test suite size: 5
 Reduced test suite size: 5
@@ -25,20 +28,23 @@ Test suite size: 22
 Reduced test suite size: 5
 Reduced test suite size: 5
 Reduced test suite size: 5
+Reduced test suite size: 5
 
-forth (no contracts)
-Mutation score: 0.708000
+forth2 (no contracts)
+Mutation score: 0.712000
 Test suite size: 86
-Reduced test suite size: 19
-Reduced test suite size: 17
-Reduced test suite size: 17
+Reduced test suite size: 20
+Reduced test suite size: 18
+Reduced test suite size: 18
+Reduced test suite size: 18
 
-forth (full contracts)
-Mutation score: 0.972000
+forth2 (full contracts)
+Mutation score: 0.780000
 Test suite size: 86
-Reduced test suite size: 1
-Reduced test suite size: 1
-Reduced test suite size: 1
+Reduced test suite size: 16
+Reduced test suite size: 15
+Reduced test suite size: 15
+Reduced test suite size: 15
 
 dungeon (no contracts)
 Mutation score: 0.108121
@@ -46,10 +52,12 @@ Test suite size: 15
 Reduced test suite size: 6
 Reduced test suite size: 5
 Reduced test suite size: 5
+Reduced test suite size: 5
 
 dungeon (full contracts)
 Mutation score: 0.108593
 Test suite size: 15
+Reduced test suite size: 4
 Reduced test suite size: 4
 Reduced test suite size: 4
 Reduced test suite size: 4
