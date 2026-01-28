@@ -158,32 +158,35 @@
       (make-directory (data-output-dir)))
 
     (define select-mutants (configured:select-mutants))
+    (define starting-q
+                      (make-process-queue
+                       (process-limit)
+                       (factory (bench-info bench config) (hash) (hash) 0)
+                       < ;; lower priority value means schedule sooner (this was
+                       ;; unconfigurable with the original implementation, now just
+                       ;; stick to that original default)
+                       #:kill-older-than
+                       (if (current-run-with-condor-machines)
+                           (*
+                            2
+                            60
+                            60) ;; condor ought to run jobs pretty quick, so after 2h it's very likely stuck
+                           (let-values ([{max-timeout _} (increased-limits bench)])
+                             (+ max-timeout 30)))))
+
+    (define starting-q-with-sanity
+      (run-mutant*tests bench config starting-q #f))
+
     (define process-q
-      (for/fold ([process-q
-                  (make-process-queue
-                   (process-limit)
-                   (factory (bench-info bench config) (hash) (hash) 0)
-                   < ;; lower priority value means schedule sooner (this was
-                   ;; unconfigurable with the original implementation, now just
-                   ;; stick to that original default)
-                   #:kill-older-than
-                   (if (current-run-with-condor-machines)
-                       (*
-                        2
-                        60
-                        60) ;; condor ought to run jobs pretty quick, so after 2h it's very likely stuck
-                       (let-values ([{max-timeout _} (increased-limits bench)])
-                         (+ max-timeout 30))))])
+      (for/fold ([process-q starting-q-with-sanity])
                 ([module-to-mutate-name mutatable-module-names]
                  #:when #t
                  [mutation-index (select-mutants module-to-mutate-name bench)])
         (run-mutant*tests bench config process-q (mutant #f module-to-mutate-name mutation-index))))
 
-    (define process-q-with-sanity
-      (run-mutant*tests bench config process-q #f))
 
     (log-factory info "Finished enqueing all test mutants. Waiting...")
-    (define process-q-finished (process-queue-wait process-q-with-sanity))
+    (define process-q-finished (process-queue-wait process-q))
     (report-completion/sanity-checks bench select-mutants (load-result-cache))))
 
 (define/contract (report-completion/sanity-checks bench select-mutants logged-results-for)
