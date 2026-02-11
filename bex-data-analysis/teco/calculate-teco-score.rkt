@@ -1,7 +1,6 @@
 #lang racket
 
 (require "../../bex/util/sql-db.rkt"
-         "../../bex/orchestration/experiment-info.rkt"
          db)
 
 (provide get-mutation-score)
