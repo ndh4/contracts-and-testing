@@ -20,7 +20,7 @@ fi
 pushd "$1"
 
 printf "Installing Racket if necessary\n\n\n"
-VERSION="8.9"
+VERSION="9.0"
 if [ -d "./racket" ]; then
     echo "$(pwd)/racket already exists; skipping installing racket"
 else
