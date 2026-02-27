@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/cut-tail.rkt:20:44 ((car segs) (cut-tail r))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/cut-tail.rkt:20:44 ((cut-tail r) (car segs))>
+#s(run-status "cut-tail.rkt" 2 cut-tail blamed ("cut-tail.rkt") ("motion-help.rkt" "motion-help.rkt" "motion-help.rkt" "motion.rkt" "motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("motion-help.rkt" "motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

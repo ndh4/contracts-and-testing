@@ -1,0 +1,2 @@
+mutate: Mutating with boolean-op-swap : or -> and
+#s(run-status "collide.rkt" 30 segs-self-collide? completed #f #f #f #f)

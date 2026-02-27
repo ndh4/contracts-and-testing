@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:188:12 (and (cons? candidates) (empty? (rest candidates)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:188:12 (not (and (cons? candidates) (empty? (rest candidates))))>
+#s(run-status "t-graph.rkt" 78 mbta% completed #f #f #f #f)

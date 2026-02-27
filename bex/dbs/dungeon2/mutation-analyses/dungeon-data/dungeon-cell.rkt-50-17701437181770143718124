@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:188:33 (occupant (raise-user-error (quote hdoor)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:188:33 ((raise-user-error (quote hdoor)) occupant)>
+#s(run-status "cell.rkt" 50 horizontal-door% completed #f #f #f #f)

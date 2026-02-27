@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:210:17 (eq? (car v) (get-field id this))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:210:17 (not (eq? (car v) (get-field id this)))>
+#s(run-status "command.rkt" 11 binop-command% completed #f #f #f #f)

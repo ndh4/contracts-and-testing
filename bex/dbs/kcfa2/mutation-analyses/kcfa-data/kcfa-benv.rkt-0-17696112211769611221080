@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/benv.rkt:63:3 (begin (for/fold ((benv benv)) ((v (in-list vars)) (a (in-list addrs))) (benv-extend benv v a)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/benv.rkt:63:3 (begin)>
+#s(run-status "benv.rkt" 0 benv-extend* syntax-error #f #f #f #f)

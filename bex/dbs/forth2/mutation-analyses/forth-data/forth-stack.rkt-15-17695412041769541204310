@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:73:3 (begin (cons v S))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:73:3 (begin)>
+#s(run-status "stack.rkt" 15 stack-push syntax-error #f #f #f #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:124:5 ((define i (add1 (random (sub1 BOARD-WIDTH) r))) (define j (add1 (random (sub1 BOARD-HEIGHT) r))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:124:5 ((define j (add1 (random (sub1 BOARD-HEIGHT) r))) (define i (add1 (random (sub1 BOARD-WIDTH) r))))>
+#s(run-status "motion.rkt" 20 snake-eat completed #f #f #f #f)

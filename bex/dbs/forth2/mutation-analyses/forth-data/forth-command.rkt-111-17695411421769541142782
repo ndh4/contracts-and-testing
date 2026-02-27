@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:35 (eq? sym (get-field id c))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:35 (not (eq? sym (get-field id c)))>
+#s(run-status "command.rkt" 111 find-command completed #f #f #f #f)

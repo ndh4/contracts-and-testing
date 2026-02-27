@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:115:8 ((append next all-lines) (cons (list color (apply set (map first next))) all-bundles))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:115:8 ((cons (list color (apply set (map first next))) all-bundles) (append next all-lines))>
+#s(run-status "t-graph.rkt" 22 read-t-graph runtime-error #f ("t-graph.rkt" "t-view.rkt" "t-view.rkt" "run-t.rkt") ("t-graph.rkt" "t-view.rkt" "run-t.rkt") #f)

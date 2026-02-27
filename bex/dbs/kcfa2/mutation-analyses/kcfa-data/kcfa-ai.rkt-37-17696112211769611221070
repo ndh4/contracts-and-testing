@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:153:43 ((set->list succs) (cdr todo))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:153:43 ((cdr todo) (set->list succs))>
+#s(run-status "ai.rkt" 37 explore completed #f #f #f #f)

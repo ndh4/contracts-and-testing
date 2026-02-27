@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:113:19 (((current-pseudo-random-generator r)) (random-seed 1324))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:113:19 ((random-seed 1324) ((current-pseudo-random-generator r)))>
+#s(run-status "motion.rkt" 1 reset! syntax-error #f #f #f #f)

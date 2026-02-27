@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/data.rkt:80:3 (begin (and (= (posn-x p1) (posn-x p2)) (= (posn-y p1) (posn-y p2))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/data.rkt:80:3 (begin)>
+#s(run-status "data.rkt" 0 posn=? syntax-error #f #f #f #f)

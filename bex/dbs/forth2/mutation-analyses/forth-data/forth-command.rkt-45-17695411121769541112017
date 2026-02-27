@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:255:12 (and (list? v) (not (null? v)) (help? (car v)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:255:12 (not (and (list? v) (not (null? v)) (help? (car v))))>
+#s(run-status "command.rkt" 45 CMD* completed #f #f #f #f)

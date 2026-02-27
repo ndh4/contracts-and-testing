@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:206:20 ((object-name binop) symbol?)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:206:20 (symbol? (object-name binop))>
+#s(run-status "command.rkt" 8 binop-command% runtime-error #f ("command.rkt" "command.rkt" "command.rkt" "command.rkt" "command.rkt") ("command.rkt" "command.rkt" "command.rkt") #f)

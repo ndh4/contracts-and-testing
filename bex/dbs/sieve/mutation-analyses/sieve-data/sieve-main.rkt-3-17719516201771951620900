@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/main.rkt:24:3 (begin (define-values (hd tl) (simple-stream-unfold st)) (cond ((= 0 (modulo hd n)) (sift n tl)) (else (make-simple-stream hd (lambda () (sift n tl))))))> -> #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/main.rkt:24:3 (begin (cond ((= 0 (modulo hd n)) (sift n tl)) (else (make-simple-stream hd (lambda () (sift n tl))))))>
+#s(run-status "main.rkt" 3 sift syntax-error #f #f #f #f)

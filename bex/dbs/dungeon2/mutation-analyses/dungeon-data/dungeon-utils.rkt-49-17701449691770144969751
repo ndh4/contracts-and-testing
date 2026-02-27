@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/utils.rkt:65:3 (begin (reverse l))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/utils.rkt:65:3 (begin)>
+#s(run-status "utils.rkt" 49 shuffle syntax-error #f #f #f #f)

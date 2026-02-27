@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : "Define a new command as a sequence of existing commands" -> #"Define a new command as a sequence of existing commands"
+#s(run-status "eval.rkt" 5 defn-command blamed ("eval.rkt") ("eval.rkt") ("eval.rkt") #f)

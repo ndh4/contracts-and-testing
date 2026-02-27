@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:121:3 (begin (world (snake-change-direction (world-snake w) dir) (world-food w)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:121:3 (begin)>
+#s(run-status "motion.rkt" 14 world-change-dir syntax-error #f #f #f #f)

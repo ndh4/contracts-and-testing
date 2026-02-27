@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:307:20 (symbol? s)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:307:20 (s symbol?)>
+#s(run-status "command.rkt" 148 show-help syntax-error #f #f #f #f)

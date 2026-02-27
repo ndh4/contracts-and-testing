@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:210:22 ((car v) (get-field id this))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:210:22 ((get-field id this) (car v))>
+#s(run-status "command.rkt" 12 binop-command% completed #f #f #f #f)

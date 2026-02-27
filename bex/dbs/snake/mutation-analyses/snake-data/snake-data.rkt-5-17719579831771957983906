@@ -1,0 +1,2 @@
+mutate: Mutating with comparison-op-swap : = -> >=
+#s(run-status "data.rkt" 5 posn=? blamed ("data.rkt") ("motion.rkt" "motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

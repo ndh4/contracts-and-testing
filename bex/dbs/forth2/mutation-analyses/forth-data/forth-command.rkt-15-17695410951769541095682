@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:212:37 (S2 (binop v2 v1))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:212:37 ((binop v2 v1) S2)>
+#s(run-status "command.rkt" 15 binop-command% completed #f #f #f #f)

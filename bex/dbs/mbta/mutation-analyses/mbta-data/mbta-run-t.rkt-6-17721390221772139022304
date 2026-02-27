@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/run-t.rkt:88:7 (=> (lambda (x) (define x2 (second x)) (define x3 (third x)) (unless (and x2 x3) (error (quote run-t) "invariat error")) (send manage find x2 x3)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/run-t.rkt:88:7 ((lambda (x) (define x2 (second x)) (define x3 (third x)) (unless (and x2 x3) (error (quote run-t) "invariat error")) (send manage find x2 x3)) =>)>
+#s(run-status "run-t.rkt" 6 run-t syntax-error #f #f #f #f)

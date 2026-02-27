@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/const.rkt:54:3 (begin (world (snake "right" (cons (posn 5 3) empty)) (posn 8 12)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/const.rkt:54:3 (begin)>
+#s(run-status "const.rkt" 29 WORLD syntax-error #f #f #f #f)

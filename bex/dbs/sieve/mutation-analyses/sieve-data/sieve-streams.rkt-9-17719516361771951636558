@@ -1,0 +1,2 @@
+mutate: Mutating with comparison-op-swap : = -> <=
+#s(run-status "streams.rkt" 9 simple-stream-get completed #f #f #f #f)

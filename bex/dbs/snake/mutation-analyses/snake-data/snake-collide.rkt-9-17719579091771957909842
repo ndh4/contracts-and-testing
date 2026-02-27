@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : 0 -> 1
+#s(run-status "collide.rkt" 9 head-collide? completed #f #f #f #f)

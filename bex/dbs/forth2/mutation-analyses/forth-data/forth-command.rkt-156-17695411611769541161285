@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:310:17 ("Cannot help with '~a'" x)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:310:17 (x "Cannot help with '~a'")>
+#s(run-status "command.rkt" 156 show-help completed #f #f #f #f)

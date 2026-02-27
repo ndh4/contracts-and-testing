@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:77:3 (begin (or (snake-wall-collide? (world-snake w)) (snake-self-collide? (world-snake w))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:77:3 (begin)>
+#s(run-status "handlers.rkt" 21 game-over? syntax-error #f #f #f #f)

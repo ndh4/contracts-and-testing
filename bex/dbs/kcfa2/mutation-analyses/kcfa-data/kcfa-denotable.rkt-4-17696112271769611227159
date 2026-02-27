@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:114:5 ((define (update-lam d) (d-join d value)) (hash-update store addr update-lam (lambda () d-bot)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:114:5 ((hash-update store addr update-lam (lambda () d-bot)) (define (update-lam d) (d-join d value)))>
+#s(run-status "denotable.rkt" 4 store-update syntax-error #f #f #f #f)

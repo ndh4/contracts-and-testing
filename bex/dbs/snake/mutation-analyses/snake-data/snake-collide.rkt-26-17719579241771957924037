@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:74:7 (empty? segs)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:74:7 (not (empty? segs))>
+#s(run-status "collide.rkt" 26 segs-self-collide? runtime-error #f ("collide.rkt" "collide.rkt" "collide.rkt" "collide.rkt" "handlers.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

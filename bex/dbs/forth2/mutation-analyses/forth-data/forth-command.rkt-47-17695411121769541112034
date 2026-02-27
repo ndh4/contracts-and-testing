@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:254:17 ((symbol? v) (help? v))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:254:17 ((help? v) (symbol? v))>
+#s(run-status "command.rkt" 47 CMD* completed #f #f #f #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:287:7 ((descr "Print the current stack") (exec (lambda (E S v) (match v ((quasiquote ((unquote (? show?)))) (displayln S) (cons E S)) (_ #f)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:287:7 ((exec (lambda (E S v) (match v ((quasiquote ((unquote (? show?)))) (displayln S) (cons E S)) (_ #f)))) (descr "Print the current stack"))>
+#s(run-status "command.rkt" 93 CMD* completed #f #f #f #f)

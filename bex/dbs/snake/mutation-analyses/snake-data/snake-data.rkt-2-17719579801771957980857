@@ -1,0 +1,2 @@
+mutate: Mutating with boolean-op-swap : and -> or
+#s(run-status "data.rkt" 2 posn=? blamed ("data.rkt") ("motion.rkt" "motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

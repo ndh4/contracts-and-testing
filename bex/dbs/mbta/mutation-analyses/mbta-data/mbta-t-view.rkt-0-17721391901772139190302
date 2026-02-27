@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:46:3 (begin ((curry argmin (lambda (p) (length (filter string? p)))) l))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:46:3 (begin)>
+#s(run-status "t-view.rkt" 0 selector syntax-error #f #f #f #f)

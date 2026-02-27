@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:124:21 (_ connection-on-set!)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:124:21 (connection-on-set! _)>
+#s(run-status "t-graph.rkt" 32 read-t-graph runtime-error #f ("t-graph.rkt" "t-graph.rkt" "t-graph.rkt" "t-view.rkt" "t-view.rkt" "run-t.rkt") ("t-graph.rkt" "t-view.rkt" "run-t.rkt") #f)

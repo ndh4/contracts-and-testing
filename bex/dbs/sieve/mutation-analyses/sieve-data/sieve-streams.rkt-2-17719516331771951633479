@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/streams.rkt:79:3 (begin (values (simple-stream-first st) ((simple-stream-rest st))))> -> #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/streams.rkt:79:3 (begin)>
+#s(run-status "streams.rkt" 2 simple-stream-unfold syntax-error #f #f #f #f)

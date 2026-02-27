@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:122:36 ((world-snake w) dir)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:122:36 (dir (world-snake w))>
+#s(run-status "motion.rkt" 16 world-change-dir runtime-error #f ("motion.rkt" "motion.rkt" "motion.rkt" "handlers.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("motion.rkt" "motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

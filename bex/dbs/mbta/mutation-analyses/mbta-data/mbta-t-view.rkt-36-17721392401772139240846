@@ -1,0 +1,2 @@
+mutate: Mutating with class:publicity : define/public -> define/private
+#s(run-status "t-view.rkt" 36 manage% blamed ("t-view.rkt") () ("t-view.rkt") #f)

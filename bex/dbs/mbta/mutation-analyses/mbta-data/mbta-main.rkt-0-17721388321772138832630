@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:20:3 (begin (for/list ((line (in-list (file->lines fname))) #:when (and (< 0 (string-length line)) (not (eq? #\- (string-ref line 0))))) (string-trim line)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:20:3 (begin)>
+#s(run-status "main.rkt" 0 dat->station-names syntax-error #f #f #f #f)

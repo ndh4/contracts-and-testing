@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:309:7 (hash-ref free-cache pos #f)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:309:7 (not (hash-ref free-cache pos #f))>
+#s(run-status "main.rkt" 377 counts-as-free? completed #f #f #f #f)

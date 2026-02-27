@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/run-t.rkt:85:3 (begin (cond ((regexp-match PATH next) => (lambda (x) (define x2 (second x)) (define x3 (third x)) (unless (and x2 x3) (error (quote run-t) "invariat error")) (send manage find x2 x3))) ((regexp-match DISABLE next) => (lambda (x) (define x2 (second x)) ...> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/run-t.rkt:85:3 (begin)>
+#s(run-status "run-t.rkt" 2 run-t syntax-error #f #f #f #f)

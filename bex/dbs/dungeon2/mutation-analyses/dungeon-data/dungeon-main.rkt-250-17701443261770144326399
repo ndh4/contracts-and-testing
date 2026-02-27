@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:214:5 ((when animate-generation? (display (show-grid grid))) (define connections (quote ())))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:214:5 ((define connections (quote ())) (when animate-generation? (display (show-grid grid))))>
+#s(run-status "main.rkt" 250 generate-dungeon completed #f #f #f #f)

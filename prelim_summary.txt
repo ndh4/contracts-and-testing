@@ -1,3 +1,51 @@
+mbta (no contracts)
+Mutation score: 0.530726
+Test suite size: 124
+Reduced test suite size: 20
+Reduced test suite size: 19
+Reduced test suite size: 19
+Reduced test suite size: 18
+
+mbta (full contracts)
+Mutation score: 0.539106
+Test suite size: 124
+Reduced test suite size: 15
+Reduced test suite size: 15
+Reduced test suite size: 15
+Reduced test suite size: 14
+
+snake (no contracts)
+Mutation score: 0.198020
+Test suite size: 21
+Reduced test suite size: 9
+Reduced test suite size: 9
+Reduced test suite size: 9
+Reduced test suite size: 9
+
+snake (full contracts)
+Mutation score: 0.222772
+Test suite size: 21
+Reduced test suite size: 9
+Reduced test suite size: 9
+Reduced test suite size: 9
+Reduced test suite size: 9
+
+sieve (no contracts)
+Mutation score: 0.761905
+Test suite size: 26
+Reduced test suite size: 2
+Reduced test suite size: 2
+Reduced test suite size: 2
+Reduced test suite size: 2
+
+sieve (full contracts)
+Mutation score: 0.761905
+Test suite size: 26
+Reduced test suite size: 2
+Reduced test suite size: 2
+Reduced test suite size: 2
+Reduced test suite size: 2
+
 kcfa2 (no contracts)
 Mutation score: 0.835052
 Test suite size: 39

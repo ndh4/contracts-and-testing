@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:123:3 (begin (define i (add1 (random (sub1 BOARD-WIDTH) r))) (define j (add1 (random (sub1 BOARD-HEIGHT) r))) (world (snake-grow (world-snake w)) (posn i j)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:123:3 (begin (define j (add1 (random (sub1 BOARD-HEIGHT) r))) (world (snake-grow (world-snake w)) (posn i j)))>
+#s(run-status "motion.rkt" 17 snake-eat syntax-error #f #f #f #f)

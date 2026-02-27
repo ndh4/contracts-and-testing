@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : "red" -> #"red"
+#s(run-status "t-graph.rkt" 5 COLORS completed #f #f #f #f)

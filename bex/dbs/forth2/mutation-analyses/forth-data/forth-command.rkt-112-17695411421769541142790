@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:40 (sym (get-field id c))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:40 ((get-field id c) sym)>
+#s(run-status "command.rkt" 112 find-command completed #f #f #f #f)

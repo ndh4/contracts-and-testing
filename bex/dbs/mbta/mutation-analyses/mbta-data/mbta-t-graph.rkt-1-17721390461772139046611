@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:103:27 ("orange" "green")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:103:27 ("green" "orange")>
+#s(run-status "t-graph.rkt" 1 COLORS completed #f #f #f #f)

@@ -1,0 +1,158 @@
+mutation-analysis: Beginning one mutation analysis.
+[info] mutation-analysis: Beginning one mutation analysis.
+mutation-analysis: Configured mutatable modules: ("main.rkt" "streams.rkt")
+[info] mutation-analysis: Configured mutatable modules: ("main.rkt" "streams.rkt")
+mutation-analysis: #s(mutant #f main.rkt 7) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 6) {negate-conditional} => miss
+mutation-analysis: #s(mutant #f main.rkt 5) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 7) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 6) {negate-conditional} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 5) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 4) {begin-drop} => miss
+mutation-analysis: #s(mutant #f main.rkt 3) {begin-drop} => miss
+mutation-analysis: #s(mutant #f main.rkt 2) {arithmetic-op-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 1) {position-swap} => hit
+[info] mutation-analysis: #s(mutant #f main.rkt 4) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 3) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 2) {arithmetic-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 1) {position-swap} => hit
+mutation-analysis: #s(mutant #f main.rkt 0) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 0) {begin-drop} => miss
+mutation-analysis: #s(mutant #f main.rkt 15) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 14) {arithmetic-op-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 13) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 12) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 11) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 15) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 14) {arithmetic-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 13) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 12) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 11) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 10) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 9) {comparison-op-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 8) {comparison-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 10) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 9) {comparison-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 8) {comparison-op-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 23) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 22) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 21) {position-swap} => hit
+mutation-analysis: #s(mutant #f main.rkt 20) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 23) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 22) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 21) {position-swap} => hit
+[info] mutation-analysis: #s(mutant #f main.rkt 20) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 19) {begin-drop} => miss
+mutation-analysis: #s(mutant #f main.rkt 18) {begin-drop} => miss
+mutation-analysis: #s(mutant #f main.rkt 17) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 16) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 19) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 18) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 17) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 16) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 31) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 30) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 29) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 28) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 27) {constant-swap} => hit
+[info] mutation-analysis: #s(mutant #f main.rkt 31) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 30) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 29) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 28) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 27) {constant-swap} => hit
+mutation-analysis: #s(mutant #f main.rkt 26) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 25) {constant-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 24) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 26) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 25) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 24) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 4) {begin-drop} => miss
+mutation-analysis: #s(mutant #f streams.rkt 2) {begin-drop} => miss
+mutation-analysis: #s(mutant #f streams.rkt 0) {begin-drop} => miss
+mutation-analysis: #s(mutant #f main.rkt 33) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 4) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 2) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 0) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 33) {begin-drop} => miss
+mutation-analysis: #s(mutant #f streams.rkt 3) {position-swap} => hit
+mutation-analysis: #s(mutant #f streams.rkt 1) {position-swap} => hit
+mutation-analysis: #s(mutant #f main.rkt 34) {position-swap} => miss
+mutation-analysis: #s(mutant #f main.rkt 32) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 3) {position-swap} => hit
+[info] mutation-analysis: #s(mutant #f streams.rkt 1) {position-swap} => hit
+[info] mutation-analysis: #s(mutant #f main.rkt 34) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f main.rkt 32) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 6) {position-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 5) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 6) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 5) {begin-drop} => miss
+mutation-analysis: #s(mutant #f streams.rkt 8) {position-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 7) {negate-conditional} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 8) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 7) {negate-conditional} => miss
+mutation-analysis: #s(mutant #f streams.rkt 12) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 11) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 10) {comparison-op-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 9) {comparison-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 12) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 11) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 10) {comparison-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 9) {comparison-op-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 16) {begin-drop} => miss
+mutation-analysis: #s(mutant #f streams.rkt 15) {arithmetic-op-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 14) {position-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 13) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 16) {begin-drop} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 15) {arithmetic-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 14) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 13) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 24) {position-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 20) {comparison-op-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 19) {comparison-op-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 18) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 24) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 20) {comparison-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 19) {comparison-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 18) {position-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 17) {negate-conditional} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 17) {negate-conditional} => miss
+mutation-analysis: #s(mutant #f streams.rkt 23) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 22) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 21) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 23) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 22) {constant-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 21) {constant-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 27) {arithmetic-op-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 26) {position-swap} => miss
+mutation-analysis: #s(mutant #f streams.rkt 25) {position-swap} => miss
+mutation-analysis: Mutation analysis complete.
+#hash([info] mutation-analysis: #s(mutant #f streams.rkt 27) {arithmetic-op-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 26) {position-swap} => miss
+[info] mutation-analysis: #s(mutant #f streams.rkt 25) {position-swap} => miss
+[info] mutation-analysis: Mutation analysis complete.
+(fail
+       .
+       #hash((arithmetic-op-swap . 4)
+             (begin-drop . 11)
+             (comparison-op-swap . 6)
+             (constant-swap . 18)
+             (negate-conditional . 3)
+             (position-swap . 16)))
+      (success . #hash((constant-swap . 1) (position-swap . 4)))
+      (total . 63))
+mutation-analysis: Beginning one mutation analysis.
+[info] mutation-analysis: Beginning one mutation analysis.
+mutation-analysis: Configured mutatable modules: ("main.rkt" "streams.rkt")
+[info] mutation-analysis: Configured mutatable modules: ("main.rkt" "streams.rkt")
+mutation-analysis: Mutation analysis complete.
+#hash((fail
+       .
+       #hash((arithmetic-op-swap . 4)
+             [info] mutation-analysis: Mutation analysis complete.
+(begin-drop . 11)
+             (comparison-op-swap . 6)
+             (constant-swap . 18)
+             (negate-conditional . 3)
+             (position-swap . 16)))
+      (success . #hash((constant-swap . 1) (position-swap . 4)))
+      (total . 63))

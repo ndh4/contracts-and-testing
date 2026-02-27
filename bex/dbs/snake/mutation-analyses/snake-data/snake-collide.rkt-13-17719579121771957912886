@@ -1,0 +1,2 @@
+mutate: Mutating with comparison-op-swap : >= -> =
+#s(run-status "collide.rkt" 13 head-collide? completed #f #f #f #f)

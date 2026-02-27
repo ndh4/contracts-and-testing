@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : 0 -> 1
+#s(run-status "streams.rkt" 22 simple-stream-take completed #f #f #f #f)

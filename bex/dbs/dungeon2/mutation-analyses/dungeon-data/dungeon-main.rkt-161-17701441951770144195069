@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:175:31 ((eq? dir up) (eq? dir down))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:175:31 ((eq? dir down) (eq? dir up))>
+#s(run-status "main.rkt" 161 vertical? completed #f #f #f #f)

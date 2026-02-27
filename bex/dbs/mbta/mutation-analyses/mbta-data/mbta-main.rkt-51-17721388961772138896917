@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:51:5 ((assert (run-query (disable "Park Street")) 1) (assert (run-query (path "Northeastern" "Harvard Square")) 1))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:51:5 ((assert (run-query (path "Northeastern" "Harvard Square")) 1) (assert (run-query (disable "Park Street")) 1))>
+#s(run-status "main.rkt" 51 main completed #f #f #f #f)

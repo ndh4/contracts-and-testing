@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:248:7 (command% (id (quote help)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:248:7 ((id (quote help)) command%)>
+#s(run-status "command.rkt" 40 CMD* syntax-error #f #f #f #f)

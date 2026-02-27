@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/run-t.rkt:92:36 ((quote run-t) "invariat error")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/run-t.rkt:92:36 ("invariat error" (quote run-t))>
+#s(run-status "run-t.rkt" 10 run-t completed #f #f #f #f)

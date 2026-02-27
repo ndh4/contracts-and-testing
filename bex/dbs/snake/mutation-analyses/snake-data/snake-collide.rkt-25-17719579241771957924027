@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:72:3 (begin (cond ((empty? segs) #f) (else (or (posn=? (car segs) h) (segs-self-collide? h (cdr segs))))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:72:3 (begin)>
+#s(run-status "collide.rkt" 25 segs-self-collide? syntax-error #f #f #f #f)

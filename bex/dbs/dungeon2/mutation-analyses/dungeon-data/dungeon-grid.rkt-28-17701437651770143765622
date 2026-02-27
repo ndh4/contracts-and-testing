@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:152:3 (begin (with-output-to-string (lambda () (for ((r (in-vector g))) (for ((c (in-vector r))) (display (send c show))) (newline)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:152:3 (begin)>
+#s(run-status "grid.rkt" 28 show-grid syntax-error #f #f #f #f)

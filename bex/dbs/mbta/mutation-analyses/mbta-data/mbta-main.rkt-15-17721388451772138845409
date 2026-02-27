@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : "../base/blue.dat" -> #"../base/blue.dat"
+#s(run-status "main.rkt" 15 BLUE-STATIONS runtime-error #f ("main.rkt") ("main.rkt" "main.rkt") #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:114:3 (begin (cond ((eating? w) (snake-eat w)) (else (world (snake-slither (world-snake w)) (world-food w)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:114:3 (begin)>
+#s(run-status "motion.rkt" 7 world->world syntax-error #f #f #f #f)
