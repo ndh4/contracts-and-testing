@@ -187,6 +187,7 @@
                                     mutant-runner-path
                                     mutant-error-log
                                     #:timeout/s timeout/s
+                                    #:test-id test-id
                                     #:memory/gb memory/gb
                                     #:log-mutation-info? [log-mutation-info? #f]
                                     #:save-output [output-path #f]
@@ -201,6 +202,7 @@
               "--"
               (~a mutant-runner-path)
               "-b" (serialize-benchmark-configuration a-benchmark-configuration)
+              "-T" (~a test-id)
               "-M" (~a module-to-mutate)
               "-i" (~a mutation-index)
               "-t" (~a timeout/s)
@@ -327,6 +329,7 @@
       (test-begin
         #:before (setup-test-env!)
         #:after (cleanup-test-env!)
+        ;; TODO BROKEN, no test-id
         (ignore (define b (read-benchmark test-bench))
                 (define bc (configure-benchmark b (hash "main.rkt" 'none)))
                 (define out (build-path test-bench "out.txt"))
@@ -352,6 +355,7 @@
         (ignore (set! condor-subs empty))
 
 
+        ;; TODO BROKEN, no test-id
         (ignore (define ctls
                   (for/list ([i 5])
                     (spawn-condor-mutant-runner bc
