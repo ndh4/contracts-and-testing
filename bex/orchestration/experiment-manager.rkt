@@ -232,6 +232,7 @@
                 @~a{
                     cd @projdir && @;
                     @(if include-configuration-outcomes?
+                         ;; TODO SSOT DBS
                          @~a{
                              cp -r @;
                              ./contracts-and-testing/bex/dbs/@(current-remote-host-db-installation-directory-name)/configuration-outcomes @;
@@ -345,6 +346,7 @@
       [other other])))
 
 (define (help!:continue? notification prompt)
+  #;
   (notify-phone! notification)
   (user-prompt! prompt))
 
@@ -368,25 +370,37 @@
 (define (update-host! a-host dbs-dir setup-config-name ; assumed to be in bex/setup/
                       [handle-failure! (λ (reason)
                                          (raise-user-error 'update-host! reason))])
+  ;; remote-host-specific
+  #;
   (define host-dbs-destination
     (build-path (get-field host-project-path a-host)
                 "contracts-and-testing"
                 "bex"
                 "dbs"))
+  #;
   (displayln "Zipping up dbs archive...")
+  #;
   (define-values {dbs-dir-parent dbs-dir-name} (basename dbs-dir #:with-directory? #t))
+  #;
   (define archive-name (~a dbs-dir-name ".tar.gz"))
+  #;
   (parameterize ([current-directory dbs-dir-parent])
     (unless (system @~a{tar -czhf @archive-name @dbs-dir-name})
       (handle-failure! "Failed to zip dbs directory, giving up.")))
+
+  #;
   (displayln "Uploading dbs archive...")
+  #;
   (define host-db-archive-upload-path (build-path host-dbs-destination archive-name))
+  #;
   (send a-host system/host @~a{mkdir -p @host-dbs-destination})
+  #;
   (unless (zero? (send a-host scp
                        #:from-local (~a (build-path dbs-dir-parent archive-name))
                        #:to-host (~a host-db-archive-upload-path)))
     (handle-failure! @~a{Failed to upload db archive to @a-host}))
 
+  #;
   (define host-dbs-unpacked-dir-path (build-path host-dbs-destination
                                                  (current-remote-host-db-installation-directory-name)))
   (define host-repo-path
@@ -401,18 +415,20 @@
                 "bex"
                 "setup"
                 setup-config-name))
-  (for ([step (in-list '("Stashing current dbs..."
-                         "Unpacking dbs..."
+  (for ([step (in-list '(#;"Stashing current dbs..."
+                         #;"Unpacking dbs..."
                          "Updating implementation..."
                          "Updating benchmarks..."
                          "Recompiling and checking status..."))]
         [cmd (in-list
               (list
+               #;
                @~a{
                    rm -r '@host-dbs-destination'/last-dbs ; @;
                    mkdir -p '@host-dbs-unpacked-dir-path' ; @; in case there weren't any before
                    mv '@host-dbs-unpacked-dir-path' '@host-dbs-destination'/last-dbs
                    }
+               #;
                @~a{
                    mkdir -p '@host-dbs-unpacked-dir-path' && @;
                    tar -xzvf '@host-db-archive-upload-path' -C '@host-dbs-unpacked-dir-path' --strip-components=1 && @;
@@ -615,6 +631,8 @@
 (define local (new local-direct-host%
                    [cpu-count 2]
                    [hostname "local"]
+                   ;; NOTE I think we'll need this if we ever need a remote host
+                   #;[host-dbs-dir (simple-form-path (build-path project-path "/bex/dbs"))]
                    [host-project-path (simple-form-path project-path)]))
 
 ;; ----- these hosts should be used on peroni directly -----

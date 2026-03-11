@@ -1,11 +1,14 @@
 #lang at-exp racket
 
+#;
 (require db
          racket/runtime-path
          "../orchestration/experiment-info.rkt")
 
+#;
 (define-runtime-path db-path "../dbs/sqlite/teco2.sqlite3")
 
+#;
 (define dbc (sqlite3-connect #:database db-path #:mode 'create))
 
 ;(define (ensure-test-suite-table! table-name)
@@ -31,6 +34,7 @@
 ;   module_under_test
 ;   test_index))
 
+#;
 (define (make-test-suite! src-table dest-table)
   (query-exec
    dbc
@@ -38,4 +42,6 @@
            dest-table
            src-table)))
 
+;; TODO call from orchestration instead
+#;
 (make-test-suite! experiment-name (string-append experiment-name "_tests"))

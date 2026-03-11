@@ -7,7 +7,7 @@
 (define-runtime-paths
   [repo-parent-path "../../.."]
   [repo-path "../.."]
-  [dbs-dir "../dbs"]
+  [dbs-dir "../../../experiment-data/dbs/"] ;; TODO SSOT DBS
   [this-mod "setup.rkt"]
   [project-raco "../util/project-raco.rkt"])
 
@@ -29,11 +29,11 @@
                                "transient-special-cases.rktdb" #f))
   (hash))
 
-(define expected-TR-branch #f)
+#;(define expected-TR-branch #f)
 (define gtp-repo-url #f)
 (define expected-gtp-branch #f)
 (define expected-blgt-branch #f)
-(define with-TR+transient? #f)
+#;(define with-TR+transient? #f)
 
 ;; ==================================================
 
@@ -138,7 +138,7 @@
                   (build-path repo-path "bex"))
     (displayln "Done.")))
 
-(define (download-TR raco-path TR-dir)
+#;(define (download-TR raco-path TR-dir)
   (displayln "Downloading typed-racket...")
   (define-values {parent _}
     (basename TR-dir #:with-directory? #t))
@@ -168,7 +168,7 @@
             expected-TR-branch))
   (directory-exists? TR-dir))
 
-(define (setup-existing-TR-dir! raco-path TR-dir)
+#;(define (setup-existing-TR-dir! raco-path TR-dir)
   (displayln @~a{Installing TR at @TR-dir})
   (define TR-subpaths
     (for/list ([dir (in-list '("source-syntax"
@@ -186,12 +186,12 @@
          "--link"
          TR-subpaths))
 
-(define TR-modified-module-rel-path
+#;(define TR-modified-module-rel-path
   (build-path "typed-racket-lib"
               "typed-racket"
               "utils"
               "require-contract.rkt"))
-(define (modify-TR TR-dir)
+#;(define (modify-TR TR-dir)
   (displayln "Modifying typed-racket...")
   (define file-path (build-path TR-dir TR-modified-module-rel-path))
   (define file-contents (file->string file-path))
@@ -248,7 +248,7 @@
             expected-gtp-branch))
   (displayln "Done."))
 
-(define (check-TR-install racket-dir
+#;(define (check-TR-install racket-dir
                           TR-dir
                           #:display-failures? [display-failures? #f])
   ;;;; This doesn't seem to work
@@ -312,7 +312,7 @@
        transient-lang-accepted?
        transient-blame-present?))
 
-(module check-modified-TR typed/racket
+#;(module check-modified-TR typed/racket
   (require/typed (only-in racket first)
     [first ((Listof Any) . -> . Boolean)])
   (first '(5)))
@@ -403,7 +403,7 @@
          ERROR: @repo-dir is out of date (there are upstream commits)
          })))
 
-(define (check-install-configuration racket-dir TR-dir gtp-dir)
+(define (check-install-configuration racket-dir #;TR-dir gtp-dir)
   (displayln "Checking racket version...")
   (define racket-version-output
     (system/string @~a{@|racket-dir|/bin/racket --version}))
@@ -426,10 +426,10 @@
   (define gtp-branch-ok? (equal? gtp-active-branch expected-gtp-branch))
   (define gtp-up-to-date? (repo-branch-up-to-date-with-remote? gtp-dir gtp-active-branch))
 
-  (displayln "Checking TR repo...")
-  (define TR-active-branch (or (not with-TR+transient?) (get-repo-current-branch TR-dir)))
-  (define TR-branch-ok? (or (not with-TR+transient?) (equal? TR-active-branch expected-TR-branch)))
-  (define TR-up-to-date? (or (not with-TR+transient?) (repo-branch-up-to-date-with-remote? TR-dir TR-active-branch)))
+  #; (displayln "Checking TR repo...")
+  #; (define TR-active-branch (or (not with-TR+transient?) (get-repo-current-branch TR-dir)))
+  #; (define TR-branch-ok? (or (not with-TR+transient?) (equal? TR-active-branch expected-TR-branch)))
+  #; (define TR-up-to-date? (or (not with-TR+transient?) (repo-branch-up-to-date-with-remote? TR-dir TR-active-branch)))
 
   (displayln "Checking dbs...")
   (define dbs-ok? (check-expected-dbs))
@@ -444,17 +444,17 @@
          }))
   (report-repo-status repo-path blgt-active-branch expected-blgt-branch blgt-up-to-date?)
   (report-repo-status gtp-dir gtp-active-branch expected-gtp-branch gtp-up-to-date?)
-  (report-repo-status TR-dir TR-active-branch expected-TR-branch TR-up-to-date?)
+  #;(report-repo-status TR-dir TR-active-branch expected-TR-branch TR-up-to-date?)
 
   (and racket-version-ok?
        blgt-branch-ok?
        blgt-up-to-date?
        gtp-branch-ok?
        gtp-up-to-date?
-       TR-branch-ok?
-       TR-up-to-date?
+       ;TR-branch-ok?
+       ;TR-up-to-date?
        dbs-ok?
-       (check-TR-install racket-dir TR-dir #:display-failures? #t)))
+       #;(check-TR-install racket-dir TR-dir #:display-failures? #t)))
 
 (define (check-expected-dbs)
   (for*/and ([{dir dbs} (in-hash expected-dbs)]
@@ -465,10 +465,10 @@
 
 (define (install-setup-config! path)
   (define mod-path `(file ,path))
-  (set! expected-TR-branch (dynamic-require mod-path 'expected-TR-branch))
+  #;(set! expected-TR-branch (dynamic-require mod-path 'expected-TR-branch))
   (set! expected-gtp-branch (dynamic-require mod-path 'expected-gtp-branch))
   (set! expected-blgt-branch (dynamic-require mod-path 'expected-blgt-branch))
-  (set! with-TR+transient? (dynamic-require mod-path 'with-TR+transient?))
+  #;(set! with-TR+transient? (dynamic-require mod-path 'with-TR+transient?))
   (set! gtp-repo-url (dynamic-require mod-path 'gtp-repo-url)))
 
 (main
@@ -493,7 +493,7 @@
                ("The root path, where dependencies reside or should be installed."
                 @~a{Default: @(pretty-path repo-parent-path)})
                #:collect ["path" take-latest repo-parent-path]]
-              [("-t" "--tr-path")
+              #;[("-t" "--tr-path")
                'tr-path
                ("Path to the typed-racket installation to use."
                 "If not specified, and none found under the root path,"
@@ -514,7 +514,7 @@
  (dry-run? (hash-ref flags 'dry-run))
  (define root (hash-ref flags 'root-path))
  (define racket-dir (simple-form-path (build-path root "racket")))
- (define TR-dir
+ #;(define TR-dir
    (simple-form-path (or (hash-ref flags 'tr-path)
                          (build-path root "typed-racket"))))
  (define gtp-dir
@@ -524,7 +524,7 @@
  (install-setup-config! (hash-ref flags 'setup-config))
 
  (define (verify-install!)
-   (match (check-install-configuration racket-dir TR-dir gtp-dir)
+   (match (check-install-configuration racket-dir #;TR-dir gtp-dir)
      [#t
       (displayln "\nInstall is configured correctly.")
       (exit 0)]
@@ -542,7 +542,7 @@
  (define raco-path (build-path racket-dir "bin" "raco"))
  (define racket-path (build-path racket-dir "bin" "racket"))
 
- (when with-TR+transient?
+ #;(when with-TR+transient?
    (unless (directory-exists? TR-dir)
      (download-TR raco-path TR-dir))
    (modify-TR TR-dir)
