@@ -192,6 +192,7 @@
                                     #:log-mutation-info? [log-mutation-info? #f]
                                     #:save-output [output-path #f]
 
+                                    #:write-to-sql? [write-to-sql? #t]
                                     #:write-modules-to [dump-dir-path #f]
                                     #:force-module-write? [force-module-write? #f])
   (define args
@@ -208,6 +209,9 @@
               "-t" (~a timeout/s)
               "-g" (~a memory/gb)
               "-c" (~a (simple-form-path config-path))
+              (if write-to-sql?
+                  (list "-d")
+                  empty)
               (if output-path
                   (list "-O" output-path)
                   empty)
