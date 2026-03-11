@@ -192,7 +192,7 @@
                                     #:log-mutation-info? [log-mutation-info? #f]
                                     #:save-output [output-path #f]
 
-                                    #:write-to-sql? [write-to-sql? #t]
+                                    #:write-to-sql? [write-to-sql? #f]
                                     #:write-modules-to [dump-dir-path #f]
                                     #:force-module-write? [force-module-write? #f])
   (define args
