@@ -15,7 +15,7 @@
 ;;  Modify these to configure setup
 ;; ==================================================
 
-(define racket-version "8.9") ;; minimum needed for TR bug fixes
+(define racket-version "9.0")
 (define racket-download-url
   @~a{https://mirror.racket-lang.org/installers/@|racket-version|/racket-@|racket-version|-x86_64-linux-cs.sh})
 
