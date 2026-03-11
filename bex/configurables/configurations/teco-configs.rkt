@@ -194,7 +194,12 @@
                           "a.rkt" 'types
                           "b.rkt" 'none))))
 
-(define (configure-benchmark bench config #:test-mod test-mod)
+;; TODO is this ok, or do we need the specific module under test?
+;; mutant-util/max-mutation-index requires test-mod to be optional. It seems it
+;; concats the main mod with the others, though, so the one we select as main
+;; shouldn't really matter. There might be other parts of the code that do
+;; depend on a sane choice for the default value of test-mod, I haven't checked
+(define (configure-benchmark bench config #:test-mod [test-mod "main.rkt"])
   (match-define (benchmark typed untyped base both)
     bench)
   (match-define-values {(list main) others}

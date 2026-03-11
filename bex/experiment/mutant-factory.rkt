@@ -839,8 +839,7 @@ Mutant: [~a] ~a @ ~a with config:
     [else void]))
 
 (module+ main
-  (require racket/cmdline
-           (prefix-in db: "../db/db.rkt"))
+  (require racket/cmdline)
   (define bench-path-to-run (make-parameter #f))
   (define metadata-file (make-parameter #f))
   (define configuration-path (make-parameter #f))

@@ -5,9 +5,10 @@
 (define-runtime-path status-file "../../../experiment-status.txt")
 
 (with-configuration [local
-                     blutil]
+                     teco]
   #:status-in status-file
   #:manual-outcome-recording
-  (run-mode blame #:record-outcomes)
-  (run-mode stack)
-  (run-mode null))
+  (run-mode teco-prime #:record-outcomes)
+  #;(run-mode blame #:record-outcomes)
+  #;(run-mode stack)
+  #;(run-mode null))
