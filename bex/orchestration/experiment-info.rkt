@@ -60,6 +60,17 @@
 
 (define scenario-samples-per-mutant 100)
 
-(define experiment-benchmarks '("sieve"))
+(define experiment-benchmarks '("abm_test"
+                                "dungeon"
+                                "forth"
+                                "kcfa"
+                                "mbta"
+                                "morsecode"
+                                "sieve"
+                                "snake"
+                                #;"telegram"
+                                #;"bazaar"
+                                #;"quirkle"
+                                #;"ticket"))
 
 (define experiment-modes '("teco-prime"))
