@@ -74,7 +74,6 @@ hostname >> $OUTDIR/$BENCH.log
     -o "$DATA_DIR" \
     -n "$CPUS" \
     -e "$OUTDIR/errs.log" \
-    -l "$OUTDIR/$BENCH-progress.log" \
     -c "contracts-and-testing/bex/configurables/configs/$CONFIG_NAME" \
     -m "$OUTDIR/$BENCH-metadata.rktd" \
     -P "$DB_DIR/configuration-outcomes/$OUTDIR_NAME.rkt" \

@@ -63,7 +63,9 @@
            mutant->process-will
            abort-suppressed?
 
+           #;
            make-cached-results-for
+           #;
            make-progress-logger
 
            record/check-configuration-outcomes?
@@ -84,6 +86,7 @@
             setting)))
 
 ;; Outcomes in a blame trail that aren't one of these will go straight to the no-blame-handler
+#;
 (define/contract normal-blame-trail-outcomes
   (listof run-outcome/c)
   '(type-error runtime-error blamed))
@@ -93,7 +96,7 @@
 (define abort-on-failure? (make-parameter #t))
 
 (define current-result-cache (make-parameter (λ _ #f)))
-(define current-progress-logger (make-parameter void))
+#;(define current-progress-logger (make-parameter void))
 
 (define/contract record/check-configuration-outcomes?
   (parameter/c (or/c #f
@@ -133,20 +136,21 @@
 ;; Main entry point of the factory
 (define/contract (run-all-mutants*config bench
                                          config
-                                         #:log-progress log-progress!
-                                         #:load-progress load-result-cache)
+                                         ;; #:log-progress log-progress!
+                                         ;; #:load-progress load-result-cache
+                                         )
   (benchmark/c
    ; first  module-name?+natural? is the mutant
    ; second module-name?+natural? is the test
-   #:log-progress (module-name? natural? module-name? natural? path-to-existant-file? . -> . any)
-   #:load-progress
-   (-> (module-name? natural? module-name? natural? . -> . (or/c #f path-to-existant-file?)))
+   ;; #:log-progress (module-name? natural? module-name? natural? path-to-existant-file? . -> . any)
+   ;; #:load-progress
+   ;; (-> (module-name? natural? module-name? natural? . -> . (or/c #f path-to-existant-file?)))
    . -> .
    boolean? ; experiment complete and sanity checks pass?
    )
 
-  (parameterize ([current-progress-logger log-progress!]
-                 [current-result-cache (load-result-cache)])
+  (parameterize (#;[current-progress-logger log-progress!]
+                 #;[current-result-cache (load-result-cache)])
     (log-factory info @~a{Running on benchmark @bench})
 
     (define select-modules (configured:select-modules-to-mutate))
@@ -181,9 +185,9 @@
 
     (log-factory info "Finished enqueing all test mutants. Waiting...")
     (define process-q-finished (process-queue-wait process-q))
-    (report-completion/sanity-checks bench select-mutants (load-result-cache))))
+    (report-completion/sanity-checks bench select-mutants #;(load-result-cache))))
 
-(define/contract (report-completion/sanity-checks bench select-mutants logged-results-for)
+(define/contract (report-completion/sanity-checks bench select-mutants #;logged-results-for)
   (benchmark/c any/c
                (module-name? natural? natural? . -> . (or/c #f path-to-existant-file?))
                . -> .
@@ -191,11 +195,11 @@
                )
 
   (log-factory info "All mutants dead. Performing sanity checks...")
-  (define mutatable-module-names (benchmark->mutatable-modules bench))
-  (define testable-modules (benchmark->testable-modules bench))
-  (define (something-recorded? module-to-mutate-name mutation-index test-mod test-id)
+  #;(define mutatable-module-names (benchmark->mutatable-modules bench))
+  #;(define testable-modules (benchmark->testable-modules bench))
+  #;(define (something-recorded? module-to-mutate-name mutation-index test-mod test-id)
     (and (logged-results-for module-to-mutate-name mutation-index test-mod test-id) #t))
-  (define something-logged-for-all-mutants*tests?
+  #;(define something-logged-for-all-mutants*tests?
       (for*/and ([module-to-mutate-name mutatable-module-names]
                  [mutation-index (select-mutants module-to-mutate-name
                                                  bench)]
@@ -231,6 +235,7 @@
   (define all-checks-pass?
     (and (not unexpected-state-encountered?)
          (not mutants-have-error-output?)))
+  #;
   (log-factory-message
    (if all-checks-pass? 'info 'error)
    @~a{
@@ -239,6 +244,12 @@
               "⚠ Not all mutants have all of the expected blame trail samples.\n") @;
     @(or-empty unexpected-state-encountered? "⚠ Some unexpected states were encountered.\n") @;
     @(or-empty mutants-have-error-output? "⚠ Some mutants logged error messages.\n")})
+  (log-factory-message
+   (if all-checks-pass? 'info 'error)
+   @~a{
+       @(if all-checks-pass? "and basic sanity checks pass." "but with failing sanity checks.")
+       @(or-empty unexpected-state-encountered? "⚠ Some unexpected states were encountered.\n") @;
+       @(or-empty mutants-have-error-output? "⚠ Some mutants logged error messages.\n")})
   all-checks-pass?)
 
 ;; Spawns a test mutant and if that mutant has a result at
@@ -267,7 +278,7 @@
                   test-mod
                   test-id)
 
-    (define result-cache-has-something?
+    #;(define result-cache-has-something?
        (and ((current-result-cache) module-to-mutate-name
                                     mutation-index
                                     test-mod
@@ -277,7 +288,7 @@
   (define (will:do-nothing current-process-q dead-proc)
             current-process-q)
   (cond
-   [result-cache-has-something? process-q]
+   #;[result-cache-has-something? process-q]
    [else
      (log-factory
       info
@@ -561,6 +572,7 @@ Attempting revival ~a / ~a
       .rktd
       })
 
+#;
 (define/contract (record-blame-trail! the-factory the-blame-trail)
   (factory/c
    (and/c blame-trail/c
@@ -591,6 +603,7 @@ Attempting revival ~a / ~a
   (copy-factory the-factory
                 [results (hash-set the-results the-mutant mutant-data-file)]))
 
+#;
 (define (append-blame-trail-to-mutant-data! mutant-data-file
                                             the-blame-trail)
   (define summary (summarize-blame-trail the-blame-trail))
@@ -599,6 +612,7 @@ Attempting revival ~a / ~a
     #:exists 'append
     (λ _ (writeln summary))))
 
+#;
 (define (summarize-blame-trail the-blame-trail)
   (define mutant-summaries
     (map summarize-dead-mutant-process
@@ -783,7 +797,9 @@ Mutant: [~a] ~a @ ~a with config:
      (>= (index-of ordering actual)
          (index-of ordering recorded))]))
 
+#;
 (define progress-log (make-parameter #f))
+#;
 (define (make-cached-results-for progress-info-hash)
   (λ (module-to-mutate-name
       mutation-index
@@ -795,6 +811,7 @@ Mutant: [~a] ~a @ ~a with config:
                     test-mod
                     test-id)
               #f)))
+#;
 (define (make-progress-logger log-progress!/raw)
   (λ (module-to-mutate-name
       mutation-index
@@ -873,6 +890,9 @@ Mutant: [~a] ~a @ ~a with config:
     n
     "Number of blame trail roots to sample. Default: 96"
     (sample-size (string->number n))]
+   ;; TODO resume from point reached in database instead of progress log, which 
+   ;; recorded blame trails
+   #;
    [("-l" "--progress-log")
     path
     ("Record progress in the given log file."
@@ -904,6 +924,7 @@ Mutant: [~a] ~a @ ~a with config:
     (raise-user-error 'mutant-factory "Error: must provide a configuration."))
   (unless (data-output-dir)
     (raise-user-error 'mutant-factory "Error: must provide a data output dir."))
+  #;
   (unless (progress-log)
     (raise-user-error 'mutant-factory "Error: must provide a progress-log."))
 
@@ -911,6 +932,7 @@ Mutant: [~a] ~a @ ~a with config:
 
   (define bench-to-run (read-benchmark (bench-path-to-run)))
 
+  #;
   (when (and (directory-exists? (data-output-dir))
              (not (progress-log)))
     (eprintf "Output directory ~a already exists; remove? (y/n): "
@@ -939,13 +961,13 @@ Mutant: [~a] ~a @ ~a with config:
   (define finalize-configuration-outcomes!
     (setup-configuration-outcome-record/checking!))
 
-  (define (make-cached-results-function)
+  #;(define (make-cached-results-function)
     (define progress-info-hash
       (match (progress-log)
         [(? file-exists? path) (make-immutable-hash (file->list path))]
         [else (hash)]))
     (make-cached-results-for progress-info-hash))
-  (define-values {log-progress!/raw finalize-log!}
+  #;(define-values {log-progress!/raw finalize-log!}
     (initialize-progress-log! (progress-log)
                               #:exists 'append))
 
@@ -961,10 +983,11 @@ Mutant: [~a] ~a @ ~a with config:
         (define config (make-bench-config bench-to-run setting))
         (run-all-mutants*config bench-to-run
                               config
-                              #:log-progress (make-progress-logger log-progress!/raw)
-                              #:load-progress make-cached-results-function))))
+                              ;; #:log-progress (make-progress-logger log-progress!/raw)
+                              ;; #:load-progress make-cached-results-function
+                              ))))
 
-  (finalize-log!)
+  #;(finalize-log!)
   (finalize-configuration-outcomes!)
 
   (exit 0))
