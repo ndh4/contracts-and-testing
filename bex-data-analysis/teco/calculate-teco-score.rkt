@@ -5,6 +5,10 @@
 
 (provide get-mutation-score)
 
+(define (printx x)
+  (printf "~a~n" x)
+  x)
+
 (define (get-num-mutants result-table-name)
   (query-value dbc
                (format "SELECT COUNT(*) from (SELECT DISTINCT mutant_module, mutation_index from ~a)"

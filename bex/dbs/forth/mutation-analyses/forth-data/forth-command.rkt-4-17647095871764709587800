@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:164:3 (begin (and (list? x) (not (null? x)) (null? (cdr x))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:164:3 (begin)>
+#s(run-status "command.rkt" 4 singleton-list? syntax-error #f #f #f #f)

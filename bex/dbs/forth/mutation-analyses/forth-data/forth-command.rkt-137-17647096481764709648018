@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:299:8 ((for/list ((c (in-list E))) (format "    ~a : ~a" (get-field id c) (get-field descr c))) "\n")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:299:8 ("\n" (for/list ((c (in-list E))) (format "    ~a : ~a" (get-field id c) (get-field descr c))))>
+#s(run-status "command.rkt" 137 show-help completed #f #f #f #f)

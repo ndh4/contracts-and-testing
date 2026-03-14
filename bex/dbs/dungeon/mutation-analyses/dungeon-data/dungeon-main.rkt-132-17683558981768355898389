@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:157:18 (and x-wall? y-wall?)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:157:18 (not (and x-wall? y-wall?))>
+#s(run-status "main.rkt" 132 try-add-rectangle completed #f #f #f #f)

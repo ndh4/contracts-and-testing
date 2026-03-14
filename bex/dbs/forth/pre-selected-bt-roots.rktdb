@@ -1,0 +1,2 @@
+#hash((data-directory . "pre-selected-bt-roots.rktdb-data")
+      (map . #hash(("forth" . "0"))))

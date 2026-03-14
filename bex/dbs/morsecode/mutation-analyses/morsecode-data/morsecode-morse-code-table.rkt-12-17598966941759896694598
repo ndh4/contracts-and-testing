@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : #f -> #t
+#s(run-status "morse-code-table.rkt" 12 char-table runtime-error #f ("morse-code-table.rkt" "morse-code-table.rkt") ("morse-code-table.rkt") #f)

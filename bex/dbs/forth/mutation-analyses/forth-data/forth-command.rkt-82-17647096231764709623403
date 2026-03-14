@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:278:11 (v ((quasiquote (push (unquote (? exact-integer? n)))) (cons E (stack-push S n))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:278:11 (((quasiquote (push (unquote (? exact-integer? n)))) (cons E (stack-push S n))) v)>
+#s(run-status "command.rkt" 82 CMD* syntax-error #f #f #f #f)

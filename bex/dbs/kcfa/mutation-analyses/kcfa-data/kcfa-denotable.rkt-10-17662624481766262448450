@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:121:3 (begin (for/fold ((new-store s1)) (((k v) (in-hash s2))) (store-update new-store k v)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:121:3 (begin)>
+#s(run-status "denotable.rkt" 10 store-join syntax-error #f #f #f #f)

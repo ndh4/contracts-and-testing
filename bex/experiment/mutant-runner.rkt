@@ -50,6 +50,7 @@
   (define mutant-output-path (make-parameter #f))
   (define configuration-path (make-parameter #f))
   (define write-to-database? (make-parameter #f))
+  (define fake-mutation? (make-parameter #f))
 
   (command-line
    #:once-each
@@ -105,6 +106,11 @@
     ("The configuration with which to run the mutant."
      "This is a mandatory argument.")
     (configuration-path path)]
+
+   [("-z" "--fake-mutation")
+    "Is this a sanity check with no actual mutation?"
+    (fake-mutation? #t)]
+
    [("-d" "--database")
     "Should the result be written to a database?"
     (write-to-database? #t)])
@@ -178,6 +184,7 @@
          #:modules-base-path (find-program-base-path the-program)
          #:write-modules-to (write-modules-to)
          #:on-module-exists (on-module-exists)
+         #:fake-mutation? (fake-mutation?)
          #:suppress-output? (not (mutant-output-path)))))
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
@@ -186,7 +193,7 @@
       #:configuration (benchmark-configuration-config (the-benchmark-configuration))
       #:module-under-test (path->string (file-name-from-path (mod-path (program-main the-program))))
       #:test-index (test-id)
-      #:mutant-module (module-to-mutate)
+      #:mutant-module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
       #:mutation-index (mutation-index)
       #:run-status the-run-status
       #:cmd-line-args (~a (current-command-line-arguments))))
@@ -204,7 +211,7 @@
          #:configuration (benchmark-configuration-config (the-benchmark-configuration))
          #:module-under-test (path->string (file-name-from-path (mod-path (program-main the-program))))
          #:test-index (test-id)
-         #:mutant-module (module-to-mutate)
+         #:mutant-module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
          #:mutation-index (mutation-index)
          #:run-status 'skipped
          #:cmd-line-args (~a (current-command-line-arguments))))

@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:123:10 (n (string->symbol (string-downcase word)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:123:10 ((string->symbol (string-downcase word)) n)>
+#s(run-status "eval.rkt" 58 forth-tokenize completed #f #f #f #f)

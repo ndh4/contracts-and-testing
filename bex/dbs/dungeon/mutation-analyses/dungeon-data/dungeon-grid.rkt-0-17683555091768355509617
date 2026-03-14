@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:134:3 (begin (vector-set! (vector-ref g (vector-ref p 0)) (vector-ref p 1) v))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:134:3 (begin)>
+#s(run-status "grid.rkt" 0 array-set! syntax-error #f #f #f #f)

@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:97:3 (begin (Closure-lam v))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:97:3 (begin)>
+#s(run-status "ui.rkt" 2 monovariant-value syntax-error #f #f #f #f)

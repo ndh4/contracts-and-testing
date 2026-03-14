@@ -205,10 +205,11 @@
   (match-define-values {(list main) others}
                        (partition (path-ends-with test-mod)
                                   untyped))
-  (define adapters (benchmark-both->files both))
+  (define adaptors (benchmark-both->files both))
+  (define dependencies (module-dependencies-transitive main others))
+  (define dependencies-with-adaptors (add-relevant-adaptors dependencies adaptors))
   (benchmark-configuration main
-                              (append (module-dependencies-transitive main others)
-                                      adapters)
+                              dependencies-with-adaptors
                               base
                               config))
 

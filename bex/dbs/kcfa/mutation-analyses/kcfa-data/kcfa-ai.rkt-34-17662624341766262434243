@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:151:7 ((define st0 (car todo)) (define succs (next st0)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:151:7 ((define succs (next st0)) (define st0 (car todo)))>
+#s(run-status "ai.rkt" 34 explore completed #f #f #f #f)

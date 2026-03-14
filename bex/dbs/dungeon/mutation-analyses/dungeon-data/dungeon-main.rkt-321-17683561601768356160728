@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:257:22 (horizontal? dir)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:257:22 (not (horizontal? dir))>
+#s(run-status "main.rkt" 321 generate-dungeon completed #f #f #f #f)
