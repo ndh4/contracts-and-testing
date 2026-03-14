@@ -61,9 +61,10 @@
       (option-let*
        ([active (match (system/host/string (format "ps -ef | grep ~a" experiment-script-name) ;@~a{ps -ef | grep @experiment-script-name}
        )
-                  [(regexp (pregexp @~a{(?m:^\s*\S+\s+(\d+)\s+(\S+\s+){5}/bin/bash .*@experiment-script-name (\S+) (\S+).rkt)})
+                  [(regexp (pregexp @~a{(?m:^\s*\S+\s+(\d+)\s+(\S+\s+){5}.*bash .*@experiment-script-name (\S+) (\S+).rkt)})
                            (list _ script-pid _ benchmark config-name))
                    (log-experiment-manager-debug "Happy Case")
+                   ;; we found the running experiment script
                    (list (list* benchmark
                                 config-name
                                 (if with-pid?
@@ -74,9 +75,12 @@
                                                    #:match-select cadr)
                                     empty)))]
                   [(regexp (pregexp @~a{grep[^@"\n"]+@experiment-script-name})) 
+                   ;; we only found the grep
                    (log-experiment-manager-debug "Empty Case")
                    empty]
-                  [else (log-experiment-manager-debug "Absent Case") absent])])
+                  [else
+                   ;; we didn't even find the grep for some reason
+                   (log-experiment-manager-debug "Absent Case") absent])])
 
        (match active?
          [#t active]

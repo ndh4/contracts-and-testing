@@ -19,7 +19,7 @@
 (define (ignored-path? p)
   (ormap (λ (pat) (regexp-match? pat p)) patterns-to-ignore))
 (define raco
-  (build-path (let-values ([(base name must-be-dir?) (split-path (find-system-path 'exec-file))])
+  (build-path (let-values ([(base name must-be-dir?) (split-path (simple-form-path (find-system-path 'exec-file)))])
                 base)
               "raco"))
 

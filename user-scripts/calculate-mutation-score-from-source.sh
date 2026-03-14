@@ -1,5 +1,26 @@
 #!/bin/bash
 
+show_help() {
+  echo "usage: $0 -b <bench> [-e <expmt>]" 1>&2
+  echo "  bench: name of benchmark in gtp-benchmarks" 1>&2
+  echo "  expmt: name of the experiment in sqlite database" 1>&2
+  echo "         (default value for exp is bench)" 1>&2
+  exit 1; }
+
+BENCHMARK_ARG=""
+EXPERIMENT_ARG=""
+while getopts ":hb:e:" opt; do
+  case "$opt" in
+    b) BENCHMARK_ARG=${OPTARG} ;;
+    e) EXPERIMENT_ARG=${OPTARG} ;;
+    h | *) show_help ;;
+  esac
+done
+
+if [ -z "$BENCHMARK_ARG" ]; then
+  show_help
+fi
+
 PARENT_DIR="/Users/nhejduk/Research-Local/blgt-parent"
 PROJECT_NAME="contracts-and-testing"
 PROJECT_PATH="$PARENT_DIR/$PROJECT_NAME"
@@ -8,9 +29,14 @@ RACKET="$RACKET_BASE/racket"
 RACO="$RACKET_BASE/raco"
 
 export BENCHMARKS_PATH="gtp-benchmarks/benchmarks"
-export BENCHMARK_NAME="morsecode"
-export EXPERIMENT_NAME="morsecode"
+export BENCHMARK_NAME="$BENCHMARK_ARG"
+
 # Please, no slashes or spaces in experiment-name
+if [ -z "$EXPERIMENT_ARG" ]; then
+  export EXPERIMENT_NAME="$BENCHMARK_ARG"
+else
+  export EXPERIMENT_NAME="$EXPERIMENT_ARG"
+fi
 
 SOURCE_CODE_BASE="$PARENT_DIR/$BENCHMARKS_PATH/$BENCHMARK_NAME"
 SOURCE_CODE_WITH_TESTS="$SOURCE_CODE_BASE/original"

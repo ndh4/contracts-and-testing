@@ -139,12 +139,16 @@
     (fail
      @~a{Error: Missing mandatory argument: @missing-arg}))
 
-  (define db-table-name (and (write-to-database?) experiment-name))
-
-  (when (write-to-database?)
-    (ensure-table! db-table-name))
-
   (install-configuration! (configuration-path))
+
+  ;; set up the sqlite db
+  (define conn ((configured:connect-to-db)))
+  (define db-table-name (and (write-to-database?)
+                             (benchmark->name (the-benchmark-configuration))))
+
+  ;; we don't want to write to the database during db-setup, for instance
+  (when (write-to-database?)
+    ((configured:ensure-table!) db-table-name conn))
 
   (define the-program
     (unify-program-for-running
@@ -185,20 +189,14 @@
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
   (when (write-to-database?)
-   (add-entry! db-table-name
-      #:configuration ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
-      #:module_under_test (path->string (file-name-from-path (mod-path (program-main the-program))))
-      #:test_index (test-id)
-      #:mutant_module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
-      #:mutation_index (mutation-index)
-      #:test_passed (bool->int (eq? (run-status-outcome the-run-status) 'completed))
-      #:outcome (~a (run-status-outcome the-run-status))
-      #:blamed (~a (run-status-blamed the-run-status))
-      #:errortrace_stack (~a (run-status-errortrace-stack the-run-status))
-      #:context_stack (~a (run-status-context-stack the-run-status))
-      #:result_value (~a (run-status-result-value the-run-status))
-      #:cmd_line_args (~a (current-command-line-arguments))))
-
+   ((configured:add-table-entry!) db-table-name conn
+      #:configuration (benchmark-configuration-config (the-benchmark-configuration))
+      #:module-under-test (path->string (file-name-from-path (mod-path (program-main the-program))))
+      #:test-index (test-id)
+      #:mutant-module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
+      #:mutation-index (mutation-index)
+      #:run-status the-run-status
+      #:cmd-line-args (~a (current-command-line-arguments))))
 
   (writeln the-run-status)]
 
@@ -209,19 +207,14 @@
 
 ;(printf "Mutant-module is ~a~n" (path->string (file-name-from-path (module-to-mutate))))
    (when (write-to-database?)
-      (add-entry! db-table-name
-         #:configuration ((configured:serialize-config) (benchmark-configuration-config (the-benchmark-configuration)))
-         #:module_under_test (path->string (file-name-from-path (mod-path (program-main the-program))))
-         #:test_index (test-id)
-         #:mutant_module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
-         #:mutation_index (mutation-index)
-         #:test_passed (bool->int #t)
-         #:outcome "skipped"
-         #:blamed (~a #f)
-         #:errortrace_stack (~a #f)
-         #:context_stack (~a #f)
-         #:result_value (~a #f)
-         #:cmd_line_args (~a (current-command-line-arguments))))
+      ((configured:add-table-entry!) db-table-name conn
+         #:configuration (benchmark-configuration-config (the-benchmark-configuration))
+         #:module-under-test (path->string (file-name-from-path (mod-path (program-main the-program))))
+         #:test-index (test-id)
+         #:mutant-module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
+         #:mutation-index (mutation-index)
+         #:run-status 'skipped
+         #:cmd-line-args (~a (current-command-line-arguments))))
 
    (define the-run-status
    (run-status (module-to-mutate)

@@ -117,9 +117,8 @@
 
 (define (get path)
   (unless (path-to-db? path)
-    (raise-internal-experiment-argument-error 'get
-                                              "a path-to-db?"
-                                              path))
+    (define msg (format "~a does not point to a valid db. Did you remember to generate dbs with `bex/orchestration/db-setup/[experiment].rkt`?" path))
+    (raise-experiment-user-error 'get msg))
   (read-serialized-db! path))
 
 (define (read a-db

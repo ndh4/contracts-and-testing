@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function help(){
 	echo "First argument must be project root (usually the parent of contracts-and-testing), and second must be the setup config (one of contracts-and-testing/bex/setup/*-setup-config.rkt)"
@@ -20,7 +20,7 @@ fi
 pushd "$1"
 
 printf "Installing Racket if necessary\n\n\n"
-VERSION="8.9"
+VERSION="9.0"
 if [ -d "./racket" ]; then
     echo "$(pwd)/racket already exists; skipping installing racket"
 else

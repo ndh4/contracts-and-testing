@@ -1,17 +1,22 @@
 #lang at-exp racket
 
+#;
 (require db
          racket/runtime-path)
 
+#;
 (provide ensure-table!
          add-entry!
          bool->int
          dbc)
 
+#;
 (define-runtime-path db-path "../dbs/sqlite/teco2.sqlite3")
 
+#;
 (define dbc (sqlite3-connect #:database db-path #:mode 'create))
 
+#;
 (define (ensure-table! table-name)
   (query-exec
    dbc
@@ -34,6 +39,7 @@
   )"
     table-name)))
 
+#;
 (define (add-entry! table-name
                     #:configuration configuration
                     #:module_under_test module_under_test
@@ -67,5 +73,6 @@
    result_value
    cmd_line_args))
 
+#;
 (define (bool->int b)
   (if b 1 0))

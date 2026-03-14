@@ -11,7 +11,8 @@
          bex/runner/mutation-runner-data
          bex/experiment/blame-trail-data)
 
-(define-runtime-path default-summaries-db "../../../experiment-data/dbs/code-mutations-natural-biased/type-err-summaries.rktdb")
+;; TODO SSOT DBS
+(define-runtime-path default-summaries-db "../../../experiment-data/dbs/code-mutations-natural-biased/type-err-summaries.rktdb") 
 
 (define (sample-some-trails mode-data-dir
                             #:summaries-db-path [summaries-db-path default-summaries-db]

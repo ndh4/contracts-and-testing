@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 PROJ_PATH="<<project-path>>"
 
@@ -57,9 +57,25 @@ fi
 export PLTSTDOUT='debug@factory'
 export PLTSTDERR='none'
 
+# TODO in general, I feel like all of these things should go in the
+# configurable (or passed in by the experiment manager), not hard-coded
+# in the experiment runner script
 OUTDIR=experiment-output/$OUTDIR_NAME
-DATA_DIR=$OUTDIR/data
+DB_DIR=experiment-data/dbs/$DB_DIR_NAME
+DATA_DIR=experiment-data/results/$CONFIG_NAME
+BENCHMARKS_PATH=gtp-benchmarks/benchmarks
+
+mkdir -p $OUTDIR
 mkdir -p $DATA_DIR
+
 hostname >> $OUTDIR/$BENCH.log
-./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- -b gtp-benchmarks/benchmarks/$BENCH -o $DATA_DIR -n "$CPUS" -e $OUTDIR/errs.log -l $OUTDIR/$BENCH-progress.log -c contracts-and-testing/bex/configurables/configs/$CONFIG_NAME -m $OUTDIR/$BENCH-metadata.rktd $PARITY_FLAG contracts-and-testing/bex/dbs/$DB_DIR_NAME/configuration-outcomes/$OUTDIR_NAME.rktd $KEEP_GOING_FLAG >> $OUTDIR/$BENCH.log 2>&1
+./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
+    -b "$BENCHMARKS_PATH/$BENCH" \
+    -o "$DATA_DIR" \
+    -n "$CPUS" \
+    -e "$OUTDIR/errs.log" \
+    -c "contracts-and-testing/bex/configurables/configs/$CONFIG_NAME" \
+    -m "$OUTDIR/$BENCH-metadata.rktd" \
+    -P "$DB_DIR/configuration-outcomes/$OUTDIR_NAME.rkt" \
+    $KEEP_GOING_FLAG >> $OUTDIR/$BENCH.log 2>&1
 popd > /dev/null
