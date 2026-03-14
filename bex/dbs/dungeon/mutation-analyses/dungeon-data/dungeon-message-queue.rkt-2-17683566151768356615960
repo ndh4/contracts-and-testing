@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/message-queue.rkt:33:3 (begin (set! message-queue (quote ())))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/message-queue.rkt:33:3 (begin)>
-#s(run-status "message-queue.rkt" 2 reset-message-queue! syntax-error #f #f #f #f)

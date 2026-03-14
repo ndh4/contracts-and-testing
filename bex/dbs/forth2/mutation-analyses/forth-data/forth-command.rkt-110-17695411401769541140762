@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:13 (((c (in-list E))) (if (eq? sym (get-field id c)) c #f))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:13 ((if (eq? sym (get-field id c)) c #f) ((c (in-list E))))>
-#s(run-status "command.rkt" 110 find-command syntax-error #f #f #f #f)

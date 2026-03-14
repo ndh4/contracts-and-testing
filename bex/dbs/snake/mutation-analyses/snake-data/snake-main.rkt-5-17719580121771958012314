@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:76:7 (((quasiquote (on-tick)) (world->world w)) ((quasiquote (stop-when)) (game-over? w) w))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:76:7 (((quasiquote (stop-when)) (game-over? w) w) ((quasiquote (on-tick)) (world->world w)))>
-#s(run-status "main.rkt" 5 replay completed #f #f #f #f)

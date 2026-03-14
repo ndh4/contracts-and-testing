@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:267:6 ((make-stack-command drop "Drop the top item from the stack") (make-stack-command dup "Duplicate the top item of the stack"))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:267:6 ((make-stack-command dup "Duplicate the top item of the stack") (make-stack-command drop "Drop the top item from the stack"))>
-#s(run-status "command.rkt" 24 CMD* completed #f #f #f #f)

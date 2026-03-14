@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 30 -> #f
-#s(run-status "const.rkt" 14 BOARD-WIDTH runtime-error #f ("const.rkt" "const.rkt") ("const.rkt") #f)

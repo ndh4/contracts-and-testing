@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:82:5 ((define w0 (WORLD)) (cond ((list? hist) (for ((_i (in-range LOOPS))) (replay w0 hist))) (else (error "bad input"))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:82:5 ((cond ((list? hist) (for ((_i (in-range LOOPS))) (replay w0 hist))) (else (error "bad input"))) (define w0 (WORLD)))>
-#s(run-status "main.rkt" 18 main syntax-error #f #f #f #f)

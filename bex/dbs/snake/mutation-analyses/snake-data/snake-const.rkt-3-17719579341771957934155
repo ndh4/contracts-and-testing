@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 30 -> 30.0+0.0i
-#s(run-status "const.rkt" 3 GRID-SIZE runtime-error #f ("const.rkt") ("const.rkt") #f)

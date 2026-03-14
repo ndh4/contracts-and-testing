@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:104:9 (Lam? id)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:104:9 (not (Lam? id))>
-#s(run-status "ai.rkt" 2 atom-eval completed #f #f #f #f)

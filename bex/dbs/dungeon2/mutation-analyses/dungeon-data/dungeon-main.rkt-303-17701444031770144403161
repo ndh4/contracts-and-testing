@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:242:15 ((if corridor (extension-points/room corridor) (quote ())) (extension-points/room room))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:242:15 ((extension-points/room room) (if corridor (extension-points/room corridor) (quote ())))>
-#s(run-status "main.rkt" 303 generate-dungeon completed #f #f #f #f)

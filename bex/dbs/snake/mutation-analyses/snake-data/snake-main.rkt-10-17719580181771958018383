@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "../base/snake-hist.rktd" -> #"../base/snake-hist.rktd"
-#s(run-status "main.rkt" 10 DATA runtime-error #f () ("main.rkt") #f)

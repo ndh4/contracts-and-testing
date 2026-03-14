@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "bad input" -> #"bad input"
-#s(run-status "main.rkt" 21 main completed #f #f #f #f)

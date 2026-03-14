@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:118:29 ((car E+S) (cdr E+S))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:118:29 ((cdr E+S) (car E+S))>
-#s(run-status "eval.rkt" 56 forth-eval completed #f #f #f #f)

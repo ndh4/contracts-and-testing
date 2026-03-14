@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:84:14 (command% (id (assert w symbol?)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:84:14 ((id (assert w symbol?)) command%)>
-#s(run-status "eval.rkt" 14 defn-command syntax-error #f #f #f #f)

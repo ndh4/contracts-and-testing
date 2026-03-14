@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:118:10 (pair? E+S)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:118:10 (E+S pair?)>
-#s(run-status "eval.rkt" 55 forth-eval syntax-error #f #f #f #f)

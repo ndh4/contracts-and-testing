@@ -1,2 +1,0 @@
-mutate: Mutating with arithmetic-op-swap : sub1 -> add1
-#s(run-status "streams.rkt" 27 simple-stream-take completed #f #f #f #f)

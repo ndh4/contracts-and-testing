@@ -1,2 +1,0 @@
-mutate: Mutating with comparison-op-swap : = -> <=
-#s(run-status "main.rkt" 8 sift completed #f #f #f #f)

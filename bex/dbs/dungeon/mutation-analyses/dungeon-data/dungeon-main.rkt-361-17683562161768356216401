@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:299:16 (and (counts-as-free? grid (left pos)) (counts-as-free? grid (right pos)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:299:16 (not (and (counts-as-free? grid (left pos)) (counts-as-free? grid (right pos))))>
-#s(run-status "main.rkt" 361 generate-dungeon completed #f #f #f #f)

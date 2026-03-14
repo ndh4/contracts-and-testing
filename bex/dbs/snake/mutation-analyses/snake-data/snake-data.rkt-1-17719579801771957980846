@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/data.rkt:81:10 ((= (posn-x p1) (posn-x p2)) (= (posn-y p1) (posn-y p2)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/data.rkt:81:10 ((= (posn-y p1) (posn-y p2)) (= (posn-x p1) (posn-x p2)))>
-#s(run-status "data.rkt" 1 posn=? completed #f #f #f #f)

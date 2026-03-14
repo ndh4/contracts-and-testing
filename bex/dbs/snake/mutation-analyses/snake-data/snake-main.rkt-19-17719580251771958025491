@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:84:7 (list? hist)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:84:7 (not (list? hist))>
-#s(run-status "main.rkt" 19 main runtime-error #f ("main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt") #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/utils.rkt:64:3 (begin (first (shuffle l)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/utils.rkt:64:3 (begin)>
-#s(run-status "utils.rkt" 48 random-from syntax-error #f #f #f #f)

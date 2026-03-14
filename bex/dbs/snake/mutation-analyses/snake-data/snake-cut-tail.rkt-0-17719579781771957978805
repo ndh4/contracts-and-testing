@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/cut-tail.rkt:18:3 (begin (let ((r (cdr segs))) (cond ((empty? r) empty) (else (cons (car segs) (cut-tail r))))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/cut-tail.rkt:18:3 (begin)>
-#s(run-status "cut-tail.rkt" 0 cut-tail syntax-error #f #f #f #f)

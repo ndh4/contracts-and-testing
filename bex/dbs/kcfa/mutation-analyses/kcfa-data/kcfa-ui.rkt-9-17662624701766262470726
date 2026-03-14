@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:107:19 (mono-store (Binding-var b))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:107:19 ((Binding-var b) mono-store)>
-#s(run-status "ui.rkt" 9 monovariant-store completed #f #f #f #f)

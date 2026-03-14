@@ -1,2 +1,0 @@
-mutate: Mutating with arithmetic-op-swap : * -> /
-#s(run-status "const.rkt" 20 BOARD-WIDTH-PIXELS completed #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:294:3 (begin (and (memq sym (quote (help ? ??? -help --help h))) #t))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:294:3 (begin)>
-#s(run-status "command.rkt" 116 help? syntax-error #f #f #f #f)

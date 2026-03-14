@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:60:3 (begin (cond ((equal? "right" dir) (posn (add1 (posn-x seg)) (posn-y seg))) ((equal? "left" dir) (posn (sub1 (posn-x seg)) (posn-y seg))) ((equal? "down" dir) (posn (posn-x seg) (sub1 (posn-y seg)))) (else (posn (posn-x seg) (add1 (posn-y seg))))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:60:3 (begin)>
-#s(run-status "motion-help.rkt" 0 next-head syntax-error #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:116:7 (eating? w)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:116:7 (not (eating? w))>
-#s(run-status "motion.rkt" 8 world->world blamed ("motion.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

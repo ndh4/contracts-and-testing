@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:282:22 ((format SWITCH pred-string stop-string) stop)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:282:22 (stop (format SWITCH pred-string stop-string))>
-#s(run-status "t-view.rkt" 91 manage% completed #f #f #f #f)

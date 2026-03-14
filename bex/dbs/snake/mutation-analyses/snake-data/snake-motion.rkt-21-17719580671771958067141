@@ -1,2 +1,0 @@
-mutate: Mutating with arithmetic-op-swap : add1 -> sub1
-#s(run-status "motion.rkt" 21 snake-eat completed #f #f #f #f)

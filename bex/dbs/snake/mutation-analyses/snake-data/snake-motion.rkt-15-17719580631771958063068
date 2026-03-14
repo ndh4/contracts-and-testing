@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:122:12 ((snake-change-direction (world-snake w) dir) (world-food w))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion.rkt:122:12 ((world-food w) (snake-change-direction (world-snake w) dir))>
-#s(run-status "motion.rkt" 15 world-change-dir blamed ("motion.rkt") ("handlers.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:49:5 ((assert (run-query (enable "Government")) 1) (assert (run-query (path "Airport" "Harvard Square")) 12))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:49:5 ((assert (run-query (path "Airport" "Harvard Square")) 12) (assert (run-query (enable "Government")) 1))>
-#s(run-status "main.rkt" 50 main completed #f #f #f #f)

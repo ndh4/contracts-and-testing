@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:63:3 (begin (or (<= (posn-x p) 0) (>= (posn-x p) BOARD-WIDTH) (<= (posn-y p) 0) (>= (posn-y p) BOARD-HEIGHT)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:63:3 (begin)>
-#s(run-status "collide.rkt" 1 head-collide? syntax-error #f #f #f #f)

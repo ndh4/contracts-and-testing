@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:75:15 (ke "d")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:75:15 ("d" ke)>
-#s(run-status "handlers.rkt" 17 handle-key completed #f #f #f #f)

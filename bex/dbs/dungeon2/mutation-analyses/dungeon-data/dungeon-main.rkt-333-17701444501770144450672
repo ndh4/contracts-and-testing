@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:268:9 (not (= n 0))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:268:9 (not (not (= n 0)))>
-#s(run-status "main.rkt" 333 generate-dungeon completed #f #f #f #f)

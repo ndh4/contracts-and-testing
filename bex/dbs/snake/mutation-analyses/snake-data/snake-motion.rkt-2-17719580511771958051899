@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 1324 -> -1324
-#s(run-status "motion.rkt" 2 reset! runtime-error #f ("motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

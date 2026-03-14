@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:65:3 (begin (let-values (((v S+) (stack-pop S))) (stack-push (stack-push S+ v) v)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:65:3 (begin)>
-#s(run-status "stack.rkt" 3 stack-dup syntax-error #f #f #f #f)

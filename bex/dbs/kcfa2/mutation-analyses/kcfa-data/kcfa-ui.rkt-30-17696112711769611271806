@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:122:18 (res "\n")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:122:18 ("\n" res)>
-#s(run-status "ui.rkt" 30 format-mono-store completed #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:256:12 ((displayln (show-help E (and (not (null? (cdr v))) (cdr v)))) (cons E S))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:256:12 ((cons E S) (displayln (show-help E (and (not (null? (cdr v))) (cdr v)))))>
-#s(run-status "command.rkt" 50 CMD* completed #f #f #f #f)

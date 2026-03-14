@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:155:24 ((unless (p v) (error (quote assert))) v)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:155:24 (v (unless (p v) (error (quote assert))))>
-#s(run-status "command.rkt" 2 assert completed #f #f #f #f)

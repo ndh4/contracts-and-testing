@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "Swap the first two numbers on the stack" -> #"Swap the first two numbers on the stack"
-#s(run-status "command.rkt" 77 CMD* syntax-error #f #f #f #f)

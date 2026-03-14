@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:77:21 ((game-over? w) w)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:77:21 (w (game-over? w))>
-#s(run-status "main.rkt" 8 replay blamed ("main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

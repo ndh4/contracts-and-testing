@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:117:18 ("Unrecognized command '~a'.\n" token*)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:117:18 (token* "Unrecognized command '~a'.\n")>
-#s(run-status "eval.rkt" 52 forth-eval completed #f #f #f #f)

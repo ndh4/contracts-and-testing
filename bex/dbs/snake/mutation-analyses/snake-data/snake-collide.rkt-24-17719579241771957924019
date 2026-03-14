@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:71:25 ((car (snake-segs snk)) (cdr (snake-segs snk)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:71:25 ((cdr (snake-segs snk)) (car (snake-segs snk)))>
-#s(run-status "collide.rkt" 24 snake-self-collide? runtime-error #f ("collide.rkt" "collide.rkt" "collide.rkt" "handlers.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/time.rkt:69:3 (begin (for/list ((e (in-list l)) (i (in-range n))) e))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/time.rkt:69:3 (begin)>
-#s(run-status "time.rkt" 0 take* syntax-error #f #f #f #f)

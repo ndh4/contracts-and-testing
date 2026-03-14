@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:121:22 ((for/list ((v (in-set vs))) (format "\t~S" v)) "\n")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ui.rkt:121:22 ("\n" (for/list ((v (in-set vs))) (format "\t~S" v)))>
-#s(run-status "ui.rkt" 26 format-mono-store completed #f #f #f #f)

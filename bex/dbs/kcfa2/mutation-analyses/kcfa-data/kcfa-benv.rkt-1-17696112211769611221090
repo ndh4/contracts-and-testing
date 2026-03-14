@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/benv.rkt:67:19 (benv v)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/benv.rkt:67:19 (v benv)>
-#s(run-status "benv.rkt" 1 benv-extend* completed #f #f #f #f)

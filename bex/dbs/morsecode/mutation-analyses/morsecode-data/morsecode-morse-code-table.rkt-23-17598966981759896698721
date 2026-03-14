@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : #f -> #t
-#s(run-status "morse-code-table.rkt" 23 char-table completed #f #f #f #f)

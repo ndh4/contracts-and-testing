@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:141:3 (begin (define full-path (format SOURCE-DIRECTORY line-file)) (for/list (((name line) (in-hash (lines->hash (file->lines full-path))))) (list name (rest line))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-graph.rkt:141:3 (begin (define full-path (format SOURCE-DIRECTORY line-file)))>
-#s(run-status "t-graph.rkt" 40 read-t-line-from-file syntax-error #f #f #f #f)

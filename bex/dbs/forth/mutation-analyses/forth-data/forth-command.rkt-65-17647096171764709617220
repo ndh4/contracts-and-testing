@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:261:19 (binop-command% (*))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:261:19 ((*) binop-command%)>
-#s(run-status "command.rkt" 65 CMD* syntax-error #f #f #f #f)

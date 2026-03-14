@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:65:13 ((posn-x p) BOARD-WIDTH)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:65:13 (BOARD-WIDTH (posn-x p))>
-#s(run-status "collide.rkt" 11 head-collide? completed #f #f #f #f)

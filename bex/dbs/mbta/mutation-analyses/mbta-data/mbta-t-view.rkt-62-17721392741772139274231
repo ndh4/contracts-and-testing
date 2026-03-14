@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:243:16 (station-or-comment ((quasiquote ((unquote name) (unquote line))) (string-append name ", take " (send mbta-subways render line))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:243:16 (((quasiquote ((unquote name) (unquote line))) (string-append name ", take " (send mbta-subways render line))) station-or-comment)>
-#s(run-status "t-view.rkt" 62 manage% syntax-error #f #f #f #f)

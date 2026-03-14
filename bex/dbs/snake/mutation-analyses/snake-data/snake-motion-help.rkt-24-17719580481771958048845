@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:77:14 ((next-head (car (snake-segs snk)) d) (snake-segs snk))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:77:14 ((snake-segs snk) (next-head (car (snake-segs snk)) d))>
-#s(run-status "motion-help.rkt" 24 snake-grow blamed ("motion-help.rkt") ("motion.rkt" "motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("motion.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

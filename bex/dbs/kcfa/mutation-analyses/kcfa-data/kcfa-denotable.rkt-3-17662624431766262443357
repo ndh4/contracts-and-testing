@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:113:3 (begin (define (update-lam d) (d-join d value)) (hash-update store addr update-lam (lambda () d-bot)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:113:3 (begin (define (update-lam d) (d-join d value)))>
-#s(run-status "denotable.rkt" 3 store-update syntax-error #f #f #f #f)

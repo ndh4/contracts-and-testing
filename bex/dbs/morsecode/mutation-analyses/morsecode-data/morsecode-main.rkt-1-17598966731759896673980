@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "./../base/frequency-small.rktd" -> #"./../base/frequency-small.rktd"
-#s(run-status "main.rkt" 1 word-frequency-list-small runtime-error #f ("main.rkt" "main.rkt") ("main.rkt" "main.rkt") #f)

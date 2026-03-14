@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 11 -> 0
-#s(run-status "main.rkt" 178 new-room completed #f #f #f #f)

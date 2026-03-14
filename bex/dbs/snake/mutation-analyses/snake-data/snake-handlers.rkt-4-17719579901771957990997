@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:75:7 (equal? ke "d")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:75:7 (not (equal? ke "d"))>
-#s(run-status "handlers.rkt" 4 handle-key blamed ("handlers.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt" "main.rkt") #f)

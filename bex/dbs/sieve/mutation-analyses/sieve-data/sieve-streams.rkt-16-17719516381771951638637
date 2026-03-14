@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/streams.rkt:84:3 (begin (cond ((= n 0) (quote ())) (else (define-values (hd tl) (simple-stream-unfold st)) (cons hd (simple-stream-take tl (sub1 n))))))> -> #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/streams.rkt:84:3 (begin)>
-#s(run-status "streams.rkt" 16 simple-stream-take syntax-error #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "Divide the top item of the stack by the second item." -> #"Divide the top item of the stack by the second item."
-#s(run-status "command.rkt" 69 CMD* completed #f #f #f #f)

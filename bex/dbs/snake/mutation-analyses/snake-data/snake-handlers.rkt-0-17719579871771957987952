@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:70:3 (begin (cond ((equal? ke "w") (world-change-dir w "up")) ((equal? ke "s") (world-change-dir w "down")) ((equal? ke "a") (world-change-dir w "left")) ((equal? ke "d") (world-change-dir w "right")) (else w)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/handlers.rkt:70:3 (begin)>
-#s(run-status "handlers.rkt" 0 handle-key syntax-error #f #f #f #f)

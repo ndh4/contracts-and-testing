@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:31:3 (begin (define num-result (length (string-split result "\n"))) (unless (= num-result expected-length) (error (format "Expected ~a results, got ~a\nFull list:~a" expected-length num-result result))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/main.rkt:31:3 (begin (define num-result (length (string-split result "\n"))))>
-#s(run-status "main.rkt" 27 assert syntax-error #f #f #f #f)

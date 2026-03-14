@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:63:7 (equal? "left" dir)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:63:7 (not (equal? "left" dir))>
-#s(run-status "motion-help.rkt" 2 next-head completed #f #f #f #f)

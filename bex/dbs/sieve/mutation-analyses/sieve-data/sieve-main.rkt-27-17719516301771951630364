@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 2 -> #f
-#s(run-status "main.rkt" 27 primes runtime-error #f ("main.rkt" "main.rkt" "streams.rkt" "streams.rkt" "main.rkt" "main.rkt") ("main.rkt" "streams.rkt" "main.rkt" "main.rkt") #f)

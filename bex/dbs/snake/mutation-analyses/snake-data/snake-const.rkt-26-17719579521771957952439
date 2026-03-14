@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 2 -> 2.0+0.0i
-#s(run-status "const.rkt" 26 SEGMENT-RADIUS completed #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:312:23 ((is-a? c empty-cell%) (is-a? c door%))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:312:23 ((is-a? c door%) (is-a? c empty-cell%))>
-#s(run-status "main.rkt" 385 counts-as-free? completed #f #f #f #f)

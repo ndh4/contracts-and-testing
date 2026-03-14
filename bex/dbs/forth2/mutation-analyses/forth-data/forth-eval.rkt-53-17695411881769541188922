@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "Unrecognized command '~a'.\n" -> #"Unrecognized command '~a'.\n"
-#s(run-status "eval.rkt" 53 forth-eval completed #f #f #f #f)

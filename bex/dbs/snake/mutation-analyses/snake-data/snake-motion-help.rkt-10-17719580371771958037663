@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:63:33 ((sub1 (posn-x seg)) (posn-y seg))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:63:33 ((posn-y seg) (sub1 (posn-x seg)))>
-#s(run-status "motion-help.rkt" 10 next-head completed #f #f #f #f)

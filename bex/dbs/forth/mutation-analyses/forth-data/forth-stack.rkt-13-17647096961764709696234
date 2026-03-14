@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "empty stack" -> #"empty stack"
-#s(run-status "stack.rkt" 13 stack-pop completed #f #f #f #f)

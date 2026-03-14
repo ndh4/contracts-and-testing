@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:70:3 (begin (segs-self-collide? (car (snake-segs snk)) (cdr (snake-segs snk))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:70:3 (begin)>
-#s(run-status "collide.rkt" 23 snake-self-collide? syntax-error #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:81:3 (begin (define w0 (WORLD)) (cond ((list? hist) (for ((_i (in-range LOOPS))) (replay w0 hist))) (else (error "bad input"))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/main.rkt:81:3 (begin (define w0 (WORLD)))>
-#s(run-status "main.rkt" 17 main syntax-error #f #f #f #f)

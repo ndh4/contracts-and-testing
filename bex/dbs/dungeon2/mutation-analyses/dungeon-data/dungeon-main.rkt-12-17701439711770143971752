@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 18 -> -18
-#s(run-status "main.rkt" 12 dungeon-height completed #f #f #f #f)

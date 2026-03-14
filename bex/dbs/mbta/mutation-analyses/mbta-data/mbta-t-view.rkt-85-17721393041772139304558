@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:279:15 (proper-subset? stop-lines pred-lines)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/mbta/unified/t-view.rkt:279:15 (not (proper-subset? stop-lines pred-lines))>
-#s(run-status "t-view.rkt" 85 manage% completed #f #f #f #f)

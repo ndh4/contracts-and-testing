@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:267:26 (drop "Drop the top item from the stack")> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:267:26 ("Drop the top item from the stack" drop)>
-#s(run-status "command.rkt" 70 CMD* syntax-error #f #f #f #f)

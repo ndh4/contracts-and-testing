@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:62:3 (begin (head-collide? (car (snake-segs snk))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/collide.rkt:62:3 (begin)>
-#s(run-status "collide.rkt" 0 snake-wall-collide? syntax-error #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 0 -> 1
-#s(run-status "grid.rkt" 71 grid-ref completed #f #f #f #f)

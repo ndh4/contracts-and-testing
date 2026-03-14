@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/streams.rkt:89:13 (hd (simple-stream-take tl (sub1 n)))> -> #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/sieve/unified/streams.rkt:89:13 ((simple-stream-take tl (sub1 n)) hd)>
-#s(run-status "streams.rkt" 25 simple-stream-take completed #f #f #f #f)

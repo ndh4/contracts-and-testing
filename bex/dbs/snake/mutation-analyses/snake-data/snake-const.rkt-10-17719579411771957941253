@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 30 -> -30
-#s(run-status "const.rkt" 10 BOARD-WIDTH blamed ("const.rkt") () ("const.rkt") #f)

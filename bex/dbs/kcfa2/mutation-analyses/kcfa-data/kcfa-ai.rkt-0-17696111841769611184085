@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:100:3 (begin (λ (id) (cond ((Ref? id) (store-lookup store (benv-lookup benv (Ref-var id)))) ((Lam? id) (set (Closure id benv))) (else (error "atom-eval got a plain Exp")))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:100:3 (begin)>
-#s(run-status "ai.rkt" 0 atom-eval syntax-error #f #f #f #f)

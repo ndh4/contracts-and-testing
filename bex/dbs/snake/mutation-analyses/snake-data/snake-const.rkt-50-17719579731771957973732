@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 8 -> #f
-#s(run-status "const.rkt" 50 WORLD blamed ("const.rkt") ("main.rkt" "main.rkt" "main.rkt") ("main.rkt" "main.rkt" "main.rkt") #f)

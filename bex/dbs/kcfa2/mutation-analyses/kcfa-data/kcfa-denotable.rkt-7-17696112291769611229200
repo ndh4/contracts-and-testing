@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:115:29 (update-lam (lambda () d-bot))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:115:29 ((lambda () d-bot) update-lam)>
-#s(run-status "denotable.rkt" 7 store-update completed #f #f #f #f)

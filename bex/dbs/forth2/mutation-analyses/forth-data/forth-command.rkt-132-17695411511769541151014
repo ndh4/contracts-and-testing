@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:296:3 (begin (match v (#f (string-join (for/list ((c (in-list E))) (format "    ~a : ~a" (get-field id c) (get-field descr c))) "\n" #:before-first "Available commands:\n")) ((or (list (? symbol? s)) (? symbol? s)) (define c (find-command E (assert s symbol?)...> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:296:3 (begin)>
-#s(run-status "command.rkt" 132 show-help syntax-error #f #f #f #f)

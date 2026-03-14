@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:291:34 (sym (quote (exit quit q leave bye)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:291:34 ((quote (exit quit q leave bye)) sym)>
-#s(run-status "command.rkt" 104 exit? completed #f #f #f #f)

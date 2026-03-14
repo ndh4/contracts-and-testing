@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:73:3 (begin (let ((d (snake-dir snk))) (snake d (cons (next-head (car (snake-segs snk)) d) (snake-segs snk)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/snake/unified/motion-help.rkt:73:3 (begin)>
-#s(run-status "motion-help.rkt" 22 snake-grow syntax-error #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:165:36 ((list? x) (not (null? x)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:165:36 ((not (null? x)) (list? x))>
-#s(run-status "command.rkt" 5 singleton-list? completed #f #f #f #f)
