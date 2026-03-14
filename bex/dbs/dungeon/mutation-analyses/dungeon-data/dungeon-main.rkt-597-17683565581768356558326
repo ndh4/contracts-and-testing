@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:387:13 (force fr)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:387:13 (not (force fr))>
+#s(run-status "main.rkt" 597 smooth-single-wall completed #f #f #f #f)

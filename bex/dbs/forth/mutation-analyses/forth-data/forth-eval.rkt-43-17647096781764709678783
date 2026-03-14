@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:115:14 (((c (in-list E))) ((get-field exec c) E S token*))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:115:14 (((get-field exec c) E S token*) ((c (in-list E))))>
+#s(run-status "eval.rkt" 43 forth-eval syntax-error #f #f #f #f)

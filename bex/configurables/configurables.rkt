@@ -115,6 +115,18 @@
                                             #:parameters [root-config-filter]))
 
 (define-configurable
+  sql-data-collection
+  #:provides [ensure-db!
+              connect-to-db
+              ensure-table!
+              add-table-entry!]
+  (define-implementation test-and-mutant-db
+    #:module "sql-data-collection/test-and-mutant-db.rkt"
+    #:parameters [db-path])
+  (define-implementation dont-collect
+    #:module "sql-data-collection/dont-collect.rkt"))
+
+(define-configurable
  configurations
  #:provides [serialize-config
              deserialize-config

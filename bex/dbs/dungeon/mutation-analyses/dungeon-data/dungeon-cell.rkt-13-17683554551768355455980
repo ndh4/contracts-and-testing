@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:103:3 (begin (dict-set! chars->cell%s char c%))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:103:3 (begin)>
+#s(run-status "cell.rkt" 13 register-cell-type! syntax-error #f #f #f #f)

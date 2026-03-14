@@ -1,0 +1,2 @@
+#hash((data-directory . "mutant-samples.rktdb-data")
+      (map . #hash(("morsecode" . "0"))))

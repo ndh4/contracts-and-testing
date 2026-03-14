@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:279:48 (E (stack-push S n))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:279:48 ((stack-push S n) E)>
+#s(run-status "command.rkt" 85 CMD* completed #f #f #f #f)

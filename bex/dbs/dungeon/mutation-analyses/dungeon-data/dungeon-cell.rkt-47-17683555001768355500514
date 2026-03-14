@@ -1,0 +1,2 @@
+mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:187:12 #t> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/cell.rkt:187:12 (not #t)>
+#s(run-status "cell.rkt" 47 horizontal-door% completed #f #f #f #f)

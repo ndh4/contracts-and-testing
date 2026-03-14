@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:117:6 ((#f (printf "Unrecognized command '~a'.\n" token*) (values E S)) ((? pair? E+S) (values (car E+S) (cdr E+S))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:117:6 (((? pair? E+S) (values (car E+S) (cdr E+S))) (#f (printf "Unrecognized command '~a'.\n" token*) (values E S)))>
+#s(run-status "eval.rkt" 42 forth-eval completed #f #f #f #f)

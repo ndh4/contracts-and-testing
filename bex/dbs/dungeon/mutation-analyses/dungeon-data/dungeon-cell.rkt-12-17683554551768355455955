@@ -1,0 +1,2 @@
+mutate: Mutating with constant-swap : "Can't close that." -> #"Can't close that."
+#s(run-status "cell.rkt" 12 cell% completed #f #f #f #f)

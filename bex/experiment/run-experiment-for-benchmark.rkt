@@ -2,7 +2,8 @@
 
 (define-runtime-paths
   [mutant-factory.rkt "mutant-factory.rkt"]
-  [configuration-outcomes-dir "../dbs/code-mutations/configuration-outcomes"]
+  ;; TODO SSOT DBS
+  [configuration-outcomes-dir "../../../experiment-data/dbs/code-mutations/configuration-outcomes"] ;; TODO SSOT DBS
   [default-benchmarks-dir "../../gtp-benchmarks/benchmarks"]
   [default-configs-dir "../configurables/configs"]
   [default-output-dir "../../experiment-output"])
@@ -11,6 +12,7 @@
 (define default-log-level "info")
 (define default-parity-check-mode "check")
 
+#;
 (main
  #:arguments ([(hash-table ['benchmark-name       benchmark-name]
                            ['config-name          config-name]

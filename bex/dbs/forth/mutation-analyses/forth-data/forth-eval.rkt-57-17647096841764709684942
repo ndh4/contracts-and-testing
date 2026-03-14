@@ -1,0 +1,2 @@
+mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:119:3 (begin (for/list ((word (in-list (string-split str)))) (define n (string->number word)) (or n (string->symbol (string-downcase word)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:119:3 (begin)>
+#s(run-status "eval.rkt" 57 forth-tokenize syntax-error #f #f #f #f)

@@ -1,9 +1,11 @@
 #lang at-exp rscript
 
-(require "../configurables/configurables.rkt"
+(require db
+         "../configurables/configurables.rkt"
          (submod "../experiment/mutant-factory.rkt" test)
          "../experiment/mutant-factory-data.rkt"
          "../configurations/configure-benchmark.rkt"
+         "tests.rkt"
          "mutant-util.rkt"
          "option.rkt")
 
@@ -46,16 +48,46 @@
     [else
      (fail-thunk)]))
 
-(define (all-mutants-for bench)
+(struct mutant*test (mutant test-mod test-id))
+
+(define (all-mutant*tests-for bench)
   (define select-mutants (configured:select-mutants))
   (for*/list ([module-to-mutate-name (in-list (benchmark->mutatable-modules bench))]
-              [mutation-index (select-mutants module-to-mutate-name bench)])
-    (mutant module-to-mutate-name mutation-index #t)))
+              [mutation-index (select-mutants module-to-mutate-name bench)]
+              [module-under-test-name (in-list (benchmark->testable-modules bench))]
+              [test-index (get-all-test-ids module-under-test-name bench)])
+    (mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
 
+#;
 (define (check-progress-percentage progress-log-path all-mutants)
   (define progress (file->list progress-log-path))
   (/ (length progress)
+     ;; TODO what is sample size?
      (* (sample-size) (length all-mutants))))
+
+;; Query the number of rows in a sqlite table (0 if the table does not exist)
+(define/contract (num-rows dbc table-name)
+  (connection? string? . -> . natural-number/c)
+  (if (table-exists? dbc table-name)
+      (query-value
+       dbc
+       (format
+        "SELECT COUNT(*) FROM ~a"
+        table-name))
+      0))
+
+;; FIXME this will break if dbc is not a connection. A better approach would be
+;; have a db setup function that returns a set of functions to modify the db,
+;; but never actually hand the user control of the db
+(define/contract (check-progress-percentage/dbc dbc bench-name all-mutant*tests)
+  (connection? string? (listof mutant*test?) . -> . (and/c real? positive? (<=/c 1)))
+  ;; GROSS HACK there should really be a global enumeration of the configs that
+  ;; will run for a given experiment. As it stands, adding a config in
+  ;; experiment-manager does not get reflected here, so we will get progress
+  ;; values greater than 1
+  (define configs '(none max))
+  (/ (num-rows dbc bench-name)
+     (* (length all-mutant*tests) (length configs))))
 
 (define (progress-bar-string % #:width width)
   (define head-pos (inexact->exact (round (* % width))))
@@ -96,6 +128,8 @@
                'log-name
                ("Explicitly provide the log file name. (one per benchmark-dir)")
                #:collect {"path" cons empty}]
+              ;; Benchmark directories in experiment-output. Need log in
+              ;; directory to infer configuration
               #:args benchmark-dirs}
  #:check [(andmap path-to-existant-directory? benchmark-dirs)
           @~a{Unable to find @(filter-not path-to-existant-directory? benchmark-dirs)}]
@@ -148,9 +182,9 @@
                                                              (simple-form-path config-path))
                              })))]
 
-       [all-mutants (all-mutants-for bench)]
+       [all-mutant*tests (all-mutant*tests-for bench)]
 
-       [progress-log-path
+       #;[progress-log-path
         (guess-path (path-replace-extension log-path "-progress.log")
                     #:fail-thunk
                     (λ (path)
@@ -160,14 +194,13 @@
                            'guess-path
                            @~a{Unable to infer progress log path. Guessed: @path}))))])
 
+      (define dbc ((configured:connect-to-db)))
       (cond [watch-mode?
              (define period 5)
              (define start-time (current-inexact-milliseconds))
-             (define start-% (check-progress-percentage progress-log-path
-                                                        all-mutants))
+             (define start-% (check-progress-percentage/dbc dbc (benchmark->name bench) all-mutant*tests))
              (let loop ()
-               (define % (check-progress-percentage progress-log-path
-                                                    all-mutants))
+               (define % (check-progress-percentage/dbc dbc (benchmark->name bench) all-mutant*tests))
                (define pretty-%
                  (truncate-string-to (~a (* (/ (truncate (* % 1000)) 1000.0) 100))
                                      4))
@@ -195,8 +228,7 @@
                  (sleep period)
                  (loop)))]
             [else
-             (define % (exact->inexact (check-progress-percentage progress-log-path
-                                                                  all-mutants)))
+             (define % (exact->inexact (check-progress-percentage/dbc dbc (benchmark->name bench) all-mutant*tests)))
              (if readable-output?
                  %
                  (displayln %))]))))

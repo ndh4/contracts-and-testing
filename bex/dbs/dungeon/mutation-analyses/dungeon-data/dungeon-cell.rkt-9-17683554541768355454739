@@ -1,0 +1,2 @@
+mutate: Mutating with class:publicity : define/public -> define/private
+#s(run-status "cell.rkt" 9 cell% runtime-error #f ("cell.rkt") ("cell.rkt") #f)

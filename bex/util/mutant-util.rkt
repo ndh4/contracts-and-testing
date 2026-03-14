@@ -121,6 +121,7 @@
                                  #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
                                  #:save-output output-path
 
+                                 #:write-to-sql? write-to-sql?
                                  #:write-modules-to dump-dir-path
                                  #:force-module-write? force-module-write?)]
     [else

@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:120:20 (store a)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/denotable.rkt:120:20 (a store)>
+#s(run-status "denotable.rkt" 9 store-update* completed #f #f #f #f)

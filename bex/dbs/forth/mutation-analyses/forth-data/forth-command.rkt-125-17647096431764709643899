@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:28 ((memq sym (quote (show print pp ls stack))) #t)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:293:28 (#t (memq sym (quote (show print pp ls stack))))>
+#s(run-status "command.rkt" 125 show? completed #f #f #f #f)

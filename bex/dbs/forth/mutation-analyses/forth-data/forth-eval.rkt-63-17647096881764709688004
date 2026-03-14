@@ -1,0 +1,2 @@
+mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:128:42 ((list? (car v*)) (null? (cdr v*)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:128:42 ((null? (cdr v*)) (list? (car v*)))>
+#s(run-status "eval.rkt" 63 de-nest completed #f #f #f #f)

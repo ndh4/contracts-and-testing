@@ -1,0 +1,2 @@
+mutate: Mutating with boolean-op-swap : and -> or
+#s(run-status "morse-code-table.rkt" 30 char-table completed #f #f #f #f)
