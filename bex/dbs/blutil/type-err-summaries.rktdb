@@ -1,3 +1,0 @@
-#hash((data-directory . "type-err-summaries.rktdb-data")
-      (map . #hash(("forth" . "0")
-                   ("dungeon" . "1"))))

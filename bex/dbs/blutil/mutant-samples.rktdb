@@ -1,3 +1,0 @@
-#hash((data-directory . "mutant-samples.rktdb-data")
-      (map . #hash(("forth" . "0")
-                   ("dungeon" . "1"))))

@@ -66,20 +66,31 @@
     (define name (file-name-from-path src-file))
     (when name
       (into-records src-file (path-replace-extension (build-path test-dir name) ".rktd"))
-      (replace-word-in-file src-file
-                            (build-path nontest-dir name)
-                            "(module+ test"
-                            "#;(module+ test"))))
+      (comment-out src-file
+                   (build-path nontest-dir name)
+                   (lambda (sexp)
+                     (match sexp
+                       [`(module+ test
+                           ,_ ...)
+                        #t]
+                       [else #f]))))))
 
-(define (replace-word-in-file input-file output-file old-word new-word)
-  (with-input-from-file
-   input-file
-   (lambda ()
-     (with-output-to-file output-file
-                          #:exists 'replace
-                          (lambda ()
-                            (for ([line (in-lines)])
-                              (displayln (string-replace line old-word new-word))))))))
+(define (comment-out input-file output-file comment-it?)
+  (displayln input-file)
+  (displayln output-file)
+  (with-input-from-file input-file
+                        (lambda ()
+                          (with-output-to-file output-file
+                                               #:exists 'replace
+                                               (lambda ()
+                                                 (displayln (read-line)) ;hashlang
+                                                 (newline)
+                                                 (define all-exprs (port->list))
+                                                 (for ([expression all-exprs])
+                                                   (when (comment-it? expression)
+                                                     (display "#;"))
+                                                   (pretty-write expression)
+                                                   (newline)))))))
 
 (module+ main
   (require racket/cmdline)
