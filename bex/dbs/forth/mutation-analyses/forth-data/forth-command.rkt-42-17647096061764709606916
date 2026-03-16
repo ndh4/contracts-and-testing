@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "Print help information" -> #"Print help information"
-#s(run-status "command.rkt" 42 CMD* completed #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/morsecode/unified/main.rkt:23:6 (((current-pseudo-random-generator (make-pseudo-random-generator))) (random-seed 42))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/morsecode/unified/main.rkt:23:6 ((random-seed 42) ((current-pseudo-random-generator (make-pseudo-random-generator))))>
-#s(run-status "main.rkt" 5 words-smaller syntax-error #f #f #f #f)

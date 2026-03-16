@@ -1,2 +1,0 @@
-mutate: Mutating with boolean-op-swap : or -> and
-#s(run-status "levenshtein.rkt" 18 vector-levenshtein/predicate/get-scratch completed #f #f #f #f)

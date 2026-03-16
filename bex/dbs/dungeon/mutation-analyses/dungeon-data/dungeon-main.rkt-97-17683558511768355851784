@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:148:16 (c (or (is-a? c void-cell%) (is-a? c wall%)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:148:16 ((or (is-a? c void-cell%) (is-a? c wall%)) c)>
-#s(run-status "main.rkt" 97 try-add-rectangle completed #f #f #f #f)

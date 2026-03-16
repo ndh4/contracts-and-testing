@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:59:3 (begin (for/fold ((S (stack-init))) ((x (in-list (reverse xs)))) (stack-push S x)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:59:3 (begin)>
-#s(run-status "stack.rkt" 0 list->stack syntax-error #f #f #f #f)

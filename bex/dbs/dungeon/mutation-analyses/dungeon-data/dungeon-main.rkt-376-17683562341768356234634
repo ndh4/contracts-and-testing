@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:307:3 (begin (cond ((hash-ref free-cache pos #f) => (lambda (x) x)) (else (define c (grid-ref grid pos)) (define res (or (is-a? c empty-cell%) (is-a? c door%))) (hash-set! free-cache pos res) res)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:307:3 (begin)>
-#s(run-status "main.rkt" 376 counts-as-free? syntax-error #f #f #f #f)

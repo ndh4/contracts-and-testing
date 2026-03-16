@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:132:7 ((define procs ((atom-eval benv store) f)) (define params (map (atom-eval benv store) args)))> -> #<syntax:/Users/nhejduk/Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:132:7 ((define params (map (atom-eval benv store) args)) (define procs ((atom-eval benv store) f)))>
-#s(run-status "ai.rkt" 14 next completed #f #f #f #f)

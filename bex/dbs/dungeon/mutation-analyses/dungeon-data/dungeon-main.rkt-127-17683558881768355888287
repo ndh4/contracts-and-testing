@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:154:14 (#t (dict-set poss->cells p wall%))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:154:14 ((dict-set poss->cells p wall%) #t)>
-#s(run-status "main.rkt" 127 try-add-rectangle completed #f #f #f #f)

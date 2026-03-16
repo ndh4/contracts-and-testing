@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : #f -> #t
-#s(run-status "main.rkt" 457 smooth-single-wall completed #f #f #f #f)

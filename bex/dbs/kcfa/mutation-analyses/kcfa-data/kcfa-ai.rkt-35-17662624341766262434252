@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:153:16 ((set-add seen st0) (append (set->list succs) (cdr todo)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:153:16 ((append (set->list succs) (cdr todo)) (set-add seen st0))>
-#s(run-status "ai.rkt" 35 explore completed #f #f #f #f)

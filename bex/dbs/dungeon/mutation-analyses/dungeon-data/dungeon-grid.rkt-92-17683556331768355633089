@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 1 -> 1.0+0.0i
-#s(run-status "grid.rkt" 92 left completed #f #f #f #f)

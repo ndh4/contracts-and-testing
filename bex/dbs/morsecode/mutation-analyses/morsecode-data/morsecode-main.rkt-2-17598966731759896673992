@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/morsecode/unified/main.rkt:16:3 (begin (define words+freqs (file->value (string->path filename))) (for/list ((word+freq words+freqs)) (car word+freq)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/morsecode/unified/main.rkt:16:3 (begin (for/list ((word+freq words+freqs)) (car word+freq)))>
-#s(run-status "main.rkt" 2 file->words syntax-error #f #f #f #f)

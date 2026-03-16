@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : #f -> #t
-#s(run-status "cell.rkt" 43 other-vertical-door% runtime-error #f ("cell.rkt") ("cell.rkt") #f)

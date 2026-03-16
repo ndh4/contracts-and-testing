@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "~a:\n~a" -> #"~a:\n~a"
-#s(run-status "ui.rkt" 25 format-mono-store completed #f #f #f #f)

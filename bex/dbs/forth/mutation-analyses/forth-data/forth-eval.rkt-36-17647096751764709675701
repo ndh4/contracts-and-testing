@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:107:12 ((null? token*) (not (list? e)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:107:12 ((not (list? e)) (null? token*))>
-#s(run-status "eval.rkt" 36 forth-eval* completed #f #f #f #f)
