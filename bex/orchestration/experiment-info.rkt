@@ -7,6 +7,30 @@
 
 (struct orchestration-config (dbs-dir dbs-dir-name download-dir setup-config))
 
+(define experiment-benchmarks '("abm_test"
+                                #;"dungeon"
+                                #;"forth"
+                                #;"kcfa"
+                                #;"mbta"
+                                #;"morsecode"
+                                #;"sieve"
+                                #;"snake"
+                                #;"telegram"
+                                #;"bazaar"
+                                #;"quirkle"
+                                #;"ticket"))
+
+(define-syntax-rule (define-twice name value)
+  (begin
+    (define name value)
+    (define-for-syntax name value)))
+
+(define-twice experiment-name "abm_test")
+
+(unless (and (= (length experiment-benchmarks) 1)
+                (equal? (first experiment-benchmarks) experiment-name))
+    (error "Experiment name does not match benchmark name:" experiment-name experiment-benchmarks))
+
 ;; dbs (data for running experiment)
 (define-runtime-path dbs:icfp "../../../experiment-data/dbs/code-mutations-icfp")
 (define-runtime-path dbs:natural-biased "../../../experiment-data/dbs/code-mutations-natural-biased")
@@ -16,7 +40,7 @@
                      "../../../experiment-data/dbs/code-mutations-erasure-biased-thesis")
 (define-runtime-path dbs:type-api-mutations "../../../experiment-data/dbs/type-api-mutations")
 (define-runtime-path dbs:blutil "../../../experiment-data/dbs/teco")
-(define-runtime-path dbs:teco "../../../experiment-data/dbs/teco")
+(define-runtime-path dbs:teco (format "../../../experiment-data/dbs/~a" experiment-name))
 
 ;; data (experiment results)
 (define-runtime-path data:natural-biased
@@ -27,7 +51,7 @@
 (define-runtime-path data:blgt-erasure-biased-thesis
                      "../../../experiment-data/results/code-mutations-erasure-biased-thesis")
 (define-runtime-path data:blutil "../../../experiment-data/results/blutil")
-(define-runtime-path data:teco "../../../experiment-data/results/teco")
+(define-runtime-path data:teco (format "../../../experiment-data/results/~a" experiment-name))
 
 ;; setup scripts
 (define setup:bltym "bltym-setup-config.rkt")
@@ -53,24 +77,12 @@
                         data:blgt-erasure-biased-thesis
                         setup:blgt))
 (define blutil (orchestration-config dbs:blutil "blutil" data:blutil setup:blutil))
-(define teco (orchestration-config dbs:teco "teco" data:teco setup:teco))
+(define teco (orchestration-config dbs:teco experiment-name data:teco setup:teco))
+(define orch-config teco)
 
 ;; All configs share the same benchmarks directory
 (define-runtime-path benchmarks-dir "../../../gtp-benchmarks/benchmarks/")
 
 (define scenario-samples-per-mutant 100)
-
-(define experiment-benchmarks '("abm_test"
-                                "dungeon"
-                                "forth"
-                                "kcfa"
-                                "mbta"
-                                "morsecode"
-                                "sieve"
-                                "snake"
-                                #;"telegram"
-                                #;"bazaar"
-                                #;"quirkle"
-                                #;"ticket"))
 
 (define experiment-modes '("teco-prime"))

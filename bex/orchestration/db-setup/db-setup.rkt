@@ -4,7 +4,9 @@
 
 (require (only-in "../experiment-info.rkt"
                   experiment-benchmarks
-                  benchmarks-dir)
+                  benchmarks-dir
+                  orchestration-config-dbs-dir
+                  orch-config)
          file/glob
          syntax/parse/define)
 
@@ -236,7 +238,7 @@
   (cond [viz-only? (viz!)]
         [else
          (rebuild!)
-         (displayln "Analyzing mutation...")
+         (displayln "Analyzing mutations...")
          (define progress-logs
            (analyze-mutation/all-benchmarks! outdir
                                              mutation-analysis-config
@@ -318,7 +320,7 @@
      #:arguments ([(hash-table ['no-viz? no-viz?]
                                ['viz-only? viz-only?]
                                _ (... ...))
-                   (list outdir)]
+                   (list)]
                   #:once-each
                   [("-j" "--cpus")
                    'cpus
@@ -334,8 +336,7 @@
                    'viz-only?
                    "Only generate visualizations."
                    #:record
-                   #:conflicts '(no-viz?)]
-                  #:args [outdir])
+                   #:conflicts '(no-viz?)])
      #:check [(natural? (cpus))
               @~a{CPUs must be a natural number.}]
 
@@ -344,7 +345,7 @@
      (setup-all-dbs! (equal? mutation-analysis-error-type 'any-error)
                      search-for-interesting-scenarios?
                      mutants-to-sample-per-benchmark
-                     outdir
+                     (orchestration-config-dbs-dir orch-config)
                      (cond [no-viz? 'no-viz]
                            [viz-only? 'viz-only]
                            [else 'normal])

@@ -1,6 +1,7 @@
 #lang racket
 
-(require "read-module.rkt")
+(require "read-module.rkt"
+         "../orchestration/experiment-info.rkt")
 
 (provide (struct-out target-file)
          (struct-out context)
@@ -76,8 +77,6 @@
                        [else #f]))))))
 
 (define (comment-out input-file output-file comment-it?)
-  (displayln input-file)
-  (displayln output-file)
   (with-input-from-file input-file
                         (lambda ()
                           (with-output-to-file output-file
@@ -93,15 +92,10 @@
                                                    (newline)))))))
 
 (module+ main
-  (require racket/cmdline)
-  (define source-dir (make-parameter #f))
-  (define dest-dir (make-parameter #f))
-  (define test-dir (make-parameter #f))
-  (command-line #:once-each
-                [("--source") path "Path to source directory. Mandatory." (source-dir path)]
-                [("--test-dir") path "Path to test directory. Mandatory." (test-dir path)]
-                [("--untyped-dest-dir")
-                 path
-                 "Path to source code destination directory. Mandatory."
-                 (dest-dir path)])
-  (split-up-code (source-dir) (test-dir) (dest-dir)))
+  (for ([name experiment-benchmarks])
+    (define (make-bm-path subdir)
+      (build-path benchmarks-dir name subdir))
+    (define source-dir (make-bm-path "original"))
+    (define test-dir (make-bm-path "tests"))
+    (define dest-dir (make-bm-path "untyped"))
+    (split-up-code source-dir test-dir dest-dir)))
