@@ -39,8 +39,8 @@
 (define-runtime-path dbs:blgt-erasure-biased-thesis
                      "../../../experiment-data/dbs/code-mutations-erasure-biased-thesis")
 (define-runtime-path dbs:type-api-mutations "../../../experiment-data/dbs/type-api-mutations")
-(define-runtime-path dbs:blutil "../../../experiment-data/dbs/teco")
-(define-runtime-path dbs:teco (format "../../../experiment-data/dbs/~a" experiment-name))
+(define-runtime-path dbs:blutil "../../../experiment-data/dbs/blutil")
+(define-runtime-path dbs:current-experiment (format "../../../experiment-data/dbs/~a" experiment-name))
 
 ;; data (experiment results)
 (define-runtime-path data:natural-biased
@@ -51,7 +51,7 @@
 (define-runtime-path data:blgt-erasure-biased-thesis
                      "../../../experiment-data/results/code-mutations-erasure-biased-thesis")
 (define-runtime-path data:blutil "../../../experiment-data/results/blutil")
-(define-runtime-path data:teco (format "../../../experiment-data/results/~a" experiment-name))
+(define-runtime-path data:current-experiment (format "../../../experiment-data/results/~a" experiment-name))
 
 ;; setup scripts
 (define setup:bltym "bltym-setup-config.rkt")
@@ -77,8 +77,7 @@
                         data:blgt-erasure-biased-thesis
                         setup:blgt))
 (define blutil (orchestration-config dbs:blutil "blutil" data:blutil setup:blutil))
-(define teco (orchestration-config dbs:teco experiment-name data:teco setup:teco))
-(define orch-config teco)
+(define current-experiment (orchestration-config dbs:current-experiment experiment-name data:current-experiment setup:teco))
 
 ;; All configs share the same benchmarks directory
 (define-runtime-path benchmarks-dir "../../../gtp-benchmarks/benchmarks/")

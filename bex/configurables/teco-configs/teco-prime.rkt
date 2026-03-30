@@ -8,18 +8,18 @@
 
 (configure! mutation                      code-mistakes)
 (configure! mutant-sampling               pre-selected
-            (build-path dbs:teco "mutant-samples.rktdb"))
+            (build-path dbs:current-experiment "mutant-samples.rktdb"))
 (configure! mutant-filtering              dont-care-about-blame-trails)
 (configure! module-selection-for-mutation all-regular-modules)
 (configure! benchmark-runner              teco-run) ;; TODO Change this to interpret result possibly
 (configure! blame-translation             configurable-ctc-middleman-mod-to-source)
 (configure! blame-following               null)
 (configure! bt-root-sampling              pre-selected
-            (build-path dbs:teco "pre-selected-bt-roots.rktdb"))
+            (build-path dbs:current-experiment "pre-selected-bt-roots.rktdb"))
 (configure! trail-completion              any-type-error/blamed-at-max)
 (configure! configurations                teco-configs)
 (configure! sql-data-collection           test-and-mutant-db  
-            (build-path dbs:teco "sqlite/db.sqlite"))
+            (build-path dbs:current-experiment "sqlite/db.sqlite"))
 
 (configure! module-instrumentation    insert-test)
 (configure! program-instrumentation   insert-test-in-main)

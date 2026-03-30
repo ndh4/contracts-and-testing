@@ -3,6 +3,7 @@
 (require "db-setup.rkt")
 
 (db-setup-script
+ #:dbs-dir #f
  #:mutation-analysis-config "../../configurables/bltym-configs/mutation-type-error-analysis.rkt"
  #:mutation-analysis-error-type 'type-error
  #:analyze-type-mutation-categories? #t

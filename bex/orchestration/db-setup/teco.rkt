@@ -1,8 +1,10 @@
 #lang at-exp racket
 
+(require (only-in "../experiment-info.rkt" dbs:current-experiment))
 (require "db-setup.rkt")
 
-(db-setup-script #:mutation-analysis-config
+(db-setup-script #:dbs-dir dbs:current-experiment
+                 #:mutation-analysis-config
                  "../../configurables/teco-configs/teco-prime.rkt"
                  #:mutation-analysis-error-type 'any-error
                  #:analyze-type-mutation-categories? #f

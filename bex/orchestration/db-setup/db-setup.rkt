@@ -4,9 +4,7 @@
 
 (require (only-in "../experiment-info.rkt"
                   experiment-benchmarks
-                  benchmarks-dir
-                  orchestration-config-dbs-dir
-                  orch-config)
+                  benchmarks-dir)
          file/glob
          syntax/parse/define)
 
@@ -297,6 +295,7 @@
 
 (define-simple-macro (db-setup-script
                       ;; each of these configs should be relative paths from here
+                      #:dbs-dir dbs-dir
                       #:mutation-analysis-config mutation-analysis-config-rel-path
                       #:mutation-analysis-error-type mutation-analysis-error-type
                       #:analyze-type-mutation-categories? analyze-type-mutation-categories?
@@ -345,7 +344,7 @@
      (setup-all-dbs! (equal? mutation-analysis-error-type 'any-error)
                      search-for-interesting-scenarios?
                      mutants-to-sample-per-benchmark
-                     (orchestration-config-dbs-dir orch-config)
+                     dbs-dir
                      (cond [no-viz? 'no-viz]
                            [viz-only? 'viz-only]
                            [else 'normal])

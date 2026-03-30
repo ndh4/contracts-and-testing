@@ -2,7 +2,8 @@
 
 (require "db-setup.rkt")
 
-(db-setup-script #:mutation-analysis-config
+(db-setup-script #:dbs-dir #f
+                 #:mutation-analysis-config
                  "../../configurables/blutil-configs/mutation-code-mistake-analysis.rkt"
                  #:mutation-analysis-error-type 'any-error
                  #:analyze-type-mutation-categories? #f

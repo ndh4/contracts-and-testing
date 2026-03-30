@@ -5,7 +5,7 @@
 (define-runtime-path status-file "../../../experiment-status.txt")
 
 (with-configuration [local
-                     teco]
+                     current-experiment]
   #:status-in status-file
   #:manual-outcome-recording
   (run-mode teco-prime #:only abm_test #:record-outcomes)
