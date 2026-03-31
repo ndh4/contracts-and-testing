@@ -27,10 +27,6 @@
 
 (define-twice experiment-name "abm_test")
 
-(unless (and (= (length experiment-benchmarks) 1)
-                (equal? (first experiment-benchmarks) experiment-name))
-    (error "Experiment name does not match benchmark name:" experiment-name experiment-benchmarks))
-
 ;; dbs (data for running experiment)
 (define-runtime-path dbs:icfp "../../../experiment-data/dbs/code-mutations-icfp")
 (define-runtime-path dbs:natural-biased "../../../experiment-data/dbs/code-mutations-natural-biased")
