@@ -25,7 +25,7 @@
     (define name value)
     (define-for-syntax name value)))
 
-(define-twice experiment-name "abm_test")
+(define-twice experiment-name "a_new_experiment")
 
 ;; dbs (data for running experiment)
 (define-runtime-path dbs:icfp "../../../experiment-data/dbs/code-mutations-icfp")

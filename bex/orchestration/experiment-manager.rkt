@@ -28,7 +28,10 @@
   [store-path "../../../experiment-data/experiment-manager"] 
   [std-experiment-runner-template "./standard-experiment-runner-script-template.sh"] 
   [experiment-info.rkt "experiment-info.rkt"] 
-  [project-path "../../.."]) 
+  [project-path "../../.."])
+
+(define (make-job-name benchmark)
+  (format "~a/~a" experiment-name benchmark))
 
 (define (local-version-mixin c)
   (class c
@@ -97,7 +100,7 @@
          empty]
         [else
          (define benchmark-paths (for/list ([benchmark (in-list benchmarks)])
-                                   (build-path (get-field host-data-path a-host) benchmark)))
+                                   (build-path (get-field host-data-path a-host) experiment-name benchmark)))
          (define progress-str
            (send a-host
                  system/host/string
@@ -157,7 +160,7 @@
 (define (restart-job! a-host job-info)
   (match-define (list benchmark config) job-info)
   (option-let* ([_ (send a-host cancel-job! benchmark config)]
-                [_ (send a-host submit-job! benchmark config)])
+                [_ (send a-host submit-job! benchmark config #:name (make-job-name benchmark))])
                (void)))
 
 (define job-restart-history (make-hash))
@@ -571,7 +574,8 @@
                (zero? (modulo i 3)))
       (sleep (* 2 60)))
     (when (absent? (send a-host submit-job! benchmark config-name
-                         #:mode outcome-checking-mode))
+                         #:mode outcome-checking-mode
+                         #:name (make-job-name benchmark)))
       (handle-failure! benchmark))))
 
 (define (download-results! a-host download-directory
@@ -646,10 +650,10 @@
 ;; (i.e. `cpu-count / batch-size` condor jobs)
 (define zythos-local/one-job-per-mutant/batched
   (new local-direct-host%
-       [cpu-count 10]
+       [cpu-count 10] ; 150
        [hostname "zythos-local-batch"]
        [host-project-path (simple-form-path project-path)]
-       [env-vars "BEX_CONDOR_MACHINES='fix allagash piraat maudite tremens guldendraak' BEX_CONDOR_BATCH_SIZE=5"]))
+       [env-vars "BEX_CONDOR_MACHINES='fix allagash piraat maudite tremens guldendraak' BEX_CONDOR_BATCH_SIZE=5"])) ; 150
 
 
 (define hosts (list zythos-local/one-job-per-mutant/batched))
@@ -782,7 +786,8 @@
         (for-each-target launch-targets
                          (λ (a-host benchmark config-name)
                            (send a-host submit-job! benchmark config-name
-                                 #:mode outcome-checking-mode))
+                                 #:mode outcome-checking-mode
+                                 #:name (make-job-name benchmark)))
                          "submit")
         ;; in case it's a direct/local host, the other thread needs a chance to do the job
         (sleep 1)]
@@ -856,7 +861,7 @@
              (check-host-empty! host)
              (for-each-target (list launch-spec)
                               (λ (a-host benchmark config-name)
-                                (send a-host submit-job! benchmark config-name))
+                                (send a-host submit-job! benchmark config-name #:name (make-job-name benchmark)))
                               "submit")
              (match (wait-for-jobs-to-finish+download-results host launch-spec-list)
                ['ok (launch-next-target #f)]
