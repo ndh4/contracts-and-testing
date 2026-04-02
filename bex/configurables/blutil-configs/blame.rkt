@@ -2,7 +2,7 @@
 
 (require "blame-following-common.rkt")
 
-(configure! mutation                 code-mistakes)
+(configure! mutation                 module-ctcs-code-mistakes)
 (configure! mutant-sampling          pre-selected
             "../dbs/blutil/mutant-samples.rktdb")
 (configure! mutant-filtering         none)

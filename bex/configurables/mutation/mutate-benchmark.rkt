@@ -8,7 +8,8 @@
          mutate/define
          mutate/low-level
          mutate/traversal
-         "mutators.rkt")
+         "mutators.rkt"
+         "body-selector.rkt")
 
 (define active-mutators
   (list arithmetic-op-swap
@@ -1161,7 +1162,20 @@
      #:reconstructor (make-reconstructor-test (list #'(begin foo))
                                               #'(define (f x) foo)))
     (test-selector
+     select-define-body-or-define/contract-body
+     #'(define (f x) (+ y y))
+     #:name (make-name-test 'f)
+     #:parts (make-parts-test (list #'(begin (+ y y))))
+     #:reconstructor (make-reconstructor-test (list #'(begin foo))
+                                              #'(define (f x) foo)))
+    (test-selector
      select-define-body
+     #'(define-type T Any)
+     #:name false?
+     #:parts false?
+     #:reconstructor false?)
+    (test-selector
+     select-define-body-or-define/contract-body
      #'(define-type T Any)
      #:name false?
      #:parts false?
@@ -1175,6 +1189,13 @@
                                               #'42))
     (test-selector
      select-define/contract-body
+     #'(define/contract (f x) ctc (+ y y))
+     #:name (make-name-test 'f)
+     #:parts (make-parts-test (list #'(begin (+ y y))))
+     #:reconstructor (make-reconstructor-test (list #'(begin foo))
+                                              #'(define/contract (f x) ctc foo)))
+    (test-selector
+     select-define-body-or-define/contract-body
      #'(define/contract (f x) ctc (+ y y))
      #:name (make-name-test 'f)
      #:parts (make-parts-test (list #'(begin (+ y y))))
@@ -1199,6 +1220,16 @@
      (λ (stx mi)
        (mutate-syntax stx mi
                       #:top-level-select select-define-body)))
+    (test-mutation/sequence
+     #'{(foobar)
+        (define (f x)
+          (+ y y))}
+     `([0 ,#'{(foobar)
+              (define (f x)
+                (- y y))}])
+     (λ (stx mi)
+       (mutate-syntax stx mi
+                      #:top-level-select select-define-body-or-define/contract-body)))
     (test-equal? (mutate-program #'{(foobar)
                                     (define (f x)
                                       (+ y y))}
@@ -1256,6 +1287,25 @@
      (λ (stx mi)
        (mutate-syntax stx mi
                       #:top-level-select select-define-body
+                      #:expression-select select-exprs-as-if-untyped)))
+    (test-mutation/sequence
+     #'{(: f (-> Number Number))
+        (define (f x)
+          (: y Number)
+          (define y (+ x x))
+          (+ y y))}
+     `([0 ,#'{(: f (-> Number Number))
+              (define (f x)
+                (: y Number)
+                (define y (+ x x)))}]
+       [1 ,#'{(: f (-> Number Number))
+              (define (f x)
+                (: y Number)
+                (+ y y)
+                (define y (+ x x)))}])
+     (λ (stx mi)
+       (mutate-syntax stx mi
+                      #:top-level-select select-define-body-or-define/contract-body
                       #:expression-select select-exprs-as-if-untyped))))
 
   (test-begin
@@ -1315,7 +1365,63 @@
                (define (main) (if #t (f x) (main x)))}])
      (λ (stx mi)
        (mutate-syntax stx mi
-                      #:top-level-select select-define-body))))
+                      #:top-level-select select-define-body)))
+    (test-mutation/sequence
+     #'{(require foobar)
+        (define (f x) (add1 x))
+        (define (g x) (if x f g))
+        (define (main) (if #t (f x) (g x)))}
+     `([0 ,#'{(require foobar)
+              (define (f x) (sub1 x))
+              (define (g x) (if x f g))
+              (define (main) (if #t (f x) (g x)))}]
+       [1 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if (not x) f g))
+              (define (main) (if #t (f x) (g x)))}]
+       [2 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if #t f g))
+              (define (main) (if #t (f x) (g x)))}]
+       [3 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if x g g))
+              (define (main) (if #t (f x) (g x)))}]
+       [4 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if x main g))
+              (define (main) (if #t (f x) (g x)))}]
+       [5 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if x f f))
+              (define (main) (if #t (f x) (g x)))}]
+       [6 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if x f main))
+              (define (main) (if #t (f x) (g x)))}]
+       [7 ,#'{(require foobar)
+              (define (f x) (add1 x))
+              (define (g x) (if x f g))
+              (define (main) (if (not #t) (f x) (g x)))}]
+       [8 ,#'{(require foobar)
+               (define (f x) (add1 x))
+               (define (g x) (if x f g))
+               (define (main) (if #t (g x) (g x)))}]
+       [9 ,#'{(require foobar)
+               (define (f x) (add1 x))
+               (define (g x) (if x f g))
+               (define (main) (if #t (main x) (g x)))}]
+       [10 ,#'{(require foobar)
+               (define (f x) (add1 x))
+               (define (g x) (if x f g))
+               (define (main) (if #t (f x) (f x)))}]
+       [11 ,#'{(require foobar)
+               (define (f x) (add1 x))
+               (define (g x) (if x f g))
+               (define (main) (if #t (f x) (main x)))}])
+     (λ (stx mi)
+       (mutate-syntax stx mi
+                      #:top-level-select select-define-body-or-define/contract-body))))
 
   ;; disabled, see above
   (test-begin
@@ -1333,6 +1439,31 @@
      (λ (stx mi)
        (mutate-syntax stx mi
                       #:top-level-select select-define-body
+                      #:program (program (mod "main.rkt" #'(module main racket (#%module-begin)))
+                                         (list (mod "a.rkt"
+                                                    #'(module main racket
+                                                        (#%module-begin
+                                                         (provide f g)
+                                                         (define (f x) x)
+                                                         (define (g x) x))))
+                                               (mod "a.rkt"
+                                                    #'(module main racket
+                                                        (#%module-begin
+                                                         (provide h something-else)
+                                                         (define (h x) x)))))))))
+    (test-mutation/sequence
+     #'{(require "a.rkt")
+        (require "b.rkt")
+        (define x (f (g (h 'a))))}
+     `([0 ,#'{(require "a.rkt")
+              (require "b.rkt")
+              (define x (g (g (h 'a))))}]
+       [1 ,#'{(require "a.rkt")
+              (require "b.rkt")
+              (define x (f (f (h 'a))))}])
+     (λ (stx mi)
+       (mutate-syntax stx mi
+                      #:top-level-select select-define-body-or-define/contract-body
                       #:program (program (mod "main.rkt" #'(module main racket (#%module-begin)))
                                          (list (mod "a.rkt"
                                                     #'(module main racket
