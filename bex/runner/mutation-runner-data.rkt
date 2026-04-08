@@ -14,7 +14,7 @@
 
 (define index-exceeded-outcome 'index-exceeded)
 (define outcomes
-  `(,index-exceeded-outcome blamed
+  `(,index-exceeded-outcome contract-violation
                             runtime-error
                             test-failure
                             type-error
@@ -25,7 +25,7 @@
                             skipped))
 
 (struct run-status
-        (mutated-module index mutated-id outcome blamed errortrace-stack context-stack result-value)
+        (mutated-module index mutated-id outcome blamed errortrace-text errortrace-stack context-stack result-value)
   #:prefab)
 
 (define module-name-or-library-path?
@@ -50,20 +50,25 @@
              [blamed
               {outcome}
               (cond
-                [(member outcome '(blamed type-error)) (listof module-name-or-library-path?)]
+                [(member outcome '(contract-violation type-error)) (listof module-name-or-library-path?)]
                 ;; Some runtime errors come with blame, if the
                 ;; primitive has a real contract,
                 ;; and type errors identify a location too
                 [(equal? outcome 'runtime-error) (or/c (listof module-name-or-library-path?) #f)]
                 [else #f])]
+             [errortrace-text
+               {outcome}
+               (if (member outcome '(contract-violation runtime-error test-failure))
+                   string?
+                   #f)]
              [errortrace-stack
               {outcome}
-              (if (member outcome '(blamed runtime-error test-failure))
+              (if (member outcome '(contract-violation runtime-error test-failure))
                   (listof module-name-or-library-path?)
                   #f)]
              [context-stack
               {outcome}
-              (if (member outcome '(blamed runtime-error test-failure))
+              (if (member outcome '(contract-violation runtime-error test-failure))
                   (listof module-name-or-library-path?)
                   #f)]
              [result-value any/c]))

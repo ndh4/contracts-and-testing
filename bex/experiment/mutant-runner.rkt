@@ -218,7 +218,7 @@
 
    (define the-run-status
    (run-status (module-to-mutate)
-              (mutation-index) #f 'skipped #f #f #f #f))
+              (mutation-index) #f 'skipped #f #f #f #f #f))
 
   (writeln the-run-status)
    ]))

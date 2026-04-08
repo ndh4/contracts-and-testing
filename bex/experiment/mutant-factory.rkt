@@ -89,7 +89,7 @@
 #;
 (define/contract normal-blame-trail-outcomes
   (listof run-outcome/c)
-  '(type-error runtime-error blamed))
+  '(type-error runtime-error contract-violation))
 
 (define process-limit (make-parameter 3))
 (define data-output-dir (make-parameter "./mutant-data"))
@@ -473,7 +473,7 @@
                         @(match result
                            [(struct* run-status
                                      ([outcome (and outcome
-                                                    (or 'blamed
+                                                    (or 'contract-violation
                                                         'type-error
                                                         'runtime-error))]
                                       [blamed (list (? string? mod-names) ...)]))
@@ -683,23 +683,27 @@ Mutant: [~a] ~a @ ~a with config:
                                            'index-exceeded
                                            'oom)]
                               [blamed #f]
+                              [errortrace-text #f]
                               [errortrace-stack #f]
                               [context-stack #f]))
                     (struct* run-status
                              ([outcome 'type-error]
                               [blamed (not #f)]
+                              [errortrace-text #f]
                               [errortrace-stack #f]
                               [context-stack #f]))
                     (struct* run-status
-                             ([outcome (or 'blamed
+                             ([outcome (or 'contract-violation
                                            'runtime-error)]
                               [blamed (not #f)]
+                              [errortrace-text (not #f)]
                               [errortrace-stack (? list?)]
                               [context-stack (? list?)]))
                     (struct* run-status
                              ([outcome (or 'runtime-error
                                            'test-failure)]
                               [blamed #f]
+                              [errortrace-text (not #f)]
                               [errortrace-stack (? list?)]
                               [context-stack (? list?)])))
                 result/well-formed)
@@ -806,7 +810,7 @@ Mutant: [~a] ~a @ ~a with config:
     [(list-no-order 'type-error (not 'type-error ))         #f]
     [else
      ;; all other modes should be 'weaker' than TR's recorded result
-     (define ordering '(blamed runtime-error completed))
+     (define ordering '(contract-violation runtime-error completed))
      (unless (and (index-of ordering actual)
                   (index-of ordering recorded))
        (log-factory error

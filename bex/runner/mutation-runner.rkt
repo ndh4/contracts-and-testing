@@ -33,7 +33,8 @@
          "error-extractors/extract-type-error-source.rkt"
          "error-extractors/extract-errortrace-stack.rkt"
          "error-extractors/extract-context-stack.rkt"
-         "error-extractors/extract-blamed-locations.rkt")
+         "error-extractors/extract-blamed-locations.rkt"
+         "error-extractors/extract-errortrace-print.rkt")
 
 (define-logger mutation-runner)
 
@@ -266,6 +267,7 @@
 
   (define (make-status status-sym
                        [blamed #f]
+                       [errortrace-text #f]
                        [errortrace-stack #f]
                        [context-stack #f]
                        [mutated-id #f]
@@ -275,6 +277,7 @@
                 mutated-id
                 status-sym
                 blamed
+                errortrace-text
                 errortrace-stack
                 context-stack
                 result))
@@ -291,12 +294,14 @@
                                    #:on-module-exists on-module-exists
                                    #:mutator mutate))
     (define ((make-status* status-sym) [blamed #f]
+                                       [errortrace-text #f]
                                        [errortrace-stack #f]
                                        [context-stack #f]
                                        [result #f])
       (log-mutation-runner-debug @~a{Making run-status with outcome @status-sym blaming @blamed})
       (make-status status-sym
                    blamed
+                   errortrace-text
                    errortrace-stack
                    context-stack
                    mutated-id))
@@ -377,11 +382,13 @@
           @~a{Type = runtime-error-with-blame})
          ((make-status* 'runtime-error)
           (extract-blamed e)
+          (extract-errortrace-print e)
           (extract-errortrace-stack e)
           (extract-context-stack e))]
         [(? exn:fail:contract:blame?)
-         ((make-status* 'blamed)
+         ((make-status* 'contract-violation)
           (extract-blamed e)
+          (extract-errortrace-print e)
           (extract-errortrace-stack e)
           (extract-context-stack e))]
         [(? exn:fail:syntax?) ; don't think should ever happen?
@@ -389,11 +396,13 @@
         [(? exn:test?)
          ((make-status* 'test-failure)
           #f
+          (extract-errortrace-print e)
           (extract-errortrace-stack e)
           (extract-context-stack e))]
         [(? exn:fail?)
          ((make-status* 'runtime-error)
           #f
+          (extract-errortrace-print e)
           (extract-errortrace-stack e)
           (extract-context-stack e))]
         [else

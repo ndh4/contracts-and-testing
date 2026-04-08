@@ -72,6 +72,7 @@
   test_passed INTEGER,
   outcome TEXT,
   blamed TEXT,
+  errortrace_text TEXT,
   errortrace_stack TEXT,
   context_stack TEXT,
   result_value TEXT,
@@ -94,6 +95,7 @@
     (test-passed
      outcome
      blamed
+     errortrace-text
      errortrace-stack
      context-stack
      result-value)
@@ -101,6 +103,7 @@
            (values (bool->int (eq? run-status-outcome run-status))
                    (~a (run-status-outcome run-status))
                    (~a (run-status-blamed run-status))
+                   (~a (run-status-errortrace-text run-status))
                    (~a (run-status-errortrace-stack run-status))
                    (~a (run-status-context-stack run-status))
                    (~a (run-status-result-value run-status)))]
@@ -110,13 +113,14 @@
                    (~a #f)
                    (~a #f)
                    (~a #f)
+                   (~a #f)
                    (~a #f))]))
   (query-exec
    dbc
    (format
     "INSERT OR REPLACE INTO ~a
-                    (configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_stack, context_stack, result_value, cmd_line_args)
-                    VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)"
+                    (configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_text, errortrace_stack, context_stack, result_value, cmd_line_args)
+                    VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)"
     table-name)
 
    ((configured:serialize-config) configuration)
@@ -127,6 +131,7 @@
    (bool->int test-passed)
    outcome
    blamed
+   errortrace-text
    errortrace-stack
    context-stack
    result-value

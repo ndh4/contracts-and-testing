@@ -28,7 +28,7 @@
                           [errortrace-stack errortrace]
                           [context-stack    context]))
      ((selector:runtime-error) program-config #f errortrace context)]
-    [(struct* run-status ([outcome 'blamed]
+    [(struct* run-status ([outcome 'contract-violation]
                           [blamed blamed]
                           [errortrace-stack errortrace]
                           [context-stack    context]))
