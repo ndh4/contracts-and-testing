@@ -10,6 +10,8 @@
          "experiment-info.rkt")
 
 (define-runtime-paths
+  ;; TODO this should be inside output dir
+  ;; data on the status of the experiment, i think
   [store-path "../../../experiment-data/experiment-manager"]
   [std-experiment-runner-template "./standard-experiment-runner-script-template.sh"])
 
@@ -55,6 +57,7 @@
             (build-path host-project-path "contracts-and-testing" "bex" "util")]
            [host-data-path (build-path host-project-path "experiment-output")]
            [host-experiment-runner-script-path
+            ;; TODO this should be relative to the results dir
             (build-path host-project-path "generated-run-experiment.sh")]
            [host-experiment-runner-script-uploaded? #f])
     (define/public (custom-write port) (write hostname port))
@@ -119,7 +122,7 @@
           '@benchmark' @;
           '@|config-name|.rkt' @;
           '@record/check-mode' @;
-          '@(current-remote-host-db-installation-directory-name)' @;
+          '@(current-experiment-dir)' @;
           '@cpus' @;
           '@name'
           })

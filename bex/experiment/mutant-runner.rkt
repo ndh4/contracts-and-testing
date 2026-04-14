@@ -54,6 +54,10 @@
 
   (command-line
    #:once-each
+   [("-x" "--experiment-dir")
+    dir
+    "Directory for this experiment. Mandatory."
+    (current-experiment-dir dir)]
    [("-b" "--benchmark-configuration")
     benchmark-configuration-str
     ("`write` form of the `benchmark-configuration` to run."
@@ -127,11 +131,12 @@
         (get-port)))
 
   (define missing-arg
-    (for/first ([arg (in-list (list (the-benchmark-configuration)
+    (for/first ([arg (in-list (list (current-experiment-dir)
+                                    (the-benchmark-configuration)
                                     (module-to-mutate)
                                     (mutation-index)
                                     (configuration-path)))]
-                [flag (in-list '(-b -M -i -c))]
+                [flag (in-list '(-x -b -M -i -c))]
                 #:unless arg)
       flag))
 

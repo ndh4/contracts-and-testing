@@ -1,10 +1,11 @@
 #lang at-exp rscript
 
 (provide update-host!
+         setup-dbs!
          check-host-empty!
          launch-benchmarks!
          wait-for-current-jobs-to-finish
-         download-results!
+         #;download-results!
          format-status
          summarize-experiment-status
          help!:continue?
@@ -212,7 +213,7 @@
      (and (= (set-count (apply set config-names)) 1)
           (empty? (missing-completed-benchmarks summary expected-benchmarks)))]
     [else #f]))
-(define (download-completed-benchmarks! a-host summary download-directory
+#; (define (download-completed-benchmarks! a-host summary download-directory
                                         #:name [name #f]
                                         #:expected-benchmarks [expected-benchmarks experiment-benchmarks])
   (define (download-results! archive-name
@@ -367,42 +368,30 @@
    (unless (summary-empty? summary)
      (handle-not-empty!))))
 
+(define (setup-dbs! a-host
+                    db-setup-script-name ; assumed to be in bex/orchestration/db-setup
+                    [handle-failure! (λ (reason)
+                                       (raise-user-error 'update-host reason))]) 
+  (unless (current-experiment-dir)
+    (raise-user-error
+     'setup-dbs!
+     "No experiment config selected, `current-experiment-id` is not configured."))
+  (define host-dbs-dir
+    (build-path (current-experiment-dir) "dbs"))
+  ;; TODO configure num_cores
+  (define cmd @~a{
+                  @(get-field host-racket-path a-host) -l 'bex/orchestration/db-setup/@db-setup-script-name' -- -x '@(current-experiment-dir)' --no-viz '@host-dbs-dir'
+                  })
+  (printf "Setting up DBs on host '~a'\n" a-host)
+  (unless (send a-host
+                  system/host
+                  cmd
+                  #:interactive? #t)
+      (handle-failure! @~a{DB setup failed on host '@a-host'})))
+
 (define (update-host! a-host dbs-dir setup-config-name ; assumed to be in bex/setup/
                       [handle-failure! (λ (reason)
                                          (raise-user-error 'update-host! reason))])
-  ;; remote-host-specific
-  #;
-  (define host-dbs-destination
-    (build-path (get-field host-project-path a-host)
-                "contracts-and-testing"
-                "bex"
-                "dbs"))
-  #;
-  (displayln "Zipping up dbs archive...")
-  #;
-  (define-values {dbs-dir-parent dbs-dir-name} (basename dbs-dir #:with-directory? #t))
-  #;
-  (define archive-name (~a dbs-dir-name ".tar.gz"))
-  #;
-  (parameterize ([current-directory dbs-dir-parent])
-    (unless (system @~a{tar -czhf @archive-name @dbs-dir-name})
-      (handle-failure! "Failed to zip dbs directory, giving up.")))
-
-  #;
-  (displayln "Uploading dbs archive...")
-  #;
-  (define host-db-archive-upload-path (build-path host-dbs-destination archive-name))
-  #;
-  (send a-host system/host @~a{mkdir -p @host-dbs-destination})
-  #;
-  (unless (zero? (send a-host scp
-                       #:from-local (~a (build-path dbs-dir-parent archive-name))
-                       #:to-host (~a host-db-archive-upload-path)))
-    (handle-failure! @~a{Failed to upload db archive to @a-host}))
-
-  #;
-  (define host-dbs-unpacked-dir-path (build-path host-dbs-destination
-                                                 (current-remote-host-db-installation-directory-name)))
   (define host-repo-path
     (build-path (get-field host-project-path a-host)
                 "contracts-and-testing"))
@@ -415,25 +404,11 @@
                 "bex"
                 "setup"
                 setup-config-name))
-  (for ([step (in-list '(#;"Stashing current dbs..."
-                         #;"Unpacking dbs..."
-                         "Updating implementation..."
+  (for ([step (in-list '("Updating implementation..."
                          "Updating benchmarks..."
                          "Recompiling and checking status..."))]
         [cmd (in-list
               (list
-               #;
-               @~a{
-                   rm -r '@host-dbs-destination'/last-dbs ; @;
-                   mkdir -p '@host-dbs-unpacked-dir-path' ; @; in case there weren't any before
-                   mv '@host-dbs-unpacked-dir-path' '@host-dbs-destination'/last-dbs
-                   }
-               #;
-               @~a{
-                   mkdir -p '@host-dbs-unpacked-dir-path' && @;
-                   tar -xzvf '@host-db-archive-upload-path' -C '@host-dbs-unpacked-dir-path' --strip-components=1 && @;
-                   echo "Done."
-                   }
                @~a{
                    cd '@host-repo-path' && @;
                    git pull && @;
@@ -574,7 +549,7 @@
                          #:mode outcome-checking-mode))
       (handle-failure! benchmark))))
 
-(define (download-results! a-host download-directory
+#;(define (download-results! a-host download-directory
                            #:name [name #f]
                            #:expected-benchmarks [benchmark-names experiment-benchmarks])
   (option-let* ([summary (summarize-experiment-status a-host)])
@@ -656,6 +631,7 @@
 
 
 
+#;
 (main
  #:arguments {[(hash-table ['status? status?]
                            ['download (app (mapper host-by-name) download-targets)]

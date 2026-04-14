@@ -50,7 +50,8 @@
          "../util/log-controls.rkt"
          "../util/sql-db.rkt"
          "../configurables/configurables.rkt"
-         "experiment-exns.rkt")
+         "experiment-exns.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
 (define-runtime-path mutant-runner-path "../experiment/mutant-runner.rkt")
 (define racket-path (find-executable-path (find-system-path 'exec-file)))
@@ -146,6 +147,7 @@
                            empty)
                        (list "--"
                              mutant-runner-path
+                             "-x" (current-experiment-dir)
                              "-b" (serialize-benchmark-configuration a-benchmark-configuration)
                              "-T" (~a test-id)
                              "-M" (~a module-to-mutate)

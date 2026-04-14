@@ -394,6 +394,7 @@
               (db:path-to-db? benchmark-summaries-db-path))
           @~a{Can't find db at @benchmark-summaries-db-path}]
 
+ ;; TODO parameterize current-experiment-dir here
  (install-configuration! config-path)
  (current-active-mutator-names (configured:active-mutator-names))
 

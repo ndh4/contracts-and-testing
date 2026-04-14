@@ -17,6 +17,7 @@
          "mutant-factory-data.rkt"
          "blame-trail-data.rkt"
          "integrity-metadata.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir)
          process-queue/priority
          racket/file
          racket/format
@@ -878,6 +879,10 @@ Mutant: [~a] ~a @ ~a with config:
   (define configuration-path (make-parameter #f))
   (command-line
    #:once-each
+   [("-x" "--experiment-dir")
+    dir
+    "Directory for this experiment. Mandatory."
+    (current-experiment-dir dir)]
    [("-b" "--benchmark")
     path
     "Path to benchmark to run. Mandatory."

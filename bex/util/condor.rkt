@@ -178,7 +178,8 @@
    script
    (current-inexact-monotonic-milliseconds)))
 
-(define (spawn-condor-mutant-runner a-benchmark-configuration
+(define (spawn-condor-mutant-runner experiment-dir
+                                    a-benchmark-configuration
                                     module-to-mutate
                                     mutation-index
                                     outfile

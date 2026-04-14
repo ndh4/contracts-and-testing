@@ -1,33 +1,25 @@
 #lang at-exp racket
 
 (provide (all-defined-out)
-         (struct-out orchestration-config))
+         (struct-out orchestration-info))
 
-(require racket/runtime-path)
+(require racket/runtime-path
+         (only-in srfi/19 date->string))
 
-(struct orchestration-config (dbs-dir dbs-dir-name download-dir setup-config))
+;; user-facing configuration for an orchestration
+(struct orchestration-config (experiment-name setup-config db-setup-script)) 
+;; built (timestamped) info for an orchestration
+(struct orchestration-info (experiment-id setup-config db-setup-script)) 
 
-;; dbs (data for running experiment)
-(define-runtime-path dbs:icfp "../../../experiment-data/dbs/code-mutations-icfp")
-(define-runtime-path dbs:natural-biased "../../../experiment-data/dbs/code-mutations-natural-biased")
-(define-runtime-path dbs:erasure-biased-2
-                     "../../../experiment-data/dbs/code-mutations-erasure-biased-2")
-(define-runtime-path dbs:blgt-erasure-biased-thesis
-                     "../../../experiment-data/dbs/code-mutations-erasure-biased-thesis")
-(define-runtime-path dbs:type-api-mutations "../../../experiment-data/dbs/type-api-mutations")
-(define-runtime-path dbs:blutil "../../../experiment-data/dbs/teco")
-(define-runtime-path dbs:teco "../../../experiment-data/dbs/teco")
-
-;; data (experiment results)
-(define-runtime-path data:natural-biased
-                     "../../../experiment-data/results/code-mutations-natural-biased")
-(define-runtime-path data:erasure-biased-2
-                     "../../../experiment-data/results/code-mutations-erasure-biased-2")
-(define-runtime-path data:type-api-mistakes "../../../experiment-data/results/type-api-mutations")
-(define-runtime-path data:blgt-erasure-biased-thesis
-                     "../../../experiment-data/results/code-mutations-erasure-biased-thesis")
-(define-runtime-path data:blutil "../../../experiment-data/results/blutil")
-(define-runtime-path data:teco "../../../experiment-data/results/teco")
+;; timestamp a basic-orchestration-config with the current time, converting it
+;; into an orchestration-config
+(define (make-orchestration-info orch-cfg date)
+  (define timestamp (date->string date "~m-~d-~Y@~T"))
+  (define output-dir-name
+    (format "~a-~a" (orchestration-config-experiment-name orch-cfg) timestamp))
+  (orchestration-info output-dir-name
+                      (orchestration-config-setup-config orch-cfg)
+                      (orchestration-config-db-setup-script orch-cfg)))
 
 ;; setup scripts
 (define setup:bltym "bltym-setup-config.rkt")
@@ -35,39 +27,52 @@
 (define setup:blutil "blutil-setup-config.rkt")
 (define setup:teco "teco-setup-config.rkt")
 
-;; this needs to match up with whatever the experiment configs look for!
+;; db-setup scripts
+(define db-setup:bltym "bltym.rkt")
+(define db-setup:blgt "blgt.rkt")
+(define db-setup:blutil "blutil.rkt")
+(define db-setup:teco "teco.rkt")
+
 ;; relevant for the host _running the mutants_, not the local host
-(define current-remote-host-db-installation-directory-name (make-parameter #f))
+(define current-experiment-dir (make-parameter #f))
 
-(define current-experiment-dbs-dir (make-parameter #f))
+#; (define current-remote-host-db-installation-directory-name (make-parameter #f))
 
-;; Orchestration configs
+#; (define current-experiment-dbs-dir (make-parameter #f))
+
+;; orchestration configs
 (define type-mistakes
-  (orchestration-config dbs:type-api-mutations
-                        "type-api-mutations"
-                        data:type-api-mistakes
-                        setup:bltym))
+  (orchestration-config "type-api-mutations"
+                        setup:bltym
+                        db-setup:bltym))
 (define code-mistakes
-  (orchestration-config dbs:blgt-erasure-biased-thesis
-                        "code-mutations"
-                        data:blgt-erasure-biased-thesis
-                        setup:blgt))
-(define blutil (orchestration-config dbs:blutil "blutil" data:blutil setup:blutil))
-(define teco (orchestration-config dbs:teco "teco" data:teco setup:teco))
+  (orchestration-config "code-mutations"
+                        setup:blgt
+                        db-setup:blgt))
+(define blutil
+  (orchestration-config "blutil"
+                        setup:blutil
+                        db-setup:blutil))
+(define teco
+  (orchestration-config "teco"
+                        setup:teco
+                        db-setup:teco))
 
-;; All configs share the same benchmarks directory
+;; All configs share the same output and benchmarks directories
 (define-runtime-path benchmarks-dir "../../../gtp-benchmarks/benchmarks/")
 
 (define scenario-samples-per-mutant 100)
 
+;; FIXME these should not need to be commented out, but currently db-setup does
+;; not respect #:only
 (define experiment-benchmarks '("abm_test"
-                                "dungeon"
-                                "forth"
-                                "kcfa"
-                                "mbta"
-                                "morsecode"
-                                "sieve"
-                                "snake"
+                                ;; "dungeon" 
+                                ;; "forth"
+                                ;; "kcfa"
+                                ;; "mbta"
+                                ;; "morsecode"
+                                ;; "sieve"
+                                ;; "snake"
                                 #;"telegram"
                                 #;"bazaar"
                                 #;"quirkle"

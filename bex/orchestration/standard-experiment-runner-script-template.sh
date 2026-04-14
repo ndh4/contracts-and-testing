@@ -5,9 +5,8 @@ PROJ_PATH="<<project-path>>"
 BENCH="$1"
 CONFIG_NAME="$2"
 RECORD_CHECK_CONFIG_PARITY="$3"
-DB_DIR_NAME="$4"
+EXPERIMENT_DIR="$4"
 CPUS="$5"
-OUTDIR_NAME="$6"
 
 KEEP_GOING="y"
 
@@ -33,8 +32,8 @@ else
     exit 1
 fi
 
-if [ "$DB_DIR_NAME" = "" ]; then
-    printf "ERROR missing positional argument 4 specifying db dir name"
+if [ "$EXPERIMENT_DIR" = "" ]; then
+    printf "ERROR missing positional argument 4 specifying the directory where this experiment's output files should be placed"
     exit 1
 fi
 
@@ -44,8 +43,8 @@ elif [ "$CPUS" = "decide" ]; then
     CPUS="$(./pick-cpu-count.sh)"
 fi
 
-if [ "$OUTDIR_NAME" = "" ]; then
-    OUTDIR_NAME="$BENCH"
+if [ "$OUTPUT_DIR_NAME" = "" ]; then
+    OUTPUT_DIR_NAME="$BENCH"
 fi
 
 KEEP_GOING_FLAG="-k"
@@ -60,9 +59,10 @@ export PLTSTDERR='none'
 # TODO in general, I feel like all of these things should go in the
 # configurable (or passed in by the experiment manager), not hard-coded
 # in the experiment runner script
-OUTDIR=experiment-output/$OUTDIR_NAME
-DB_DIR=experiment-data/dbs/$DB_DIR_NAME
-DATA_DIR=experiment-data/results/$CONFIG_NAME
+# TODO sqlite database should not be in db_dir, it should be in output_dir
+OUTPUT_DIR=$EXPERIMENT_DIR/experiment-output/$OUTPUT_DIR_NAME
+DB_DIR=$EXPERIMENT_DIR/dbs
+DATA_DIR=$EXPERIMENT_DIR/mutant-runner-results/$CONFIG_NAME
 BENCHMARKS_PATH=gtp-benchmarks/benchmarks
 
 mkdir -p $OUTDIR
@@ -70,12 +70,13 @@ mkdir -p $DATA_DIR
 
 hostname >> $OUTDIR/$BENCH.log
 ./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
+    -x "$EXPERIMENT_DIR"
     -b "$BENCHMARKS_PATH/$BENCH" \
     -o "$DATA_DIR" \
     -n "$CPUS" \
-    -e "$OUTDIR/errs.log" \
+    -e "$OUTPUT_DIR/errs.log" \
     -c "contracts-and-testing/bex/configurables/configs/$CONFIG_NAME" \
-    -m "$OUTDIR/$BENCH-metadata.rktd" \
-    -P "$DB_DIR/configuration-outcomes/$OUTDIR_NAME.rkt" \
+    -m "$OUTPUT_DIR/$BENCH-metadata.rktd" \
+    -P "$DB_DIR/configuration-outcomes/$OUTPUT_DIR_NAME.rkt" \
     $KEEP_GOING_FLAG >> $OUTDIR/$BENCH.log 2>&1
 popd > /dev/null

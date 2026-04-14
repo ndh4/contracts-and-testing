@@ -4,7 +4,8 @@
 
 (require (only-in "../experiment-info.rkt"
                   experiment-benchmarks
-                  benchmarks-dir)
+                  benchmarks-dir
+                  current-experiment-dir)
          file/glob
          syntax/parse/define)
 
@@ -66,6 +67,7 @@
              (build-path outdir (~a bench-name '- suffix)))
   #:pre-flags [-O "debug@mutation-analysis" -W "warning@mutation-analysis"]
   ../../mutation-analysis/analyze-mutation.rkt
+  -x (current-experiment-dir)
   -b (build-path benchmarks-dir bench-name)
   -n (~a (cpus))
   -e (outpath 'errs.log)
@@ -320,6 +322,11 @@
                                _ (... ...))
                    (list outdir)]
                   #:once-each
+                  [("-x" "--experiment-dir")
+                   'experiment-dir
+                   "Directory for this experiment. Mandatory."
+                   #:mandatory
+                   #:collect ["path" (set-parameter current-experiment-dir) #f]]
                   [("-j" "--cpus")
                    'cpus
                    ("How many CPUs to use when possible."
