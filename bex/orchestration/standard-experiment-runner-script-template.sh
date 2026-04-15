@@ -64,10 +64,10 @@ OUTPUT_DIR=$EXPERIMENT_DIR/experiment-output/$OUTPUT_DIR_NAME
 DATA_DIR=$EXPERIMENT_DIR/mutant-runner-results/$CONFIG_NAME
 BENCHMARKS_PATH=gtp-benchmarks/benchmarks
 
-mkdir -p $OUTDIR
+mkdir -p $OUTPUT_DIR
 mkdir -p $DATA_DIR
 
-hostname >> $OUTDIR/$BENCH.log
+hostname >> $OUTPUT_DIR/$BENCH.log
 ./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
     -x "$EXPERIMENT_DIR"
     -b "$BENCHMARKS_PATH/$BENCH" \
@@ -76,5 +76,5 @@ hostname >> $OUTDIR/$BENCH.log
     -e "$OUTPUT_DIR/errs.log" \
     -c "contracts-and-testing/bex/configurables/configs/$CONFIG_NAME" \
     -m "$OUTPUT_DIR/$BENCH-metadata.rktd" \
-    $KEEP_GOING_FLAG >> $OUTDIR/$BENCH.log 2>&1
+    $KEEP_GOING_FLAG >> $OUTPUT_DIR/$BENCH.log 2>&1
 popd > /dev/null
