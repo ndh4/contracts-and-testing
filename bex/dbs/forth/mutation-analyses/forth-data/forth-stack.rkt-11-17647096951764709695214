@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:71:3 (begin (if (null? S) (raise-user-error "empty stack") (values (car S) (cdr S))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:71:3 (begin)>
-#s(run-status "stack.rkt" 11 stack-pop syntax-error #f #f #f #f)

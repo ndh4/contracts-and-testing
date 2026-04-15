@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:128:9 (and (list? v*) (not (null? v*)) (list? (car v*)) (null? (cdr v*)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:128:9 (not (and (list? v*) (not (null? v*)) (list? (car v*)) (null? (cdr v*))))>
-#s(run-status "eval.rkt" 61 de-nest completed #f #f #f #f)

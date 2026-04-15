@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 2 -> -2
-#s(run-status "main.rkt" 49 try-add-rectangle completed #f #f #f #f)

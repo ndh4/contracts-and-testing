@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : #t -> #f
-#s(run-status "cell.rkt" 27 double-bar? completed #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with negate-conditional : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:107:8 (or (null? token*) (not (list? e)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:107:8 (not (or (null? token*) (not (list? e))))>
-#s(run-status "eval.rkt" 35 forth-eval* completed #f #f #f #f)

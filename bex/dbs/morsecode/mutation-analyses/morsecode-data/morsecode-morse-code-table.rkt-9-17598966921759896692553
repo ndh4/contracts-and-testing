@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "." -> #"."
-#s(run-status "morse-code-table.rkt" 9 clean-pattern runtime-error #f ("morse-code-table.rkt" "morse-code-table.rkt" "morse-code-table.rkt") ("morse-code-table.rkt") #f)

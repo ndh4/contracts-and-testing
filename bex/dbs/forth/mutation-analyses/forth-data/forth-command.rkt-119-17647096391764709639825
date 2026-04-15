@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:292:34 (sym (quote (help ? ??? -help --help h)))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/command.rkt:292:34 ((quote (help ? ??? -help --help h)) sym)>
-#s(run-status "command.rkt" 119 help? completed #f #f #f #f)

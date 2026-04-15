@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:141:3 (begin (for/vector ((x (in-range (vector-ref p 0)))) (for/vector ((y (in-range (vector-ref p 1)))) (f (vector (assert x index?) (assert y index?))))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:141:3 (begin)>
-#s(run-status "grid.rkt" 13 build-array syntax-error #f #f #f #f)

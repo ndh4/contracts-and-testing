@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:311:7 ((define c (grid-ref grid pos)) (define res (or (is-a? c empty-cell%) (is-a? c door%))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/main.rkt:311:7 ((define res (or (is-a? c empty-cell%) (is-a? c door%))) (define c (grid-ref grid pos)))>
-#s(run-status "main.rkt" 382 counts-as-free? completed #f #f #f #f)

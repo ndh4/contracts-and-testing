@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:161:3 (begin (and (<= 0 (vector-ref pos 0) (sub1 (grid-height g))) (<= 0 (vector-ref pos 1) (sub1 (grid-width g)))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/grid.rkt:161:3 (begin)>
-#s(run-status "grid.rkt" 36 within-grid? syntax-error #f #f #f #f)
