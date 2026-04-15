@@ -160,7 +160,7 @@
 
     (unless (directory-exists? (data-output-dir))
       (log-factory debug "Creating output directory ~a." (data-output-dir))
-      (make-directory (data-output-dir)))
+      (make-directory* (data-output-dir)))
 
     (define select-mutants (configured:select-mutants))
     (define starting-q

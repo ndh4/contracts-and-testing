@@ -62,7 +62,7 @@
       (set-field! host-experiment-runner-script-path this
                   (build-path experiment-dir "generated-run-experiment.sh"))
       (set-field! data-store-path this
-                  (build-path experiment-dir "experiment-manager" (~a hostname ".rktd"))))
+                  (build-path experiment-dir "temporary-data" "experiment-manager" (~a hostname ".rktd"))))
     (define/public (custom-write port) (write hostname port))
     (define/public (custom-display port) (display hostname port))
 

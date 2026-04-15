@@ -62,7 +62,7 @@ export PLTSTDERR='none'
 # TODO sqlite database should not be in db_dir, it should be in output_dir
 OUTPUT_DIR=$EXPERIMENT_DIR/experiment-output/$OUTPUT_DIR_NAME
 DB_DIR=$EXPERIMENT_DIR/dbs
-DATA_DIR=$EXPERIMENT_DIR/mutant-runner-results/$CONFIG_NAME
+TEMPORARY_DATA_DIR=$EXPERIMENT_DIR/temporary-data/mutant-factory/$CONFIG_NAME
 BENCHMARKS_PATH=gtp-benchmarks/benchmarks
 
 mkdir -p $OUTPUT_DIR
@@ -72,7 +72,7 @@ hostname >> $OUTPUT_DIR/$BENCH.log
 ./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
     -x "$EXPERIMENT_DIR" \
     -b "$BENCHMARKS_PATH/$BENCH" \
-    -o "$DATA_DIR" \
+    -o "$TEMPORARY_DATA_DIR" \
     -n "$CPUS" \
     -e "$OUTPUT_DIR/errs.log" \
     -c "contracts-and-testing/bex/configurables/configs/$CONFIG_NAME" \
