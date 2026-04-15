@@ -69,7 +69,7 @@
           (get-field host-racket-path a-host)
           (build-path (get-field host-utilities-path a-host) "check-experiment-results.rkt")
           "-w"
-          (get-field host-data-path a-host)))
+          (get-field host-output-path a-host)))
   (match info-str
     [(regexp "^#hash")
      (call-with-input-string info-str read)]
@@ -98,7 +98,7 @@
          empty]
         [else
          (define benchmark-paths (for/list ([benchmark (in-list benchmarks)])
-                                   (build-path (get-field host-data-path a-host) benchmark)))
+                                   (build-path (get-field host-output-path a-host) benchmark)))
          (define progress-str
            (send a-host
                  system/host/string

@@ -53,11 +53,11 @@
            [host-racket-path (build-path host-project-path "racket" "bin" "racket")]
            [host-utilities-path
             (build-path host-project-path "contracts-and-testing" "bex" "util")]
-           [host-data-path 'unknown] ;; experiment-output (TODO probably want to rename this var)
+           [host-output-path 'unknown] ;; experiment-output
            [host-experiment-runner-script-path 'unknown]
            [host-experiment-runner-script-uploaded? #f])
     (define/public (configure-experiment-dir! experiment-dir)
-      (set-field! host-data-path this
+      (set-field! host-output-path this
                   (build-path experiment-dir "experiment-output"))
       (set-field! host-experiment-runner-script-path this
                   (build-path experiment-dir "generated-run-experiment.sh"))

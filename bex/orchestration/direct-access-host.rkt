@@ -34,7 +34,7 @@
                    host-project-path
                    host-racket-path
                    host-utilities-path
-                   host-data-path
+                   host-output-path
                    host-experiment-runner-script-path)
     (init-field [cpu-count 1]
                 [env-vars ""])
