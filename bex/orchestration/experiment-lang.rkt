@@ -113,6 +113,8 @@
                       (build-path (get-field host-project-path the-host)
                                   "experiment-results"
                                   the-experiment-id)])
+        (make-directory* (current-experiment-dir))
+        (send the-host configure-experiment-dir! (current-experiment-dir))
         maybe-host-update
         (setup-dbs! the-host
                     the-db-setup-script

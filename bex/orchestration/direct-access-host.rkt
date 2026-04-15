@@ -55,9 +55,9 @@
           (write-data-store! empty))
         (set! queueing-thd (make-direct-access-host-queue-manager))))
 
-    (define experiment-script-name (basename host-experiment-runner-script-path))
     
     (define/public (get-jobs [active? #t] #:with-pid? [with-pid? #f])
+      (define experiment-script-name (basename host-experiment-runner-script-path))
       (option-let*
        ([active (match (system/host/string (format "ps -ef | grep ~a" experiment-script-name) ;@~a{ps -ef | grep @experiment-script-name}
        )

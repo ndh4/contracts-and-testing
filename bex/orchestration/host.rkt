@@ -10,13 +10,11 @@
          "experiment-info.rkt")
 
 (define-runtime-paths
-  ;; TODO this should be inside output dir
-  ;; data on the status of the experiment, i think
-  [store-path "../../../experiment-data/experiment-manager"]
   [std-experiment-runner-template "./standard-experiment-runner-script-template.sh"])
 
 (define host<%> (interface (writable<%>)
                   ;; provided by host%
+                  [configure-experiment-dir! (->m path-to-existant-directory? any)]
                   [system/host (unconstrained-domain-> boolean?)]
                   [system/host/string (unconstrained-domain-> string?)]
                   [scp (->*m {}
@@ -51,15 +49,20 @@
     (super-new)
     (init-field hostname
                 host-project-path)
-    (field [data-store-path (build-path store-path (~a hostname ".rktd"))]
+    (field [data-store-path 'unknown] ;; used by the host to store job data
            [host-racket-path (build-path host-project-path "racket" "bin" "racket")]
            [host-utilities-path
             (build-path host-project-path "contracts-and-testing" "bex" "util")]
-           [host-data-path (build-path host-project-path "experiment-output")]
-           [host-experiment-runner-script-path
-            ;; TODO this should be relative to the results dir
-            (build-path host-project-path "generated-run-experiment.sh")]
+           [host-data-path 'unknown] ;; experiment-output (TODO probably want to rename this var)
+           [host-experiment-runner-script-path 'unknown]
            [host-experiment-runner-script-uploaded? #f])
+    (define/public (configure-experiment-dir! experiment-dir)
+      (set-field! host-data-path this
+                  (build-path experiment-dir "experiment-output"))
+      (set-field! host-experiment-runner-script-path this
+                  (build-path experiment-dir "generated-run-experiment.sh"))
+      (set-field! data-store-path this
+                  (build-path experiment-dir "experiment-manager" (~a hostname ".rktd"))))
     (define/public (custom-write port) (write hostname port))
     (define/public (custom-display port) (display hostname port))
 
