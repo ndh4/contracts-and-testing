@@ -6,7 +6,8 @@
  (define-implementation type-mistakes-in-code #:module "mutation/mutate-benchmark.rkt")
  (define-implementation type-annotation-mistakes #:module "mutation/mutate-types.rkt")
  (define-implementation type-interface-mistakes #:module "mutation/mutate-type-interface.rkt")
- (define-implementation code-mistakes #:module "mutation/mutate-for-module-level-ctcs.rkt"))
+ (define-implementation module-ctcs-code-mistakes #:module "mutation/mutate-for-module-level-ctcs.rkt")
+ (define-implementation component-ctcs-code-mistakes #:module "mutation/mutate-for-component-level-ctcs.rkt"))
 
 (define-configurable mutant-sampling
                      #:provides [select-mutants all-mutants-should-have-trails?]

@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : 42 -> -42
-#s(run-status "main.rkt" 6 words-smaller runtime-error #f ("main.rkt" "main.rkt") ("main.rkt") #f)

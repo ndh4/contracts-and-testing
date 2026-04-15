@@ -2,7 +2,7 @@
 
 (require "../../orchestration/experiment-info.rkt")
 
-(configure! mutation                      code-mistakes)
+(configure! mutation                      component-ctcs-code-mistakes)
 (configure! mutant-sampling               pre-selected
             (and (current-experiment-dir)
                  (build-path (current-experiment-dir) "dbs" "mutant-samples.rktdb")))

@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/message-queue.rkt:32:58 (m message-queue)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/dungeon/unified/message-queue.rkt:32:58 (message-queue m)>
-#s(run-status "message-queue.rkt" 1 enqueue-message! completed #f #f #f #f)

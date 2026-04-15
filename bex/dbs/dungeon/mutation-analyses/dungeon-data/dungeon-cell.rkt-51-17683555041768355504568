@@ -1,2 +1,0 @@
-mutate: Mutating with boolean-op-swap : or -> and
-#s(run-status "cell.rkt" 51 horizontal-door% completed #f #f #f #f)

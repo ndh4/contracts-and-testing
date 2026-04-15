@@ -698,7 +698,8 @@ Mutant: [~a] ~a @ ~a with config:
                               [errortrace-stack (? list?)]
                               [context-stack (? list?)]))
                     (struct* run-status
-                             ([outcome 'runtime-error]
+                             ([outcome (or 'runtime-error
+                                           'test-failure)]
                               [blamed #f]
                               [errortrace-stack (? list?)]
                               [context-stack (? list?)])))

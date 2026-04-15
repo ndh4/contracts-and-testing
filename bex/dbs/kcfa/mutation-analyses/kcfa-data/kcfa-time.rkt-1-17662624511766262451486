@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/time.rkt:71:3 (begin (define label (Stx-label call)) (take* (cons label time) 1))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/time.rkt:71:3 (begin (take* (cons label time) 1))>
-#s(run-status "time.rkt" 1 tick syntax-error #f #f #f #f)

@@ -161,6 +161,9 @@
     (namespace-attach-module (current-namespace)
                              'racket/contract
                              ns)
+    ;; Make rackunit come from the same namespace so we can classify
+    ;; which errors were thrown by rackunit checks
+    (namespace-attach-module (current-namespace) '(lib "rackunit") ns)
     ;; Require errortrace so that we get accurate runtime error location
     ;; information.
     #;(eval '(require (lib "errortrace")) ns)
@@ -383,12 +386,12 @@
           (extract-context-stack e))]
         [(? exn:fail:syntax?) ; don't think should ever happen?
          ((make-status* 'syntax-error))]
+        [(? exn:test?)
+         ((make-status* 'test-failure)
+          #f
+          (extract-errortrace-stack e)
+          (extract-context-stack e))]
         [(? exn:fail?)
-;         (log-mutation-runner-info
-;          @~a{Type = exn:fail,
-;          value = @e
-;          exn:test? result: @(exn:test? e)
-;          exn:test:check? result: @(exn:test:check? e)})
          ((make-status* 'runtime-error)
           #f
           (extract-errortrace-stack e)

@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:146:3 (begin (cond ((eq? (quote ()) todo) seen) ((set-member? seen (car todo)) (explore seen (cdr todo))) (else (define st0 (car todo)) (define succs (next st0)) (explore (set-add seen st0) (append (set->list succs) (cdr todo))))))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/kcfa/unified/ai.rkt:146:3 (begin)>
-#s(run-status "ai.rkt" 28 explore syntax-error #f #f #f #f)

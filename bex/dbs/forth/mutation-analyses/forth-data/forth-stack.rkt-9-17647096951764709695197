@@ -1,2 +1,0 @@
-mutate: Mutating with position-swap : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:70:31 ((stack-push S2 v1) v2)> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/stack.rkt:70:31 (v2 (stack-push S2 v1))>
-#s(run-status "stack.rkt" 9 stack-over completed #f #f #f #f)

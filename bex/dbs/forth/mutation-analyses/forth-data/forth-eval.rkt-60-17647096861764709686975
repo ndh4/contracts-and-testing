@@ -1,2 +1,0 @@
-mutate: Mutating with begin-drop : #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:127:3 (begin (if (and (list? v*) (not (null? v*)) (list? (car v*)) (null? (cdr v*))) (de-nest (car v*)) v*))> -> #<syntax:Research-Local/blgt-parent/gtp-benchmarks/benchmarks/forth/unified/eval.rkt:127:3 (begin)>
-#s(run-status "eval.rkt" 60 de-nest syntax-error #f #f #f #f)

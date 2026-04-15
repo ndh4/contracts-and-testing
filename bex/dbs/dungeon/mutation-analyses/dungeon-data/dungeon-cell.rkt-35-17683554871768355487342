@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "The door is already closed." -> #"The door is already closed."
-#s(run-status "cell.rkt" 35 door% completed #f #f #f #f)

@@ -1,2 +1,0 @@
-mutate: Mutating with comparison-op-swap : = -> <=
-#s(run-status "main.rkt" 112 try-add-rectangle completed #f #f #f #f)

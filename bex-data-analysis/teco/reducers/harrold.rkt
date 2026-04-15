@@ -5,7 +5,7 @@
          "../../../bex/util/sql-db.rkt"
          "../common.rkt")
 
-[provide reduce-by-harrold]
+(provide reduce-by-harrold)
 
 ;; A hash-set containing the names of all tables introduced during this
 ;; reduction so that we can clean up at the end
@@ -34,7 +34,8 @@
 (define (prepare-table-name! name #:is-helper (is-helper #t))
   (let ([formatted-name (add-prefix name)])
     (drop-table! formatted-name)
-    (when is-helper (record-new-table! formatted-name))
+    (when is-helper
+      (record-new-table! formatted-name))
     formatted-name))
 
 ;; Reduce SUITE by the Harrold algorithm
@@ -49,32 +50,26 @@
                  [table-prefix (format "~a_~a_harrold_" suite conf)])
     ;; "kills" binary relation
     (define kills-table
-      (make-kills-table #:test-suite suite
-                        #:test-mutant-mapping mapping
-                        #:configuration conf))
-    
+      (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf))
+
     ;; mapping from mutants to cardinality / killed?
-    (define mutant-card-table
-      (make-mutant-card-table
-       #:kills-table kills-table))
-    
+    (define mutant-card-table (make-mutant-card-table #:kills-table kills-table))
+
     ;; table of results
     (define result-suite (make-result-suite #:start-suite suite))
-    
+
     ;; begin with all tests that kill mutants of cardinality 1, kill their
     ;; corresponding mutants, and add the tests to the result suite
     (define essential-tests
-      (remaining-tests-for-card 1
-                                #:kills-table kills-table
-                                #:mutant-card-table mutant-card-table))
+      (remaining-tests-for-card 1 #:kills-table kills-table #:mutant-card-table mutant-card-table))
     (kill-mutants/testlist! #:mutant-card-table mutant-card-table
                             #:testlist essential-tests
                             #:kills-table kills-table)
     (add-tests! #:to result-suite #:from essential-tests)
-    
+
     (let card-loop ([cur-card 2])
       (define max-card (get-max-card #:mutant-card-table mutant-card-table))
-      (displayln (format "assessing cardinality ~a (max-card: ~a)" cur-card max-card))
+      ;(displayln (format "assessing cardinality ~a (max-card: ~a)" cur-card max-card))
       (when (cur-card . <= . max-card)
         ;; add tests until all tests of this cardinality are killed
         (let add-tests-loop ()
@@ -92,18 +87,17 @@
                            #:testlist remaining-tests-for-cur-card
                            #:mutant-card-table mutant-card-table
                            #:kills-table kills-table))
-            
-            (displayln (format "selected test (~a, ~a)"
-                               (test-id-modul best-test)
-                               (test-id-index best-test)))
+
+            #;(displayln
+               (format "selected test (~a, ~a)" (test-id-modul best-test) (test-id-index best-test)))
             ;; mark any mutants killed by the selected test as killed
             (kill-mutants/test-id! #:mutant-card-table mutant-card-table
                                    #:test-id best-test
                                    #:kills-table kills-table)
-            
+
             ;; add the selected test to result-table
             (add-test! #:suite result-suite #:test best-test)
-            
+
             ;; continue adding tests
             (add-tests-loop)))
 
@@ -143,22 +137,14 @@
 ;; table -> nat
 (define (get-max-card #:mutant-card-table mutant-card)
   (define card
-    (query-value
-     dbc
-     (format
-      "SELECT MAX(card) FROM ~a
-       WHERE killed = FALSE"
-      mutant-card)))
+    (query-value dbc (format "SELECT MAX(card) FROM ~a
+       WHERE killed = FALSE" mutant-card)))
   (if (sql-null? card) 0 card))
 
 ;; query the number of rows in TBL
 ;; table -> nat
 (define (tbl-size tbl)
-  (query-value
-   dbc
-   (format
-    "SELECT COUNT(*) FROM ~a"
-    tbl)))
+  (query-value dbc (format "SELECT COUNT(*) FROM ~a" tbl)))
 
 ;; Does TBL have any rows?
 (define (tbl-empty? tbl)
@@ -220,13 +206,8 @@
 ;; Add tests from TESTLIST to TO-TABLE
 ;; table... -> void
 (define (add-tests! #:to to-table #:from testlist)
-  (query-exec
-   dbc
-   (format
-    "INSERT INTO ~a
-      SELECT * FROM ~a"
-    to-table
-    testlist)))
+  (query-exec dbc (format "INSERT INTO ~a
+      SELECT * FROM ~a" to-table testlist)))
 
 ;; Mark all mutants killed by tests in TESTLIST as killed
 ;; table... -> void
@@ -278,11 +259,7 @@
 ;; table -> (listof test-id)
 (define (testlist->test-ids testlist)
   (map vec->test-id
-       (query-rows
-        dbc
-        (format
-         "SELECT module_under_test, test_index FROM ~a"
-         testlist))))
+       (query-rows dbc (format "SELECT module_under_test, test_index FROM ~a" testlist))))
 
 ;; Select the best test for cardinality CARD. Returns a test ID
 ;; nat table... -> test-id
@@ -300,13 +277,13 @@
                                    #:kills-table kills))
   ;; If the list has multiple options, select the best option for the next
   ;; cardinality. If there is no next cardinality, choose by CHOOSE-TEST
-  (cond [(= (tbl-size best-tests) 1)
-         (first (testlist->test-ids best-tests))]
-        [(= card max-card)
-         (choose-test (testlist->test-ids best-tests))]
-        [else (select-test (+ card 1)
-                           #:max-card max-card
-                           #:choose-test choose-test
-                           #:testlist best-tests
-                           #:mutant-card-table mutant-card
-                           #:kills-table kills)]))
+  (cond
+    [(= (tbl-size best-tests) 1) (first (testlist->test-ids best-tests))]
+    [(= card max-card) (choose-test (testlist->test-ids best-tests))]
+    [else
+     (select-test (+ card 1)
+                  #:max-card max-card
+                  #:choose-test choose-test
+                  #:testlist best-tests
+                  #:mutant-card-table mutant-card
+                  #:kills-table kills)]))

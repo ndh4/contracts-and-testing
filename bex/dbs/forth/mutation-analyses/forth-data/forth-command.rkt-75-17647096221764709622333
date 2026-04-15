@@ -1,2 +1,0 @@
-mutate: Mutating with constant-swap : "Duplicate the top item of the stack, but place the duplicate in the third position of the stack." -> #"Duplicate the top item of the stack, but place the duplicate in the third position of the stack."
-#s(run-status "command.rkt" 75 CMD* syntax-error #f #f #f #f)

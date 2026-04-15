@@ -16,6 +16,7 @@
 (define outcomes
   `(,index-exceeded-outcome blamed
                             runtime-error
+                            test-failure
                             type-error
                             oom
                             timeout
@@ -57,12 +58,12 @@
                 [else #f])]
              [errortrace-stack
               {outcome}
-              (if (member outcome '(blamed runtime-error))
+              (if (member outcome '(blamed runtime-error test-failure))
                   (listof module-name-or-library-path?)
                   #f)]
              [context-stack
               {outcome}
-              (if (member outcome '(blamed runtime-error))
+              (if (member outcome '(blamed runtime-error test-failure))
                   (listof module-name-or-library-path?)
                   #f)]
              [result-value any/c]))
