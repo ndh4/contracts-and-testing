@@ -70,7 +70,7 @@ mkdir -p $DATA_DIR
 
 hostname >> $OUTPUT_DIR/$BENCH.log
 ./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
-    -x "$EXPERIMENT_DIR"
+    -x "$EXPERIMENT_DIR" \
     -b "$BENCHMARKS_PATH/$BENCH" \
     -o "$DATA_DIR" \
     -n "$CPUS" \
