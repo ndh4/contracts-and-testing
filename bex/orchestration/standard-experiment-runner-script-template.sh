@@ -56,10 +56,6 @@ fi
 export PLTSTDOUT='debug@factory'
 export PLTSTDERR='none'
 
-# TODO in general, I feel like all of these things should go in the
-# configurable (or passed in by the experiment manager), not hard-coded
-# in the experiment runner script
-# TODO sqlite database should not be in db_dir, it should be in output_dir
 OUTPUT_DIR=$EXPERIMENT_DIR/experiment-output/$OUTPUT_DIR_NAME
 DB_DIR=$EXPERIMENT_DIR/dbs
 TEMPORARY_DATA_DIR=$EXPERIMENT_DIR/temporary-data/mutant-factory/$CONFIG_NAME
