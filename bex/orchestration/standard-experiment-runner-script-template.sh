@@ -61,6 +61,7 @@ export PLTSTDERR='none'
 # in the experiment runner script
 # TODO sqlite database should not be in db_dir, it should be in output_dir
 OUTPUT_DIR=$EXPERIMENT_DIR/experiment-output/$OUTPUT_DIR_NAME
+DB_DIR=$EXPERIMENT_DIR/dbs
 DATA_DIR=$EXPERIMENT_DIR/mutant-runner-results/$CONFIG_NAME
 BENCHMARKS_PATH=gtp-benchmarks/benchmarks
 
@@ -76,5 +77,6 @@ hostname >> $OUTPUT_DIR/$BENCH.log
     -e "$OUTPUT_DIR/errs.log" \
     -c "contracts-and-testing/bex/configurables/configs/$CONFIG_NAME" \
     -m "$OUTPUT_DIR/$BENCH-metadata.rktd" \
+    -P "$DB_DIR/configuration-outcomes/$OUTPUT_DIR_NAME.rkt" \
     $KEEP_GOING_FLAG >> $OUTPUT_DIR/$BENCH.log 2>&1
 popd > /dev/null

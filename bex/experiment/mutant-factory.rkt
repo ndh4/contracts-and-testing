@@ -757,9 +757,6 @@ Mutant: [~a] ~a @ ~a with config:
 ;; annotation" type errors for no apparent reason whatsoever. We don't know what
 ;; causes it or how to fix it, so we need to work around it by checking a few
 ;; times that any type error really is a type-error.
-
-;; NOTE as of the commit this message was added, parity is no longer checked in
-;; the TeCo experiment, as we are not concerned with type-errors. 
 (define (record/check-configuration-outcome! mutant-proc result)
   (match-define (struct* mutant-process ([mutant mutant]
                                          [config config]
