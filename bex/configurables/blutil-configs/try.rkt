@@ -2,7 +2,7 @@
 
 (require "blame-following-common.rkt")
 
-(configure! mutation                 code-mistakes)
+(configure! mutation                 module-ctcs-code-mistakes)
 (configure! mutant-sampling          none)
 (configure! mutant-filtering         select-type/runtime/ctc-erroring-max-config-mutants)
 (configure! module-selection-for-mutation all-regular-modules)

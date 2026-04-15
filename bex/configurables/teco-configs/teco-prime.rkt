@@ -6,7 +6,7 @@
 ;; not generalize across experiments; for two, I think it will cause issues on
 ;; the remote host
 
-(configure! mutation                      code-mistakes)
+(configure! mutation                      component-ctcs-code-mistakes)
 (configure! mutant-sampling               pre-selected
             (build-path dbs:teco "mutant-samples.rktdb"))
 (configure! mutant-filtering              dont-care-about-blame-trails)
