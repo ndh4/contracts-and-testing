@@ -90,7 +90,8 @@
                                            [make-result (λ (ns r) r)]
                                            #:run-with
                                            [run-main run-with:require]
-
+                                           #:fake-run?
+                                           [fake-run? #f]
                                            #:modules-base-path
                                            [base-path #f]
                                            #:write-modules-to
@@ -103,7 +104,7 @@
         #:before-main [do-before-main! (namespace? . -> . any)]
         #:make-result [make-result (namespace? any/c . -> . any/c)]
         #:run-with [run-main ((list/c 'file path-string?) . -> . any/c)]
-
+        #:fake-run? [fake-run? booolean?]
         #:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)])
@@ -134,6 +135,9 @@
                              (program main/instrumented others/instrumented)])))
   ;; Modules must be loaded in order such that loading one module doesn't
   ;; cause another one to be loaded before it gets instrumented
+  (cond [fake-run? (thunk #f)]
+        [else
+
   (define others/instrumented/ordered
     (order-by-dependencies others/instrumented
                            resolved-module-stx
@@ -208,7 +212,7 @@
 
           (make-result ns result)))))
 
-  run)
+  run]))
 
 (define (exn:fail:runner-unwrap wrapped-e)
   (match wrapped-e

@@ -25,7 +25,8 @@
                                        any/c)
                                       #f)
              #:working-dir path-string?}
-            {#:failure-retries natural?
+            {#:fake-run? boolean?
+            #:failure-retries natural?
              ;; outfile->result can request a run with some valid result to be
              ;; retried up to this many times (e.g. to confirm a type error) by
              ;; returning an instance of the `retry` struct containing the
@@ -60,6 +61,7 @@
                                 outfile->result ;; should raise an exn:fail:bad-mutant-result? on error / bad/failure result
                                 #:progress-logging maybe-progress-logging-fns
                                 #:working-dir working-dir
+                                #:fake-run? [fake-run? #f]
                                 #:failure-retries [failure-retries 3]
                                 #:other-retries [other-retries 3])
   (define-values {log-progress!
@@ -92,6 +94,7 @@
                                         outfile->result
                                         #:log-progress log-progress!
                                         #:working-dir working-dir
+                                        #:fake-run? fake-run?
                                         #:failure-retries failure-retries
                                         #:other-retries other-retries)
                                 0)]
@@ -132,6 +135,7 @@
                 the-mutant
                 config-to-run
                 outfile->result
+                #:fake-run? [fake-run? #f]
                 #:log-progress log-progress!
                 #:working-dir working-dir
                 #:failure-retries failure-retries
@@ -154,7 +158,8 @@
                              index
                              outfile
                              experiment-config-path
-                             #:fake-mutation? #f)))
+                             #:fake-mutation? #f
+                             #:fake-run? fake-run?)))
     (process-info outfile ctl will))
   (define ((make-will:record-outcome! failure-retries-so-far other-retries-so-far) q info)
     (log-mutant-results-debug @~a{

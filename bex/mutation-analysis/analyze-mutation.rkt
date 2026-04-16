@@ -29,11 +29,13 @@
                                                 any-error? ; #f means type error only
                                                 #:process-limit proc-limit
                                                 #:working-dir working-dir
+                                                #:dont-run-mutants? dont-run-mutants?
                                                 #:log-progress progress-log-path)
   (benchmark/c
    boolean?
    #:process-limit natural?
    #:working-dir path-to-existant-directory?
+   #:dont-run-mutants? boolean?
    #:log-progress path-string?
 
    . -> . any)
@@ -75,6 +77,7 @@
        #:progress-logging `(auto ,progress-log-path)
        #:working-dir working-dir
        #:failure-retries 3
+       #:fake-run? dont-run-mutants?
        #:other-retries 2))) ;; confirm type errors
 
   (define success+fails
@@ -167,6 +170,7 @@
                                   (hash-ref flags 'check-for-any-error?)
                                   #:process-limit (string->number (hash-ref flags 'process-limit))
                                   #:working-dir data-output-dir
+                                  #:dont-run-mutants? #t
                                   #:log-progress (hash-ref flags 'progress-log)))
  (log-mutation-analysis-info "Mutation analysis complete.")
  (pretty-display result))

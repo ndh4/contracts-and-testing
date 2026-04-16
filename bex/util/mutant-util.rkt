@@ -12,6 +12,7 @@
              #:test-id (or/c #f natural?)
              #:memory/gb (or/c #f number?)
              #:log-mutation-info? boolean?
+             #:fake-run? boolean?
              #:save-output (or/c #f path-string?)
              #:write-to-sql? boolean?
              #:write-modules-to (or/c #f path-string?)
@@ -95,6 +96,7 @@
                              outfile
                              config-path
                              #:fake-mutation? fake-mutation?
+                             #:fake-run? [fake-run? #f]
                              #:timeout/s [timeout/s #f]
                              #:test-id [test-id #f]
                              #:memory/gb [memory/gb #f]
@@ -159,6 +161,9 @@
                              "-c" config-path)
                        (if fake-mutation?
                            (list "-z")
+                           empty)
+                       (if fake-run?
+                           (list "--fake-run")
                            empty)
                        (if write-to-sql?
                            (list "-d")
