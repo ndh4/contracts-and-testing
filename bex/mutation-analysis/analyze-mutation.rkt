@@ -7,6 +7,7 @@
          "../util/mutant-util.rkt"
          "../util/run-mutants-in-parallel.rkt"
          "../configurables/configurables.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir)
          racket/hash)
 
 (define-logger mutation-analysis)
@@ -115,6 +116,11 @@
 (main
  #:arguments {[flags args]
               #:once-each
+              [("-x" "--experiment-dir")
+               'experiment-dir
+               "Directory for this experiment. Mandatory."
+               #:mandatory
+               #:collect ["path" (set-parameter current-experiment-dir) #f]]
               [("-b" "--benchmark")
                'bench-to-run
                "Path to benchmark to run. Mandatory."

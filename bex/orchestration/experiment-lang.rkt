@@ -61,10 +61,9 @@
                                          #'#t
                                          #'#f)
              #:with implementation #'(run-one-mode current-host
-                                                   current-dbs
+                                                   current-experiment-id
                                                    mode.str
                                                    (list benchmark-name ...)
-                                                   {~? download-dir current-download-dir}
                                                    {~? name #f}
                                                    current-status-file
                                                    record-outcomes?)]))
@@ -72,10 +71,10 @@
 (define-syntax-parameter current-host
   (λ _ (raise-syntax-error 'run-mode
                            "can only be used inside a `with-configuration` form")))
-(define-syntax-parameter current-dbs
+(define-syntax-parameter current-experiment-id
   (λ _ (raise-syntax-error 'run-mode
                            "can only be used inside a `with-configuration` form")))
-(define-syntax-parameter current-download-dir
+#;(define-syntax-parameter current-download-dir
   (λ _ (raise-syntax-error 'run-mode
                            "can only be used inside a `with-configuration` form")))
 
@@ -100,59 +99,77 @@
   #:with maybe-host-update (if (attribute skip-setup-kw)
                                #'(void)
                                #'(update-host! the-host
-                                               the-dbs
                                                the-setup-config
-                                               (handle-host-update-failure! the-dbs)))
+                                               (handle-host-update-failure! the-experiment-id)))
   (module+ main
+    (define orchestration-info
+      (make-orchestration-info configuration (current-date)))
     (let ([the-host host]
-          [the-dbs (orchestration-config-dbs-dir configuration)]
-          [the-download-dir (orchestration-config-download-dir configuration)]
-          [the-setup-config (orchestration-config-setup-config configuration)]
+          [the-experiment-id (orchestration-info-experiment-id orchestration-info)] ;; should be relative
+          [the-setup-config (orchestration-info-setup-config orchestration-info)]
+          [the-db-setup-script (orchestration-info-db-setup-script orchestration-info)]
           [the-status-file {~? status-file-path #f}])
-      (parameterize ([current-remote-host-db-installation-directory-name
-                      (orchestration-config-dbs-dir-name configuration)])
+      (parameterize ([current-experiment-dir
+                      (build-path (get-field host-project-path the-host)
+                                  "experiment-results"
+                                  the-experiment-id)])
+        (make-directory* (current-experiment-dir))
+        (send the-host configure-experiment-dir! (current-experiment-dir))
         maybe-host-update
+        (setup-dbs! the-host
+                    the-db-setup-script
+                    (handle-host-db-setup-failure! the-experiment-id))
         (syntax-parameterize ([current-host (syntax-id-rules () [_ the-host])]
-                              [current-dbs  (syntax-id-rules () [_ the-dbs])]
-                              [current-download-dir (syntax-id-rules () [_ the-download-dir])]
+                              [current-experiment-id  (syntax-id-rules () [_ the-experiment-id])]
                               [current-status-file (syntax-id-rules () [_ the-status-file])])
           first-mode.implementation
           more-modes.implementation ...)))))
 
-(define ((handle-host-update-failure! dbs-path) msg)
+;; TODO I think that handle-host-update-failure! and handle-db-setup-failure!
+;; can both be removed, since dbs are being re-created every time (so something)
+;; must actually be wrong if there was an error
+(define ((handle-host-update-failure! experiment-id) msg)
   (unless (help!:continue? msg
                            @~a{
                                @msg
-                               Currently the host is setup with @dbs-path
+                               Currently the host is setup with @experiment-id
                                Fix the problem and manually setup the host @;
                                (e.g. with `experiment-manager.rkt`).
                                Done? (No means abort.)
                                })
       (raise-user-error 'handle-host-update-failure! "Aborted.")))
-(define ((handle-launch-benchmarks-failure! dbs-path) benchmark)
+(define ((handle-host-db-setup-failure! experiment-id) msg)
+  (unless (help!:continue? msg
+                           @~a{
+                               @msg
+                               Currently the host is setup with @experiment-id
+                               Fix the problem before continuing.
+                               Done? (No means abort.)
+                               })
+      (raise-user-error 'handle-host-update-failure! "Aborted.")))
+(define ((handle-launch-benchmarks-failure! experiment-id) benchmark)
   (unless (help!:continue? @~a{Benchmark launch failed}
                            @~a{
                                Failed to launch benchmark @benchmark
-                               Currently the host is setup with @dbs-path
+                               Currently the host is setup with @experiment-id
                                Fix the problem and launch the benchmark before continuing.
                                Done? (No means abort.)
                                })
     (raise-user-error 'handle-launch-benchmarks-failure! "Aborted.")))
 
-(define (handle-job-data-disappeared-failure! host dbs-path)
+(define (handle-job-data-disappeared-failure! host experiment-id)
   (unless (help!:continue? @~a{Jobs disappeared?}
                            @~a{
-                               Jobs have disappeared on @host, which is setup with @dbs-path
+                               Jobs have disappeared on @host, which is setup with @experiment-id
                                Continue with the rest of the experiment?
                                If the results are there, download them manually before continuing.
                                })
     (raise-user-error 'handle-job-data-disappeared-failure! "Aborted.")))
 
 (define (run-one-mode host
-                      dbs
+                      experiment-id
                       mode-name
                       benchmark-names
-                      download-dir
                       name
                       status-file
                       record-outcomes?)
@@ -168,7 +185,6 @@
                                     Unexpected dirty state on @host, summary:
                                     @(format-status host)
                                     host: @host
-                                    download-dir: @download-dir
                                     name: @name
                                     expected-benchmarks: @benchmark-names
                                     You can go clean it up manually now and then continue, @;
@@ -179,7 +195,7 @@
   (send host setup-job-management!)
   (displayln @~a{Submitting benchmark jobs...})
   (launch-benchmarks! host mode-name benchmark-names
-                      (handle-launch-benchmarks-failure! dbs)
+                      (handle-launch-benchmarks-failure! experiment-id)
                       #:outcome-checking-mode (if record-outcomes? 'record 'check))
   (displayln @~a{Waiting for benchmarks to finish...})
   (match (wait-for-current-jobs-to-finish host
@@ -195,13 +211,13 @@
                                                #:exists 'truncate)))
                                           #:expected-benchmarks benchmark-names)
     ['complete
-     (displayln @~a{Downloading results...})
-     (download-results! host download-dir
+     #;(displayln @~a{Downloading results...})
+     #;(download-results! host download-dir
                         #:name name
                         #:expected-benchmarks benchmark-names)
      (displayln @~a{@mode-name finished})]
     ['empty
-     (handle-job-data-disappeared-failure! host dbs)]
+     (handle-job-data-disappeared-failure! experiment-id)]
     ['error
      (unless (help!:continue? @~a{Something went wrong waiting for data}
                               @~a{

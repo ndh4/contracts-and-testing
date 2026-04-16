@@ -8,9 +8,11 @@
          )
 
 (provide (contract-out
-          [db-path (parameter/c path-to-db/c)]
+          [db-path (parameter/c (or/c path-to-db/c #f))]
           [ensure-db! (-> void?)]
-          [connect-to-db (-> connection?)]
+          [connect-to-db (->* ()
+                              #:pre (λ () (path-to-db/c (db-path)))
+                              connection?)]
           [ensure-table! (valid-table-name/c connection? . -> . void?)]
           [add-table-entry! (valid-table-name/c
                              connection?

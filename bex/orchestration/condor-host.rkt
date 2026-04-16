@@ -29,7 +29,7 @@
                    data-store-path
                    host-racket-path
                    host-utilities-path
-                   host-data-path
+                   host-output-path
                    host-experiment-runner-script-path)
     (init-field [host-jobdir-path "."])
     (field [host-jobfile-path (build-path host-jobdir-path "job.sub")]

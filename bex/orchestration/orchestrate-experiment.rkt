@@ -6,6 +6,7 @@
 
 (with-configuration [local
                      teco]
+  #:skip-setup
   #:status-in status-file
   #:manual-outcome-recording
   (run-mode teco-prime #:only abm_test #:record-outcomes)

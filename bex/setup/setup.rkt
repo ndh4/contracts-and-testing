@@ -7,7 +7,6 @@
 (define-runtime-paths
   [repo-parent-path "../../.."]
   [repo-path "../.."]
-  [dbs-dir "../../../experiment-data/dbs/"] ;; TODO SSOT DBS
   [this-mod "setup.rkt"]
   [project-raco "../util/project-raco.rkt"])
 
@@ -431,8 +430,9 @@
   #; (define TR-branch-ok? (or (not with-TR+transient?) (equal? TR-active-branch expected-TR-branch)))
   #; (define TR-up-to-date? (or (not with-TR+transient?) (repo-branch-up-to-date-with-remote? TR-dir TR-active-branch)))
 
-  (displayln "Checking dbs...")
-  (define dbs-ok? (check-expected-dbs))
+  ;; Don't need to check dbs anymore, since db-setup happens after setup.rkt is run
+  #; (displayln "Checking dbs...")
+  #; (define dbs-ok? (check-expected-dbs))
 
   (unless racket-version-ok?
     (displayln
@@ -453,9 +453,10 @@
        gtp-up-to-date?
        ;TR-branch-ok?
        ;TR-up-to-date?
-       dbs-ok?
+       ;dbs-ok?
        #;(check-TR-install racket-dir TR-dir #:display-failures? #t)))
 
+#;
 (define (check-expected-dbs)
   (for*/and ([{dir dbs} (in-hash expected-dbs)]
              [{db-name should-have-all-expected-benchmarks?} (in-hash dbs)])
