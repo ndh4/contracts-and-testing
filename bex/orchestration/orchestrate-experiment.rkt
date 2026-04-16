@@ -9,7 +9,4 @@
   #:skip-setup
   #:status-in status-file
   #:manual-outcome-recording
-  (run-mode teco-prime #:only abm_test #:record-outcomes)
-  #;(run-mode blame #:record-outcomes)
-  #;(run-mode stack)
-  #;(run-mode null))
+  (run-mode teco-prime #:record-outcomes))
