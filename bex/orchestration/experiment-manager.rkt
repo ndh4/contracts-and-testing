@@ -529,7 +529,7 @@
                     [hostname "benbox"]
                     [host-project-path "./teco"]))
 (define local (new local-direct-host%
-                   [cpu-count 2]
+                   [cpu-count 8]
                    [hostname "local"]
                    ;; NOTE I think we'll need this if we ever need a remote host
                    #;[host-dbs-dir (simple-form-path (build-path project-path "/bex/dbs"))]
