@@ -107,6 +107,7 @@
                                               module-to-mutate
                                               mutation-index
                                               #:fake-mutation? fake-mutation?
+                                              #:fake-run? [fake-run? #f]
                                               #:modules-base-path [base-path #f]
                                               #:write-modules-to [write-to-dir #f]
                                               #:test-id [test-id #f]
@@ -118,6 +119,7 @@
         #:fake-mutation? [fake-mutation? boolean?])
        (#:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
+        #:fake-run? [fake-run? boolean?]
         #:test-id [test-id (or/c natural? #f)]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)]
         #:mutator [mutate (mod/c natural? #:in program/c . -> . (values syntax? mutated-identifier?))])
@@ -199,6 +201,7 @@
                  no-TR-delayed-errors-instrumenter
                  configured-instrumenter
                  mutate-and-record-id)
+       #:fake-run? fake-run?
        #:setup-namespace setup-namespace!
        #:run-with (make-configured-runner a-program
                                           (mod->name module-to-mutate)
@@ -241,6 +244,7 @@
                                           #:modules-base-path [base-path #f]
                                           #:write-modules-to [write-to-dir #f]
                                           #:test-id [test-id #f]
+                                          #:fake-run? [fake-run? #f]
                                           #:on-module-exists [on-module-exists 'error]
                                           #:mutator [mutate mutate-module])
   (->i ([a-program program/c]
@@ -254,6 +258,7 @@
         #:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
         #:test-id [test-id (or/c natural? #f)]
+        #:fake-run? [fake-run? boolean?]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)]
         #:mutator [mutate (mod/c natural? #:in program/c . -> . (values syntax? mutated-identifier?))])
 
@@ -285,6 +290,7 @@
                                    module-to-mutate
                                    mutation-index
                                    #:fake-mutation? fake-mutation?
+                                   #:fake-run? fake-run?
                                    #:modules-base-path base-path
                                    #:write-modules-to write-to-dir
                                    #:test-id test-id

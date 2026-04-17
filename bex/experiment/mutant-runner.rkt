@@ -51,6 +51,7 @@
   (define configuration-path (make-parameter #f))
   (define write-to-database? (make-parameter #f))
   (define fake-mutation? (make-parameter #f))
+  (define fake-run? (make-parameter #f))
 
   (command-line
    #:once-each
@@ -114,6 +115,10 @@
    [("-z" "--fake-mutation")
     "Is this a sanity check with no actual mutation?"
     (fake-mutation? #t)]
+
+   [("--fake-run")
+    "Is this a fake run for the purpose of inital mutant aggregation?"
+    (fake-run? #t)]
 
    [("-d" "--database")
     "Should the result be written to a database?"
@@ -190,6 +195,7 @@
          #:write-modules-to (write-modules-to)
          #:on-module-exists (on-module-exists)
          #:fake-mutation? (fake-mutation?)
+         #:fake-run? (fake-run?)
          #:suppress-output? (not (mutant-output-path)))))
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
