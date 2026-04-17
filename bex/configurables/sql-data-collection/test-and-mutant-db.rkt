@@ -100,14 +100,14 @@
      context-stack
      result-value)
     (cond [(run-status? run-status)
-           (values (bool->int (eq? (run-status-outcome run-status) 'completed))
+           (values (eq? (run-status-outcome run-status) 'completed)
                    (~a (run-status-outcome run-status))
                    (~a (run-status-blamed run-status))
                    (~a (run-status-errortrace-stack run-status))
                    (~a (run-status-context-stack run-status))
                    (~a (run-status-result-value run-status)))]
           [(eq? 'skipped run-status)
-           (values (bool->int #t)
+           (values #t
                    "skipped"
                    (~a #f)
                    (~a #f)
@@ -134,5 +134,6 @@
    result-value
    cmd-line-args))
 
-(define (bool->int b)
+(define/contract (bool->int b)
+  (-> boolean? integer?)
   (if b 1 0))
