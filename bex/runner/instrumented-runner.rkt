@@ -104,7 +104,7 @@
         #:before-main [do-before-main! (namespace? . -> . any)]
         #:make-result [make-result (namespace? any/c . -> . any/c)]
         #:run-with [run-main ((list/c 'file path-string?) . -> . any/c)]
-        #:fake-run? [fake-run? booolean?]
+        #:fake-run? [fake-run? boolean?]
         #:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)])
@@ -137,82 +137,81 @@
   ;; cause another one to be loaded before it gets instrumented
   (cond [fake-run? (thunk #f)]
         [else
+          (define others/instrumented/ordered
+            (order-by-dependencies others/instrumented
+                                   resolved-module-stx
+                                   resolved-module-path-string))
 
-  (define others/instrumented/ordered
-    (order-by-dependencies others/instrumented
-                           resolved-module-stx
-                           resolved-module-path-string))
+          (define others+main/instrumented/ordered
+            (append others/instrumented/ordered
+                    (list main/instrumented)))
 
-  (define others+main/instrumented/ordered
-    (append others/instrumented/ordered
-            (list main/instrumented)))
+          (when write-to-dir
+            (for-each (write-module-to-disk! base-path write-to-dir on-module-exists)
+                      others+main/instrumented/ordered))
 
-  (when write-to-dir
-    (for-each (write-module-to-disk! base-path write-to-dir on-module-exists)
-              others+main/instrumented/ordered))
+          (define ns (make-base-namespace))
+          (setup-namespace! ns)
 
-  (define ns (make-base-namespace))
-  (setup-namespace! ns)
+          (define (run)
+            (parameterize ([current-load/use-compiled
+                            ;; Prevent loading from bytecode to ensure
+                            ;; instrumented versions are loaded
+                            (make-custom-load/use-compiled
+                             #:blacklist
+                             (curryr member
+                                     (map resolved-module-file-path
+                                          others+main/instrumented/ordered)))]
+                           [current-namespace ns])
 
-  (define (run)
-    (parameterize ([current-load/use-compiled
-                    ;; Prevent loading from bytecode to ensure
-                    ;; instrumented versions are loaded
-                    (make-custom-load/use-compiled
-                     #:blacklist
-                     (curryr member
-                             (map resolved-module-file-path
-                                  others+main/instrumented/ordered)))]
-                   [current-namespace ns])
+              ;; Eval the instrumented modules one at a time
+              (with-handlers ([exn? (λ (e)
+                                      (raise
+                                       (exn:fail:runner:module-evaluation "Module evaluation exception"
+                                                                          (current-continuation-marks)
+                                                                          e)))])
+                (for ([m (in-list others+main/instrumented/ordered)])
+                  (parameterize
+                      ;; Ensure relative load paths work
+                      ([current-load-relative-directory
+                        (resolved-module-containing-directory m)]
+                       [current-module-declare-name
+                        (module-path-resolve (resolved-module-module-path m))]
+                       [current-directory
+                        (resolved-module-containing-directory m)])
 
-      ;; Eval the instrumented modules one at a time
-      (with-handlers ([exn? (λ (e)
-                              (raise
-                               (exn:fail:runner:module-evaluation "Module evaluation exception"
-                                                                  (current-continuation-marks)
-                                                                  e)))])
-        (for ([m (in-list others+main/instrumented/ordered)])
-          (parameterize
-              ;; Ensure relative load paths work
-              ([current-load-relative-directory
-                (resolved-module-containing-directory m)]
-               [current-module-declare-name
-                (module-path-resolve (resolved-module-module-path m))]
-               [current-directory
-                (resolved-module-containing-directory m)])
-
-               (log-instrumented-runner-debug "Point AAAAA")
+                       (log-instrumented-runner-debug "Point AAAAA")
 
 
-            #;(log-instrumented-runner-debug (format "mapped symbols: ~a~n" (namespace-mapped-symbols ns)))
-              (parameterize ([print-syntax-width +inf.0])
-                   (log-instrumented-runner-debug (format "~a~n" (resolved-module-stx m))))
-;               (log-instrumented-runner-debug "Point AA")
-;               (log-instrumented-runner-debug (resolved-module-stx m))
-;               (log-instrumented-runner-debug "Point B")
-;               (parameterize ([print-syntax-width +inf.0])
-;                 (log-instrumented-runner-debug (pretty-format "~a~n" (resolved-module-stx m))))
-;               (log-instrumented-runner-debug "Point C")
-            (eval (resolved-module-stx m)))))
+                    #;(log-instrumented-runner-debug (format "mapped symbols: ~a~n" (namespace-mapped-symbols ns)))
+                      (parameterize ([print-syntax-width +inf.0])
+                           (log-instrumented-runner-debug (format "~a~n" (resolved-module-stx m))))
+        ;               (log-instrumented-runner-debug "Point AA")
+        ;               (log-instrumented-runner-debug (resolved-module-stx m))
+        ;               (log-instrumented-runner-debug "Point B")
+        ;               (parameterize ([print-syntax-width +inf.0])
+        ;                 (log-instrumented-runner-debug (pretty-format "~a~n" (resolved-module-stx m))))
+        ;               (log-instrumented-runner-debug "Point C")
+                    (eval (resolved-module-stx m)))))
 
-      ;; Run the main module
-      (with-handlers ([exn? (λ (e)
-                              (raise
-                               (exn:fail:runner:runtime "Runtime exception"
-                                                        (current-continuation-marks)
-                                                        e)))])
-        (parameterize
-            ;; Ensure relative load paths work
-            ([current-load-relative-directory
-              (resolved-module-containing-directory main/instrumented)]
-             [current-directory
-              (resolved-module-containing-directory main/instrumented)])
-          (do-before-main! ns)
-          (define result (run-main (resolved-module-module-path main/instrumented)))
+              ;; Run the main module
+              (with-handlers ([exn? (λ (e)
+                                      (raise
+                                       (exn:fail:runner:runtime "Runtime exception"
+                                                                (current-continuation-marks)
+                                                                e)))])
+                (parameterize
+                    ;; Ensure relative load paths work
+                    ([current-load-relative-directory
+                      (resolved-module-containing-directory main/instrumented)]
+                     [current-directory
+                      (resolved-module-containing-directory main/instrumented)])
+                  (do-before-main! ns)
+                  (define result (run-main (resolved-module-module-path main/instrumented)))
 
-          (make-result ns result)))))
+                  (make-result ns result)))))
 
-  run]))
+          run]))
 
 (define (exn:fail:runner-unwrap wrapped-e)
   (match wrapped-e
