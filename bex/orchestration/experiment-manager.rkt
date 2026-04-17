@@ -16,7 +16,8 @@
          zythos-local/one-job-per-mode
          zythos-local/one-job-per-mutant/batched
          benbox
-         local)
+         local
+         nathaniel)
 
 (require syntax/parse/define 
          racket/date
@@ -529,10 +530,15 @@
                     [hostname "benbox"]
                     [host-project-path "./teco"]))
 (define local (new local-direct-host%
-                   [cpu-count 8]
+                   [cpu-count 2]
                    [hostname "local"]
                    ;; NOTE I think we'll need this if we ever need a remote host
                    #;[host-dbs-dir (simple-form-path (build-path project-path "/bex/dbs"))]
+                   [host-project-path (simple-form-path project-path)]))
+
+(define nathaniel (new local-direct-host%
+                   [cpu-count 8]
+                   [hostname "nathaniel"]
                    [host-project-path (simple-form-path project-path)]))
 
 ;; ----- these hosts should be used on peroni directly -----
