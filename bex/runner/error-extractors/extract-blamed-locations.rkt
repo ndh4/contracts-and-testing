@@ -177,6 +177,10 @@
          (list (? path-string? path)
                (? symbol?) ...))
      (file-name-string-from-path path)]
+    [(or (? symbol? sym))
+     ;; With define/contract, each def/conned identifier becomes its own mini-module.
+     ;; So just return the name of the identifier.
+     (symbol->string sym)]
     [else
      (error 'extract-blamed-mod-name
             @~a{
