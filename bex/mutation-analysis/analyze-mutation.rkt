@@ -23,7 +23,7 @@
   '(type-error))
 (define/contract any-error-results
   (listof run-outcome/c)
-  '(type-error runtime-error blamed))
+  '(type-error runtime-error contract-violation))
 
 (define/contract (mutation-info-for-all-mutants bench
                                                 any-error? ; #f means type error only

@@ -82,7 +82,7 @@
   (define result (with-handlers ([exn:fail? (const #f)])
                    (file->value outfile)))
   (match result
-    [(struct* run-status ([outcome (or 'runtime-error 'blamed)]
+    [(struct* run-status ([outcome (or 'runtime-error 'contract-violation)]
                           [blamed blamed-list]
                           [context-stack stack]))
      #:when (blamed-is-interesting? (or blamed-list stack) config mutant)
