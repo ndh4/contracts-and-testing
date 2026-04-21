@@ -62,7 +62,7 @@
 (define (object-reduce!? kills-table)
   (define query-result
     (query-rows
-     dbc
+     (dbc)
      (format
       "SELECT
                  *
@@ -114,7 +114,7 @@
 (define (attribute-reduce!? kills-table)
   (define query-result
     (query-rows
-     dbc
+     (dbc)
      (format
       "SELECT
            *
@@ -166,7 +166,7 @@
 (define (owner-reduce!? #:kills-table kills-table #:result-suite result-suite)
   (define query-result
     (query-rows
-     dbc
+     (dbc)
      (format
       "SELECT DISTINCT
            module_under_test, test_index

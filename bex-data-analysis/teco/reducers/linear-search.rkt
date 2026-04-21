@@ -56,7 +56,7 @@
 (define (remove-test #:remove test #:from suite #:to-create dest)
   (drop-table! dest)
   (query-exec
-   dbc
+   (dbc)
    (format
     "CREATE TABLE ~a AS
     SELECT module_under_test, test_index FROM ~a

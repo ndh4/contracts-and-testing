@@ -8,6 +8,7 @@
          vec->test-id
          (struct-out mutant-id)
          vec->mutant-id
+         (struct-out slice)
          copy-table!
          drop-table!
          reducer/c
@@ -18,6 +19,7 @@
          add-test!
          delete-test!
          delete-mutant!
+         maybe-make-test-suite!
          make-result-suite
          maybe-move-sanity!)
 
@@ -28,6 +30,8 @@
 (define-struct mutant-id [modul index]
   #:transparent)
 
+(define-struct slice [experiment benchmark config])
+
 (define (vec->test-id row)
   (test-id (vector-ref row 0) (vector-ref row 1)))
 
@@ -36,11 +40,11 @@
 
 (define (copy-table! #:src src #:dest dest)
   (drop-table! dest)
-  (query-exec dbc (format "CREATE TABLE ~a AS SELECT * FROM ~a" dest src))
+  (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a" dest src))
   dest)
 
 (define (drop-table! table)
-  (query-exec dbc (format "DROP TABLE IF EXISTS ~a" table)))
+  (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a" table)))
 
 (define reducer/c
   (->i (#:test-suite [suite string?]
@@ -62,7 +66,7 @@
   (define new-name (format "~a_~a_kills" mapping conf))
   (drop-table! new-name)
   (query-exec
-   dbc
+   (dbc)
    (format
     "CREATE TABLE ~a AS
       SELECT module_under_test, test_index, mutant_module, mutation_index from ~a
@@ -74,11 +78,11 @@
   new-name)
 
 (define (empty-table? t)
-  (zero? (query-value dbc (format "SELECT COUNT(*) FROM ~a" t))))
+  (zero? (query-value (dbc) (format "SELECT COUNT(*) FROM ~a" t))))
 
 (define (get-best-tests #:kills-table kills-table)
   (query-rows
-   dbc
+   (dbc)
    (format
     "SELECT module_under_test, test_index, COUNT(*) from ~a
                                           GROUP BY module_under_test, test_index
@@ -88,13 +92,13 @@
 
 (define (make-result-suite #:start-suite suite #:configuration conf #:algo-name algo-name)
   (define new-name (format "~a_~a_~a_result" suite conf algo-name))
-  (query-exec dbc (format "DROP TABLE IF EXISTS ~a" new-name))
-  (query-exec dbc (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
+  (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a" new-name))
+  (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)
 
 (define (test-chosen! #:test test #:kills-table kills-table)
   (query-exec
-   dbc
+   (dbc)
    (format
     "DELETE FROM ~a
     WHERE (mutant_module, mutation_index)
@@ -105,14 +109,14 @@
    (test-id-index test)))
 
 (define (add-test! #:test test #:suite suite)
-  (query-exec dbc
+  (query-exec (dbc)
               (format "INSERT INTO ~a VALUES ($1, $2)" suite)
               (test-id-modul test)
               (test-id-index test)))
 
 (define (delete-test! #:test test #:kills-table kills-table)
   (query-exec
-   dbc
+   (dbc)
    (format "DELETE FROM ~a
                        WHERE module_under_test=$1 AND test_index=$2"
            kills-table)
@@ -121,7 +125,7 @@
 
 (define (delete-mutant! #:mutant mutant #:kills-table kills-table)
   (query-exec
-   dbc
+   (dbc)
    (format "DELETE FROM ~a
                        WHERE mutant_module=$1 AND mutation_index=$2"
            kills-table)
@@ -130,19 +134,26 @@
 
 (define (maybe-move-sanity! mapping)
   (call-with-transaction
-   dbc
+   (dbc)
    (lambda ()
      (when (not (zero? (query-value
-                        dbc
+                        (dbc)
                         (format "SELECT COUNT(*) FROM ~a WHERE mutant_module='NO_MUTATIONS'"
                                 mapping))))
 
-       (query-exec dbc (format "DROP TABLE IF EXISTS ~a_sanity" mapping))
+       (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a_sanity" mapping))
 
        (query-exec
-        dbc
+        (dbc)
         (format "CREATE TABLE ~a_sanity AS SELECT * FROM ~a WHERE mutant_module='NO_MUTATIONS'"
                 mapping
                 mapping))
 
-       (query-exec dbc (format "DELETE FROM ~a WHERE mutant_module='NO_MUTATIONS'" mapping))))))
+       (query-exec (dbc) (format "DELETE FROM ~a WHERE mutant_module='NO_MUTATIONS'" mapping))))))
+
+(define (maybe-make-test-suite! #:src src-table #:dest dest-table)
+  (query-exec
+   (dbc)
+   (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT DISTINCT module_under_test, test_index from ~a"
+           dest-table
+           src-table)))

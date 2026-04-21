@@ -114,8 +114,8 @@
 ;; table -> table
 (define (make-result-suite #:start-suite suite)
   (define new-name (prepare-table-name! "result" #:is-helper #f))
-  (query-exec dbc (format "DROP TABLE IF EXISTS ~a" new-name))
-  (query-exec dbc (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
+  (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a" new-name))
+  (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)
 
 ;; Create a table with information on each mutant, including cardinality and
@@ -124,7 +124,7 @@
 (define (make-mutant-card-table #:kills-table kills)
   (define new-name (prepare-table-name! "card"))
   (query-exec
-   dbc
+   (dbc)
    (format
     "CREATE TABLE ~a AS
       SELECT mutant_module, mutation_index, COUNT(*) AS card, FALSE AS killed FROM ~a
@@ -137,14 +137,14 @@
 ;; table -> nat
 (define (get-max-card #:mutant-card-table mutant-card)
   (define card
-    (query-value dbc (format "SELECT MAX(card) FROM ~a
+    (query-value (dbc) (format "SELECT MAX(card) FROM ~a
        WHERE killed = FALSE" mutant-card)))
   (if (sql-null? card) 0 card))
 
 ;; query the number of rows in TBL
 ;; table -> nat
 (define (tbl-size tbl)
-  (query-value dbc (format "SELECT COUNT(*) FROM ~a" tbl)))
+  (query-value (dbc) (format "SELECT COUNT(*) FROM ~a" tbl)))
 
 ;; Does TBL have any rows?
 (define (tbl-empty? tbl)
@@ -155,7 +155,7 @@
 (define (remaining-tests-for-card card #:kills-table kills #:mutant-card-table mutant-card)
   (define new-name (prepare-table-name! (format "TESTLIST_~a" card)))
   (query-exec
-   dbc
+   (dbc)
    (format
     "CREATE TABLE ~a AS
       SELECT DISTINCT module_under_test, test_index FROM ~a Kills
@@ -178,7 +178,7 @@
                                        #:kills-table kills)
   (define new-name (prepare-table-name! (format "FILTER_~a" card)))
   (query-exec
-   dbc
+   (dbc)
    (format
     "CREATE TABLE ~a AS
       WITH CardKillCounts AS (
@@ -206,7 +206,7 @@
 ;; Add tests from TESTLIST to TO-TABLE
 ;; table... -> void
 (define (add-tests! #:to to-table #:from testlist)
-  (query-exec dbc (format "INSERT INTO ~a
+  (query-exec (dbc) (format "INSERT INTO ~a
       SELECT * FROM ~a" to-table testlist)))
 
 ;; Mark all mutants killed by tests in TESTLIST as killed
@@ -215,7 +215,7 @@
                                 #:testlist testlist
                                 #:kills-table kills-table)
   (query-exec
-   dbc
+   (dbc)
    (format
     "UPDATE ~a AS MutantCard
       SET killed = TRUE
@@ -238,7 +238,7 @@
                                #:test-id test-id
                                #:kills-table kills-table)
   (query-exec
-   dbc
+   (dbc)
    (format
     "UPDATE ~a AS MutantCard
       SET killed = TRUE
@@ -259,7 +259,7 @@
 ;; table -> (listof test-id)
 (define (testlist->test-ids testlist)
   (map vec->test-id
-       (query-rows dbc (format "SELECT module_under_test, test_index FROM ~a" testlist))))
+       (query-rows (dbc) (format "SELECT module_under_test, test_index FROM ~a" testlist))))
 
 ;; Select the best test for cardinality CARD. Returns a test ID
 ;; nat table... -> test-id
