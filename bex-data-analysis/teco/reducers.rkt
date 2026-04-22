@@ -1,17 +1,18 @@
 #lang racket
 
 (require db
-         "../../bex/util/sql-db.rkt"
+         "db-params.rkt"
          "calculate-teco-score.rkt"
          "common.rkt"
          "reducers/linear-search.rkt"
          "reducers/greedy.rkt"
          "reducers/harrold.rkt"
-         "reducers/delayed-greedy.rkt")
+         "reducers/delayed-greedy.rkt"
+         racket/runtime-path)
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   (define tests
-    (map vec->test-id (query-rows dbc (format "SELECT module_under_test, test_index from ~a" suite))))
+    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index from ~a" suite))))
 
   (printf
    "~n~a (~a contracts)~n"
@@ -57,7 +58,7 @@
                #:choose-test choose-test))
 
     (printf "Reduced test suite size: ~a~n"
-            (length (query-rows dbc
+            (length (query-rows (dbc)
                                 (format "SELECT module_under_test, test_index from ~a"
                                         reduction-result))))
 
@@ -75,25 +76,27 @@
     (random-seed seed)
     (func)))
 
-(for ([conf (list 0 222222 0 22222222 0 22 0 2222222 0 2222 0 2222 0 22222)]
-      [bm (list "mbta"
-                "mbta"
-                "snake"
-                "snake"
-                "sieve"
-                "sieve"
-                "kcfa2"
-                "kcfa2"
-                "morsecode"
-                "morsecode"
-                "forth2"
-                "forth2"
-                "dungeon2"
-                "dungeon2")])
+(define-runtime-path experiment-results "../../../experiment-results")
 
-  (maybe-move-sanity! bm)
-  (run-reducers
-   (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
-   #:test-suite (string-append bm "_tests")
-   #:test-mutant-mapping bm
-   #:configuration conf))
+(define (db-connection a-slice)
+  (define db-path (build-path experiment-results (slice-experiment a-slice) "experiment-output" "db.sqlite"))
+  (sqlite3-connect #:database db-path #:mode 'read/write))
+
+;; Alter slices as needed
+(for ([a-slice (list (slice "teco-04-20-2026@16:23:46" "kcfa" 0)
+                     (slice "teco-04-20-2026@16:23:46" "kcfa" 2222222)
+                     (slice "teco-04-21-2026@23:27:58" "morsecode" 0)
+                     (slice "teco-04-21-2026@23:27:58" "morsecode" 2222)
+                     (slice "teco-04-21-2026@23:27:58" "sieve" 0)
+                     (slice "teco-04-21-2026@23:27:58" "sieve" 22))])
+
+  (define bm-name (slice-benchmark a-slice))
+
+  (parameterize ([dbc (db-connection a-slice)])
+    (maybe-make-test-suite! #:src bm-name #:dest (string-append bm-name "_tests"))
+    (maybe-move-sanity! bm-name)
+    (run-reducers
+     (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
+     #:test-suite (string-append bm-name "_tests")
+     #:test-mutant-mapping bm-name
+     #:configuration (slice-config a-slice))))

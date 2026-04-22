@@ -1,7 +1,7 @@
 #lang racket
 
-(require "../../bex/util/sql-db.rkt"
-         db)
+(require db
+         "db-params.rkt")
 
 (provide get-mutation-score)
 
@@ -10,7 +10,7 @@
   x)
 
 (define (get-num-mutants result-table-name)
-  (query-value dbc
+  (query-value (dbc)
                (format "SELECT COUNT(*) from (SELECT DISTINCT mutant_module, mutation_index from ~a)"
                        result-table-name)))
 
@@ -18,7 +18,7 @@
                               #:test-suite-table-name test-suite-table-name
                               #:serialized-configuration configuration)
   (query-value
-   dbc
+   (dbc)
    (apply
     format
     (cons
@@ -42,19 +42,17 @@
                           #:serialized-configuration configuration))
   (/ num-dead-mutants num-mutants))
 
-(define (get-mscore-from-config config experiment-name)
-  (get-mutation-score #:result-table-name experiment-name
-                      #:test-suite-table-name (string-append experiment-name "_tests")
+(define (get-mscore-from-config config benchmark-name)
+  (get-mutation-score #:result-table-name benchmark-name
+                      #:test-suite-table-name (string-append benchmark-name "_tests")
                       #:serialized-configuration config))
 
-(define (get-all-configs experiment-name)
-  (query-list dbc (format "SELECT configuration from ~a GROUP BY configuration" experiment-name)))
+(define (get-all-configs benchmark-name)
+  (query-list (dbc) (format "SELECT configuration from ~a GROUP BY configuration" benchmark-name)))
 
-(define (print-all-mscores experiment-name)
-  (define configs (get-all-configs experiment-name))
+(define (print-all-mscores benchmark-name)
+  (define configs (get-all-configs benchmark-name))
   (for ([config configs])
     (printf "Mutation score for ~a configuration: ~a~n"
             config
-            (get-mscore-from-config config experiment-name))))
-
-;(print-all-mscores experiment-name)
+            (get-mscore-from-config config benchmark-name))))
