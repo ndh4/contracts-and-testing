@@ -2,7 +2,7 @@
 
 (require db
          "../calculate-teco-score.rkt"
-         "../../../bex/util/sql-db.rkt"
+         "../db-params.rkt"
          "../common.rkt")
 
 (provide reduce-by-harrold)

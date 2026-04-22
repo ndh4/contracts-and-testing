@@ -1,7 +1,7 @@
 #lang racket
 
 (require db
-         "../../bex/util/sql-db.rkt"
+         "db-params.rkt"
          "calculate-teco-score.rkt")
 
 (provide (struct-out test-id)

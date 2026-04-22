@@ -1,7 +1,7 @@
 #lang racket
 
 (require db
-         "../../bex/util/sql-db.rkt"
+         "db-params.rkt"
          "calculate-teco-score.rkt"
          "common.rkt"
          "reducers/linear-search.rkt"
@@ -84,7 +84,11 @@
 
 ;; Alter slices as needed
 (for ([a-slice (list (slice "teco-04-20-2026@16:23:46" "kcfa" 0)
-                     (slice "teco-04-20-2026@16:23:46" "kcfa" 2222222))])
+                     (slice "teco-04-20-2026@16:23:46" "kcfa" 2222222)
+                     (slice "teco-04-21-2026@23:27:58" "morsecode" 0)
+                     (slice "teco-04-21-2026@23:27:58" "morsecode" 2222)
+                     (slice "teco-04-21-2026@23:27:58" "sieve" 0)
+                     (slice "teco-04-21-2026@23:27:58" "sieve" 22))])
 
   (define bm-name (slice-benchmark a-slice))
 

@@ -1,7 +1,7 @@
 #lang racket
 
-(require "../../bex/util/sql-db.rkt"
-         db)
+(require db
+         "db-params.rkt")
 
 (provide get-mutation-score)
 
@@ -42,17 +42,17 @@
                           #:serialized-configuration configuration))
   (/ num-dead-mutants num-mutants))
 
-(define (get-mscore-from-config config table-name)
-  (get-mutation-score #:result-table-name table-name
-                      #:test-suite-table-name (string-append table-name "_tests")
+(define (get-mscore-from-config config benchmark-name)
+  (get-mutation-score #:result-table-name benchmark-name
+                      #:test-suite-table-name (string-append benchmark-name "_tests")
                       #:serialized-configuration config))
 
-(define (get-all-configs table-name)
-  (query-list (dbc) (format "SELECT configuration from ~a GROUP BY configuration" table-name)))
+(define (get-all-configs benchmark-name)
+  (query-list (dbc) (format "SELECT configuration from ~a GROUP BY configuration" benchmark-name)))
 
-(define (print-all-mscores table-name)
-  (define configs (get-all-configs table-name))
+(define (print-all-mscores benchmark-name)
+  (define configs (get-all-configs benchmark-name))
   (for ([config configs])
     (printf "Mutation score for ~a configuration: ~a~n"
             config
-            (get-mscore-from-config config table-name))))
+            (get-mscore-from-config config benchmark-name))))
