@@ -217,7 +217,7 @@
                         #:expected-benchmarks benchmark-names)
      (displayln @~a{@mode-name finished})]
     ['empty
-     (handle-job-data-disappeared-failure! experiment-id)]
+     (handle-job-data-disappeared-failure! host experiment-id)]
     ['error
      (unless (help!:continue? @~a{Something went wrong waiting for data}
                               @~a{
