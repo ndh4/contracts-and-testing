@@ -1,6 +1,14 @@
 #lang racket
 
-(require "read-module.rkt")
+(require "read-module.rkt"
+         "path-utils.rkt")
+
+(provide (contract-out
+          [split-up-code
+           (-> path-to-existant-directory?
+               path-string?
+               path-string?
+               any)]))
 
 (provide (struct-out target-file)
          (struct-out context)

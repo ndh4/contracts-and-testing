@@ -323,7 +323,7 @@
                   #:interactive? #t)
       (handle-failure! @~a{DB setup failed on host '@a-host'})))
 
-(define (update-host! a-host dbs-dir setup-config-name ; assumed to be in bex/setup/
+(define (update-host! a-host setup-config-name ; assumed to be in bex/setup/
                       [handle-failure! (λ (reason)
                                          (raise-user-error 'update-host! reason))])
   (define host-repo-path
@@ -340,6 +340,7 @@
                 setup-config-name))
   (for ([step (in-list '("Updating implementation..."
                          "Updating benchmarks..."
+                         "Enumerating tests in benchmarks..."
                          "Recompiling and checking status..."))]
         [cmd (in-list
               (list
@@ -351,6 +352,11 @@
                @~a{
                    cd '@host-benchmarks-path' && @;
                    git pull && @;
+                   echo "Done."
+                   }
+               @~a{
+                   cd '@host-benchmarks-path' && @;
+                   @(get-field host-racket-path a-host) -l bex/util/enumerate-tests-for-benchmarks.rkt -- --gtp-benchmarks-dir . @(string-join experiment-benchmarks) && @;
                    echo "Done."
                    }
                @~a{
