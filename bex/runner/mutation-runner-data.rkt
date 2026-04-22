@@ -50,7 +50,8 @@
              [blamed
               {outcome}
               (cond
-                [(member outcome '(contract-violation type-error)) (listof module-name-or-library-path?)]
+                [(equal? outcome 'contract-violation) (listof string?)]
+                [(equal? outcome 'type-error) (listof module-name-or-library-path?)]
                 ;; Some runtime errors come with blame, if the
                 ;; primitive has a real contract,
                 ;; and type errors identify a location too
