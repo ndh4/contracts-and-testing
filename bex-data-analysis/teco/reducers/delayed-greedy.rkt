@@ -1,8 +1,7 @@
 #lang racket
 
 (require db
-         "../calculate-teco-score.rkt"
-         "../../../bex/util/sql-db.rkt"
+         "../db-params.rkt"
          "../common.rkt")
 
 (provide (contract-out [reduce-by-delayed-greedy reducer/c]))
@@ -62,7 +61,7 @@
 (define (object-reduce!? kills-table)
   (define query-result
     (query-rows
-     dbc
+     (dbc)
      (format
       "SELECT
                  *
@@ -114,7 +113,7 @@
 (define (attribute-reduce!? kills-table)
   (define query-result
     (query-rows
-     dbc
+     (dbc)
      (format
       "SELECT
            *
@@ -166,7 +165,7 @@
 (define (owner-reduce!? #:kills-table kills-table #:result-suite result-suite)
   (define query-result
     (query-rows
-     dbc
+     (dbc)
      (format
       "SELECT DISTINCT
            module_under_test, test_index

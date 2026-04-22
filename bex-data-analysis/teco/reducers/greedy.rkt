@@ -1,9 +1,6 @@
 #lang racket
 
-(require db
-         "../calculate-teco-score.rkt"
-         "../../../bex/util/sql-db.rkt"
-         "../common.rkt")
+(require "../common.rkt")
 
 (provide (contract-out [reduce-by-vanilla-greedy reducer/c]))
 
