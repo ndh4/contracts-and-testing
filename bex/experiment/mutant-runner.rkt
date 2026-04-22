@@ -16,7 +16,6 @@
          "../util/program.rkt"
          "../util/log-controls.rkt"
          "../util/path-utils.rkt"
-         "../util/sql-db.rkt"
          "../configurables/configurables.rkt"
          "../configurations/configure-benchmark.rkt"
          "../orchestration/experiment-info.rkt")
