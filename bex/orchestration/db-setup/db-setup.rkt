@@ -237,7 +237,6 @@
       (plot-type-mutation-categories! outdir mutation-analysis-config)))
   (cond [viz-only? (viz!)]
         [else
-         (rebuild!)
          (displayln "Analyzing mutation...")
          (define progress-logs
            (analyze-mutation/all-benchmarks! outdir
