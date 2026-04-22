@@ -39,6 +39,12 @@
 (define run-outcome/c (apply or/c outcomes))
 (define mutated-identifier? (or/c string? symbol?))
 
+(define (identifier-string? s)
+  (and (string? s) (no-whitespace? s)))
+
+(define (no-whitespace? s)
+  (not (regexp-match? #px"\\s" s)))
+
 (define run-status/c
   (struct/dc run-status
              [mutated-module module-name?]
@@ -50,7 +56,8 @@
              [blamed
               {outcome}
               (cond
-                [(member outcome '(contract-violation type-error)) (listof module-name-or-library-path?)]
+                [(equal? outcome 'contract-violation) (listof (or/c identifier-string? module-name-or-library-path?))]
+                [(equal? outcome 'type-error) (listof module-name-or-library-path?)]
                 ;; Some runtime errors come with blame, if the
                 ;; primitive has a real contract,
                 ;; and type errors identify a location too
