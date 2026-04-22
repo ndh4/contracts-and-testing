@@ -49,7 +49,6 @@
          "../util/program.rkt"
          "../util/condor.rkt"
          "../util/log-controls.rkt"
-         "../util/sql-db.rkt"
          "../configurables/configurables.rkt"
          "experiment-exns.rkt"
          (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
