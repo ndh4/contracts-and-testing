@@ -340,8 +340,9 @@
                 setup-config-name))
   (for ([step (in-list '("Updating implementation..."
                          "Updating benchmarks..."
-                         "Enumerating tests in benchmarks..."
-                         "Recompiling and checking status..."))]
+                         "Recompiling..."
+                         "Checking status:"
+                         "Enumerating tests in benchmarks..."))]
         [cmd (in-list
               (list
                @~a{
@@ -355,13 +356,16 @@
                    echo "Done."
                    }
                @~a{
-                   cd '@host-benchmarks-path' && @;
-                   @(get-field host-racket-path a-host) -l bex/util/enumerate-tests-for-benchmarks.rkt -- --gtp-benchmarks-dir . @(string-join experiment-benchmarks) && @;
+                   @(get-field host-racket-path a-host) -l bex/util/project-raco -- -Cc && @;
                    echo "Done."
                    }
                @~a{
-                   @(get-field host-racket-path a-host) -l bex/util/project-raco -- -Cc && @;
                    @(get-field host-racket-path a-host) -l bex/setup/setup -- -c '@host-setup-config-path' -v && @;
+                   echo "Done."
+                   }
+               @~a{
+                   cd '@host-benchmarks-path' && @;
+                   @(get-field host-racket-path a-host) -l bex/util/enumerate-tests-for-benchmarks.rkt -- --gtp-benchmarks-dir . @(string-join experiment-benchmarks) && @;
                    echo "Done."
                    }))])
     (displayln step)
