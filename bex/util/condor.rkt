@@ -1,12 +1,14 @@
 #lang at-exp racket
 
 (provide current-run-with-condor-machines
+         batch-temp-loc
          spawn-condor-mutant-runner)
 
 (require racket/runtime-path
          "../configurations/configure-benchmark.rkt"
          "../configurables/configurables.rkt"
-         "experiment-exns.rkt")
+         "experiment-exns.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
 (define-runtime-path default-script-dir "../../../tmp")
 (define this-racket-exe-path (simple-form-path (find-system-path 'exec-file)))
@@ -22,6 +24,7 @@
 (define max-batch-waiting-time
   (make-parameter (getenv/default "BEX_CONDOR_BATCH_WAIT" 5 string->number)))
 (define batch-temp-loc
+  ;; during orchestration, configured in mutant-util, not with the env-var
   (make-parameter (getenv/default "BEX_CONDOR_BATCH_SCRIPT_DIR" default-script-dir)))
 
 (define (make-system-executor exe-name)
@@ -167,7 +170,7 @@
         Executable = @(simple-form-path script)
         Error = @(build-path (batch-temp-loc) "batched-condor-script-errs.txt")
         Output = @(build-path (batch-temp-loc) "batched-condor-script-outs.txt")
-        Log = condor-log.txt
+        Log = @(build-path (current-experiment-dir) "condor-log.txt")
 
         +IsWholeMachineJob = false
         +IsSuspensionJob = false
@@ -178,8 +181,7 @@
    script
    (current-inexact-monotonic-milliseconds)))
 
-(define (spawn-condor-mutant-runner experiment-dir
-                                    a-benchmark-configuration
+(define (spawn-condor-mutant-runner a-benchmark-configuration
                                     module-to-mutate
                                     mutation-index
                                     outfile
@@ -203,6 +205,7 @@
                   empty)
               "--"
               (~a mutant-runner-path)
+              "-x" (~a (simple-form-path (current-experiment-dir)))
               "-b" (serialize-benchmark-configuration a-benchmark-configuration)
               "-T" (~a test-id)
               "-M" (~a module-to-mutate)

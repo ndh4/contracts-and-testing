@@ -80,6 +80,9 @@
                                 #:name [name benchmark])
       (define job-uploaded?
         (with-temp-file job.sub
+          ;; NOTE condor-host is currently unused, so this is not updated with
+          ;; the most recent directory structure. Instead, we use
+          ;; spawn-condor-mutant-runner in condor.rkt
           (display-to-file
            @~a{
                # Set the universe
