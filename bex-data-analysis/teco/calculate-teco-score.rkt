@@ -27,7 +27,7 @@
                             ON ~a.module_under_test = ~a.module_under_test AND
                                ~a.test_index = ~a.test_index
                             WHERE configuration = $1
-                            AND test_passed = 0)"
+                            AND (test_passed = 0 AND outcome!='test-failure'))"
      (build-list 6 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))))
    configuration))
 

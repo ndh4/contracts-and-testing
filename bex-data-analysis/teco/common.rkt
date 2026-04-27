@@ -62,7 +62,6 @@
                               #:serialized-configuration conf))))
 
 (define (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
-  ; SQL SELECT [mutant-id] [test-id] [conf] WHERE test_passed = 0
   (define new-name (format "~a_~a_kills" mapping conf))
   (drop-table! new-name)
   (query-exec
@@ -70,7 +69,7 @@
    (format
     "CREATE TABLE ~a AS
       SELECT module_under_test, test_index, mutant_module, mutation_index from ~a
-      WHERE (module_under_test, test_index) IN ~a AND test_passed = 0 AND configuration = $1"
+      WHERE (module_under_test, test_index) IN ~a AND (test_passed = 0 AND outcome!='test-failure') AND configuration = $1"
     new-name
     mapping
     suite)
