@@ -169,7 +169,7 @@
         Executable = @(simple-form-path script)
         Error = @(build-path (batch-temp-loc) "batched-condor-script-errs.txt")
         Output = @(build-path (batch-temp-loc) "batched-condor-script-outs.txt")
-        Log = condor-log.txt
+        Log = @(build-path (current-experiment-dir) "condor-log.txt")
 
         +IsWholeMachineJob = false
         +IsSuspensionJob = false
