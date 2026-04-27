@@ -7,7 +7,8 @@
 (require racket/runtime-path
          "../configurations/configure-benchmark.rkt"
          "../configurables/configurables.rkt"
-         "experiment-exns.rkt")
+         "experiment-exns.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
 (define-runtime-path default-script-dir "../../../tmp")
 (define this-racket-exe-path (simple-form-path (find-system-path 'exec-file)))
@@ -204,6 +205,7 @@
                   empty)
               "--"
               (~a mutant-runner-path)
+              "-x" (~a (simple-form-path (current-experiment-dir)))
               "-b" (serialize-benchmark-configuration a-benchmark-configuration)
               "-T" (~a test-id)
               "-M" (~a module-to-mutate)
