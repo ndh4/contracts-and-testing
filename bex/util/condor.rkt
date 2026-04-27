@@ -1,6 +1,7 @@
 #lang at-exp racket
 
 (provide current-run-with-condor-machines
+         batch-temp-loc
          spawn-condor-mutant-runner)
 
 (require racket/runtime-path
@@ -22,6 +23,7 @@
 (define max-batch-waiting-time
   (make-parameter (getenv/default "BEX_CONDOR_BATCH_WAIT" 5 string->number)))
 (define batch-temp-loc
+  ;; during orchestration, configured in mutant-util, not with the env-var
   (make-parameter (getenv/default "BEX_CONDOR_BATCH_SCRIPT_DIR" default-script-dir)))
 
 (define (make-system-executor exe-name)

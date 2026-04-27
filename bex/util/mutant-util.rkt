@@ -110,22 +110,23 @@
 ;                                         module-to-mutate-name))
   (cond
     [(current-run-with-condor-machines)
-     (spawn-condor-mutant-runner a-benchmark-configuration
-                                 module-to-mutate
-                                 mutation-index
-                                 outfile
-                                 config-path
-                                 mutant-runner-path
-                                 (mutant-error-log)
-                                 #:timeout/s (or timeout/s (default-timeout/s))
-                                 #:test-id test-id
-                                 #:memory/gb (or memory/gb (default-memory-limit/gb))
-                                 #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
-                                 #:save-output output-path
+     (parameterize ([batch-temp-loc (build-path (current-experiment-dir) "temporary-data" "condor")])
+       (spawn-condor-mutant-runner a-benchmark-configuration
+                                   module-to-mutate
+                                   mutation-index
+                                   outfile
+                                   config-path
+                                   mutant-runner-path
+                                   (mutant-error-log)
+                                   #:timeout/s (or timeout/s (default-timeout/s))
+                                   #:test-id test-id
+                                   #:memory/gb (or memory/gb (default-memory-limit/gb))
+                                   #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
+                                   #:save-output output-path
 
-                                 #:write-to-sql? write-to-sql?
-                                 #:write-modules-to dump-dir-path
-                                 #:force-module-write? force-module-write?)]
+                                   #:write-to-sql? write-to-sql?
+                                   #:write-modules-to dump-dir-path
+                                   #:force-module-write? force-module-write?))]
     [else
      (call-with-output-file outfile #:mode 'text #:exists 'replace
        (λ (outfile-port)
