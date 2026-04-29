@@ -8,6 +8,7 @@
          #;download-results!
          format-status
          summarize-experiment-status
+         prompt-for-cleanup!
          help!:continue?
          notify-phone!
 
@@ -284,6 +285,12 @@
   #;
   (notify-phone! notification)
   (user-prompt! prompt))
+
+;; Ask if the user wants to remove the experiment-dir after a failed run
+(define (prompt-for-cleanup!)
+  (when (user-prompt! (format "Since the experiment failed, do you want to remove the experiment-dir? (~a)"
+                              (current-experiment-dir)))
+    (delete-directory (current-experiment-dir))))
 
 (define (check-host-empty! host
                            [handle-not-empty!
