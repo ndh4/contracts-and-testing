@@ -100,8 +100,16 @@
                                #'(void)
                                #'(update-host! the-host
                                                the-setup-config
+                                               #:skip-recompile? (skip-recompile?)
                                                (handle-host-update-failure! the-experiment-id)))
   (module+ main
+    (define skip-recompile? (make-parameter #f))
+    (command-line
+     #:once-each
+     [("-s" "--skip-recompile")
+      "Skip the recompilation phase before running the experiment"
+      (skip-recompile? #t)])
+
     (define orchestration-info
       (make-orchestration-info configuration (current-date)))
     (let ([the-host host]

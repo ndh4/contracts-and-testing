@@ -323,7 +323,9 @@
                   #:interactive? #t)
       (handle-failure! @~a{DB setup failed on host '@a-host'})))
 
-(define (update-host! a-host setup-config-name ; assumed to be in bex/setup/
+(define (update-host! a-host
+                      setup-config-name ; assumed to be in bex/setup/
+                      #:skip-recompile? skip-recompile?
                       [handle-failure! (λ (reason)
                                          (raise-user-error 'update-host! reason))])
   (define host-repo-path
@@ -338,11 +340,11 @@
                 "bex"
                 "setup"
                 setup-config-name))
-  (for ([step (in-list '("Updating implementation..."
-                         "Updating benchmarks..."
-                         "Recompiling..."
-                         "Checking status:"
-                         "Enumerating tests in benchmarks..."))]
+  (for ([step (in-list (list "Updating implementation..."
+                             "Updating benchmarks..."
+                             (if skip-recompile? "Skipping recompilation..." "Recompiling...")
+                             "Checking status:"
+                             "Enumerating tests in benchmarks..."))]
         [cmd (in-list
               (list
                @~a{
@@ -355,10 +357,14 @@
                    git pull && @;
                    echo "Done."
                    }
-               @~a{
-                   @(get-field host-racket-path a-host) -l bex/util/project-raco -- -Cc && @;
-                   echo "Done."
-                   }
+               (if skip-recompile?
+                   @~a{
+                       echo "Continuing."
+                       }
+                   @~a{
+                       @(get-field host-racket-path a-host) -l bex/util/project-raco -- -Cc && @;
+                       echo "Done."
+                       })
                @~a{
                    @(get-field host-racket-path a-host) -l bex/setup/setup -- -c '@host-setup-config-path' -v && @;
                    echo "Done."
