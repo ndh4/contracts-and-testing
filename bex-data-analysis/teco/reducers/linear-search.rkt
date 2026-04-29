@@ -48,7 +48,7 @@
          (drop-table! new-suite)
          accum])))
 
-  (define result-name (format "~a_~a_~a_linsearch_result" suite conf dtc?-name))
+  (define result-name (format "~a_linsearch_result" (build-table-prefix #:base suite #:config conf #:dtc?-name dtc?-name)))
   (copy-table! #:src winner #:dest result-name)
   (drop-table! winner)
   result-name)
