@@ -7,7 +7,8 @@
          "../configurations/configure-benchmark.rkt"
          "tests.rkt"
          "mutant-util.rkt"
-         "option.rkt")
+         "option.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
 (define-runtime-paths
   [configs-dir "../configurables"]
@@ -173,8 +174,13 @@
                             'check-experiment-progress
                             "Unable to infer path to config for this experiment."))))]
 
+       ;; assume that the experiment-dir is two levels upward of the benchmark-dir
+       [experiment-dir
+        (simple-form-path (build-path benchmark-dir 'up 'up))]
+
        [_ (begin
-            (install-configuration! config-path)
+            (parameterize ([current-experiment-dir experiment-dir])
+              (install-configuration! config-path))
             (unless readable-output?
               (displayln @~a{
                              Inferred benchmark @(benchmark->name bench) @;
