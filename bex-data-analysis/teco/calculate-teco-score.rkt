@@ -27,8 +27,9 @@
                             ON ~a.module_under_test = ~a.module_under_test AND
                                ~a.test_index = ~a.test_index
                             WHERE configuration = $1
-                            AND test_passed = 0)"
-     (build-list 6 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))))
+                            AND ~a)"
+     (append (build-list 6 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))
+             (list test-passed=0))))
    configuration))
 
 (define (get-mutation-score #:result-table-name result-table-name

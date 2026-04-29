@@ -9,6 +9,7 @@
          (struct-out mutant-id)
          vec->mutant-id
          (struct-out slice)
+         build-table-prefix
          copy-table!
          drop-table!
          reducer/c
@@ -38,6 +39,9 @@
 (define (vec->mutant-id row)
   (mutant-id (vector-ref row 0) (vector-ref row 1)))
 
+(define (build-table-prefix #:base base #:config conf #:dtc?-name dtc?-name)
+  (format "~a_~a_~a" base conf dtc?-name))
+
 (define (copy-table! #:src src #:dest dest)
   (drop-table! dest)
   (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a" dest src))
@@ -62,18 +66,18 @@
                               #:serialized-configuration conf))))
 
 (define (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
-  ; SQL SELECT [mutant-id] [test-id] [conf] WHERE test_passed = 0
-  (define new-name (format "~a_~a_kills" mapping conf))
+  (define new-name (format "~a_kills" (build-table-prefix #:base mapping #:config conf #:dtc?-name dtc?-name)))
   (drop-table! new-name)
   (query-exec
    (dbc)
    (format
     "CREATE TABLE ~a AS
       SELECT module_under_test, test_index, mutant_module, mutation_index from ~a
-      WHERE (module_under_test, test_index) IN ~a AND test_passed = 0 AND configuration = $1"
+      WHERE (module_under_test, test_index) IN ~a AND ~a AND configuration = $1"
     new-name
     mapping
-    suite)
+    suite
+    test-passed=0)
    conf)
   new-name)
 
@@ -91,7 +95,7 @@
     kills-table)))
 
 (define (make-result-suite #:start-suite suite #:configuration conf #:algo-name algo-name)
-  (define new-name (format "~a_~a_~a_result" suite conf algo-name))
+  (define new-name (format "~a_~a_result" (build-table-prefix #:base suite #:config conf #:dtc?-name dtc?-name) algo-name))
   (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a" new-name))
   (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)
