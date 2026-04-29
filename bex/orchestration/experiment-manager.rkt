@@ -325,7 +325,7 @@
 
 (define (update-host! a-host
                       setup-config-name ; assumed to be in bex/setup/
-                      skip-recompile
+                      #:skip-recompile? skip-recompile?
                       [handle-failure! (λ (reason)
                                          (raise-user-error 'update-host! reason))])
   (define host-repo-path
@@ -342,7 +342,7 @@
                 setup-config-name))
   (for ([step (in-list (list "Updating implementation..."
                              "Updating benchmarks..."
-                             (if skip-recompile "Skipping recompilation..." "Recompiling...")
+                             (if skip-recompile? "Skipping recompilation..." "Recompiling...")
                              "Checking status:"
                              "Enumerating tests in benchmarks..."))]
         [cmd (in-list
@@ -357,7 +357,7 @@
                    git pull && @;
                    echo "Done."
                    }
-               (if skip-recompile
+               (if skip-recompile?
                    @~a{
                        echo "Continuing."
                        }
