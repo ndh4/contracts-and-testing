@@ -122,6 +122,16 @@
                                   "experiment-results"
                                   the-experiment-id)])
         (make-directory* (current-experiment-dir))
+
+        ;; create a symlink to the most recent experiment-dir for convenience
+        (define experiment-results-link
+          (build-path (get-field host-project-path the-host)
+                      "experiment-results"
+                      "latest"))
+        (when (link-exists? experiment-results-link)
+          (delete-file experiment-results-link))
+        (make-file-or-directory-link (current-experiment-dir) experiment-results-link)
+
         (send the-host configure-experiment-dir! (current-experiment-dir))
         maybe-host-update
         (setup-dbs! the-host
