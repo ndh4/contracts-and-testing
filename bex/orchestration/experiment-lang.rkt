@@ -122,6 +122,16 @@
                                   "experiment-results"
                                   the-experiment-id)])
         (make-directory* (current-experiment-dir))
+
+        ;; create a symlink to the most recent experiment-dir for convenience
+        (define experiment-results-link
+          (build-path (get-field host-project-path the-host)
+                      "experiment-results"
+                      "latest"))
+        (when (link-exists? experiment-results-link)
+          (delete-file experiment-results-link))
+        (make-file-or-directory-link (current-experiment-dir) experiment-results-link)
+
         (send the-host configure-experiment-dir! (current-experiment-dir))
         maybe-host-update
         (setup-dbs! the-host
@@ -145,7 +155,8 @@
                                (e.g. with `experiment-manager.rkt`).
                                Done? (No means abort.)
                                })
-      (raise-user-error 'handle-host-update-failure! "Aborted.")))
+    (prompt-for-cleanup!)
+    (raise-user-error 'handle-host-update-failure! "Aborted.")))
 (define ((handle-host-db-setup-failure! experiment-id) msg)
   (unless (help!:continue? msg
                            @~a{
@@ -154,7 +165,8 @@
                                Fix the problem before continuing.
                                Done? (No means abort.)
                                })
-      (raise-user-error 'handle-host-update-failure! "Aborted.")))
+    (prompt-for-cleanup!)
+    (raise-user-error 'handle-host-update-failure! "Aborted.")))
 (define ((handle-launch-benchmarks-failure! experiment-id) benchmark)
   (unless (help!:continue? @~a{Benchmark launch failed}
                            @~a{
@@ -163,6 +175,7 @@
                                Fix the problem and launch the benchmark before continuing.
                                Done? (No means abort.)
                                })
+    (prompt-for-cleanup!)
     (raise-user-error 'handle-launch-benchmarks-failure! "Aborted.")))
 
 (define (handle-job-data-disappeared-failure! host experiment-id)
@@ -172,6 +185,7 @@
                                Continue with the rest of the experiment?
                                If the results are there, download them manually before continuing.
                                })
+    ;; Do not prompt for cleanup here, since this could mean a success. Better safe than sorry!
     (raise-user-error 'handle-job-data-disappeared-failure! "Aborted.")))
 
 (define (run-one-mode host
