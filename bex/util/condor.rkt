@@ -189,6 +189,8 @@
 
                                     mutant-runner-path
                                     mutant-error-log
+                                    #:fake-mutation? [fake-mutation? #f]
+                                    #:fake-run? [fake-run? #f]
                                     #:timeout/s timeout/s
                                     #:test-id test-id
                                     #:memory/gb memory/gb
@@ -213,6 +215,12 @@
               "-t" (~a timeout/s)
               "-g" (~a memory/gb)
               "-c" (~a (simple-form-path config-path))
+              (if fake-mutation?
+                  (list "-z")
+                  empty)
+              (if fake-run?
+                  (list "--fake-run")
+                  empty)
               (if write-to-sql?
                   (list "-d")
                   empty)
