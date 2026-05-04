@@ -118,6 +118,8 @@
                                    config-path
                                    mutant-runner-path
                                    (mutant-error-log)
+                                   #:fake-mutation? fake-mutation?
+                                   #:fake-run? fake-run?
                                    #:timeout/s (or timeout/s (default-timeout/s))
                                    #:test-id test-id
                                    #:memory/gb (or memory/gb (default-memory-limit/gb))
