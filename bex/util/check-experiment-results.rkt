@@ -37,7 +37,7 @@
      (define bench-dir-name (basename bench-dir))
      (define contents (directory-list bench-dir #:build? #t))
      (define-values {log-path status ended-with-err? config}
-       (match (findf (λ (p) (and (regexp-match? @regexp{^[A-Za-z0-9]+\.log$}
+       (match (findf (λ (p) (and (regexp-match? @regexp{^[_A-Za-z0-9]+\.log$}
                                                 (basename p))
                                  (not (equal? (basename p)
                                               "errs.log"))))
