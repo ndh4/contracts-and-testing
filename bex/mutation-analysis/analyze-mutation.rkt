@@ -163,8 +163,6 @@
  (install-configuration! (hash-ref flags 'config-path))
  (define data-output-dir (hash-ref flags 'data-output-dir))
  (make-directory* data-output-dir)
- ;; Create the sqlite database if desired
- ((configured:ensure-db!))
  (define result
    (mutation-info-for-all-mutants (read-benchmark (hash-ref flags 'bench-to-run))
                                   (hash-ref flags 'check-for-any-error?)
