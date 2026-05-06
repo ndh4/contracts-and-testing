@@ -197,7 +197,6 @@
                                     #:log-mutation-info? [log-mutation-info? #f]
                                     #:save-output [output-path #f]
 
-                                    #:write-to-sql? [write-to-sql? #f]
                                     #:write-modules-to [dump-dir-path #f]
                                     #:force-module-write? [force-module-write? #f])
   (define args
@@ -220,9 +219,6 @@
                   empty)
               (if fake-run?
                   (list "--fake-run")
-                  empty)
-              (if write-to-sql?
-                  (list "-d")
                   empty)
               (if output-path
                   (list "-O" output-path)

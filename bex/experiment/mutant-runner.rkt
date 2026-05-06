@@ -48,7 +48,6 @@
   (define memory/gb (make-parameter #f))
   (define mutant-output-path (make-parameter #f))
   (define configuration-path (make-parameter #f))
-  (define write-to-database? (make-parameter #f))
   (define fake-mutation? (make-parameter #f))
   (define fake-run? (make-parameter #f))
 
@@ -117,11 +116,7 @@
 
    [("--fake-run")
     "Is this a fake run for the purpose of inital mutant aggregation?"
-    (fake-run? #t)]
-
-   [("-d" "--database")
-    "Should the result be written to a database?"
-    (write-to-database? #t)])
+    (fake-run? #t)])
 
   (define mutant-output-path-port
     (match (mutant-output-path)

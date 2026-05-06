@@ -14,7 +14,6 @@
              #:log-mutation-info? boolean?
              #:fake-run? boolean?
              #:save-output (or/c #f path-string?)
-             #:write-to-sql? boolean?
              #:write-modules-to (or/c #f path-string?)
              #:force-module-write? boolean?}
             . ->* .
@@ -101,7 +100,6 @@
                              #:memory/gb [memory/gb #f]
                              #:log-mutation-info? [log-mutation-info? (current-mutant-runner-log-mutation-info?)]
                              #:save-output [output-path #f]
-                             #:write-to-sql? [write-to-sql? #f]
                              #:write-modules-to [dump-dir-path #f]
                              #:force-module-write? [force-module-write? #f])
 ; TODO: move this step to somewhere lower-down
@@ -126,7 +124,6 @@
                                    #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
                                    #:save-output output-path
 
-                                   #:write-to-sql? write-to-sql?
                                    #:write-modules-to dump-dir-path
                                    #:force-module-write? force-module-write?))]
     [else
@@ -166,9 +163,6 @@
                            empty)
                        (if fake-run?
                            (list "--fake-run")
-                           empty)
-                       (if write-to-sql?
-                           (list "-d")
                            empty)
                        (if output-path
                            (list "-O" output-path)

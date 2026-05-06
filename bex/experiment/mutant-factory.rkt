@@ -391,7 +391,6 @@
                            #:memory/gb memory/gb
                            #:test-id test-id
                            #:fake-mutation? fake-mutation?
-                           #:write-to-sql? #t
                            #:save-output (and debug:save-individual-mutant-outputs?
                                               (build-path (data-output-dir)
                                                           (format "~a.rktd"
