@@ -19,6 +19,8 @@
    mapping
    (cond
      [(= conf 0) "no"]
+     [(or (= conf 11) (= conf 1111) (= conf 11111) (= conf 111111) (= conf 1111111) (= conf 11111111))
+      "type-level"]
      [(or (= conf 22) (= conf 2222) (= conf 22222) (= conf 222222) (= conf 2222222) (= conf 22222222))
       "full"]
      [else "some"])) ;; code smell, but who really cares
@@ -84,18 +86,25 @@
 
 ;; Alter slices as needed
 (for ([a-slice (list (slice "teco-04-20-2026@16:23:46" "kcfa" 0)
+      (slice "teco-04-30-2026@11:13:36" "kcfa" 1111111)
       (slice "teco-04-20-2026@16:23:46" "kcfa" 2222222)
       (slice "teco-04-21-2026@23:27:58" "morsecode" 0)
+      (slice "teco-04-30-2026@13:19:27" "morsecode" 1111)
       (slice "teco-04-21-2026@23:27:58" "morsecode" 2222)
       (slice "teco-04-25-2026@16:15:01" "forth" 0)
+      (slice "teco-05-01-2026@14:24:16" "forth" 1111)
       (slice "teco-04-25-2026@16:15:01" "forth" 2222)
       (slice "teco-04-22-2026@10:43:21" "sieve" 0)
+      (slice "teco-04-30-2026@17:02:02" "sieve" 11)
       (slice "teco-04-22-2026@10:43:21" "sieve" 22)
       (slice "teco-04-24-2026@20:59:51" "dungeon" 0)
+      (slice "teco-05-01-2026@09:51:43" "dungeon" 11111)
       (slice "teco-04-24-2026@20:59:51" "dungeon" 22222)
       (slice "teco-04-24-2026@13:59:38" "snake" 0)
+      (slice "teco-05-01-2026@05:14:36" "snake" 11111111)
       (slice "teco-04-24-2026@13:59:38" "snake" 22222222)
       (slice "teco-04-23-2026@15:08:11" "mbta" 0)
+      (slice "teco-04-30-2026@18:34:21" "mbta" 111111)
       (slice "teco-04-23-2026@15:08:11" "mbta" 222222))])
 
   (define bm-name (slice-benchmark a-slice))

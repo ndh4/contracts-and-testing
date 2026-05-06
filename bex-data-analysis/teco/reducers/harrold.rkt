@@ -47,7 +47,7 @@
                            #:choose-test choose-test)
 
   (parameterize ([created-tables (mutable-set)]
-                 [table-prefix (format "~a_harrold_" (build-table-prefix #:base suite #:config conf #:dtc?-name dtc?-name))])
+                 [table-prefix (format "~a_harrold_" (build-table-prefix #:base suite #:config conf #:test-check-config test-check-config))])
     ;; "kills" binary relation
     (define kills-table
       (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf))

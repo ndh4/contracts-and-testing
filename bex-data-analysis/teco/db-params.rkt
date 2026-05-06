@@ -3,27 +3,21 @@
 (provide dbc
          test-passed=0
          test-passed=1
-         dtc?-name)
+         test-check-config)
 
 (define dbc (make-parameter #f))
 
-(define disable-test-checks? #f)
+(define/contract test-check-config (or/c 'yes_tc 'no_tc 'both)
+  'yes_tc)
 
 ;; If we disable test checks, then instances of
 ;; failure must exclude test-check failures.
-(define test-passed=0
-  (if disable-test-checks?
-    "(test_passed = 0 AND outcome!='test-failure')"
-    "(test_passed = 0)"))
+(define (test-passed=0 #:test-suite-name suite #:mapping-name mapping)
+  (format
+    "(   (~a.test_check = 1 AND ~a.test_passed = 0)
+      OR (~a.test_check = 0 AND ~a.test_passed = 0 AND ~a.outcome != 'test-failure'))"
+      suite mapping
+      suite mapping mapping))
 
-;; If we disable test checks, then instances of
-;; passage must include test-check failures.
-(define test-passed=1
-  (if disable-test-checks?
-    "(test_passed = 1 OR outcome='test-failure')"
-    "(test_passed = 1)"))
-
-(define dtc?-name
-  (if disable-test-checks?
-      "no_tc"
-      "yes_tc"))
+(define (test-passed=1 #:test-suite-name suite #:mapping-name mapping)
+  (format "(NOT ~a)" (test-passed=0 #:test-suite-name suite #:mapping-name mapping)))
