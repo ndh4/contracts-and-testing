@@ -99,6 +99,9 @@
 (define current-result-cache (make-parameter (λ _ #f)))
 #;(define current-progress-logger (make-parameter void))
 
+(define current-sqlite-db-connection (make-parameter #f))
+(define current-sqlite-db-table-name (make-parameter #f))
+
 (define/contract record/check-configuration-outcomes?
   (parameter/c (or/c #f
                      (list/c 'record (mutant/c config/c run-outcome/c . -> . any))
@@ -393,7 +396,7 @@
                                               (build-path (data-output-dir)
                                                           (format "~a.rktd"
                                                                   mutant-id)))))
-    (define mutant-proc
+    (define mutant*test-proc
       (mutant*test-process (mutant #f module-to-mutate-name mutation-index)
                       precision-config
                       outfile
@@ -414,7 +417,7 @@
      test-mod
      test-id
      (pretty-path outfile))
-    (process-info mutant-proc
+    (process-info mutant*test-proc
                   mutant-ctl
                   (mutant->process-will mutant-will)))
   (log-factory
@@ -441,13 +444,16 @@
   (mutant-will/c . -> . process-will/c)
 
   (define (outer-will process-q the-process-info)
-    (match-define (and mutant-proc
-                       (mutant-process (mutant #f mod index)
-                                       config
-                                       file
-                                       id the-blame-trail
-                                       revival-counts
-                                       increased-limits?))
+    (match-define (and mutant*test-proc
+                       (mutant*test-process (mutant #f mutant-mod mutant-id)
+                                            config
+                                            file
+                                            id the-blame-trail
+                                            revival-counts
+                                            increased-limits?
+                                            test-mod
+                                            test-id
+                                            fake-mutation?))
       (process-info-data the-process-info))
     ;; Read the result of the mutant before possible consolidation
     (define status ((process-info-ctl the-process-info) 'status))
@@ -456,20 +462,28 @@
       ;; emitted for an errored mutant, otherwise would warn wrong
       ;; output as well as error
       (if (equal? status 'done-ok)
-          (read-mutant-result mutant-proc)
-          (file->string (mutant-process-file mutant-proc))))
+          (read-mutant-result mutant*test-proc)
+          (file->string (mutant-process-file mutant*test-proc))))
     (match (cons status maybe-result)
       [(or (cons 'done-error _)
            (cons 'done-ok (? eof-object?)))
        (maybe-revive-failed-mutant process-q
-                                   mutant-proc
+                                   mutant*test-proc
                                    status
                                    maybe-result
                                    mutant-will)]
       [(cons 'done-ok (? run-status? result))
+       ((configured:add-table-entry!) (current-sqlite-db-table-name) (current-sqlite-db-connection)
+                                      #:configuration config
+                                      #:module-under-test test-mod
+                                      #:test-index test-id
+                                      #:mutant-module (if fake-mutation? "NO_MUTATIONS" mutant-mod)
+                                      #:mutation-index mutant-id
+                                      #:run-status result
+                                      #:cmd-line-args "nothing")
        (log-factory info
                     @~a{
-                        Sweeping up dead mutant [@id]: @mod @"@" @index, @;
+                        Sweeping up dead mutant [@id]: @mutant-mod @"@" @mutant-id, @;
                         result: @;
                         @(match result
                            [(struct* run-status
@@ -489,10 +503,10 @@
                             o]), @;
                         config: @~s[(serialize-config config)]
                         })
-       (match (record/check-configuration-outcome! mutant-proc result)
+       (match (record/check-configuration-outcome! mutant*test-proc result)
          [#t
          (log-factory fatal
-          (format "Revive-type-error case encountered: mutant-proc = ~a and result = ~a Don't know what to do about it." mutant-proc result))
+          (format "Revive-type-error case encountered: mutant*test-proc = ~a and result = ~a Don't know what to do about it." mutant*test-proc result))
           #;(revive-type-error-mutant process-q
                                     mutant-proc
                                     status
@@ -500,7 +514,7 @@
                                     mutant-will)]
          [#f
           (define dead-mutant-proc
-            (dead-mutant-process (mutant #f mod index)
+            (dead-mutant-process (mutant #f mutant-mod mutant-id)
                                  config
                                  result
                                  id
@@ -1003,15 +1017,23 @@ Mutant: [~a] ~a @ ~a with config:
                    @(configuration-path)
                    })
 
+  ;; Create the sqlite database and the table for this benchmark
+  ((configured:ensure-db!))
+  (define conn ((configured:connect-to-db)))
+  (define db-table-name (benchmark->name bench-to-run))
+  ((configured:ensure-table!) db-table-name conn)
+
   (define completed+checks-pass?
-    (parameterize ([date-display-format 'iso-8601])
+    (parameterize ([date-display-format 'iso-8601]
+                   [current-sqlite-db-connection conn]
+                   [current-sqlite-db-table-name db-table-name])
       (for ([setting '(max none)])
         (define config (make-bench-config bench-to-run setting))
         (run-all-mutants*config bench-to-run
-                              config
-                              ;; #:log-progress (make-progress-logger log-progress!/raw)
-                              ;; #:load-progress make-cached-results-function
-                              ))))
+                                config
+                                ;; #:log-progress (make-progress-logger log-progress!/raw)
+                                ;; #:load-progress make-cached-results-function
+                                ))))
 
   #;(finalize-log!)
   (finalize-configuration-outcomes!)
