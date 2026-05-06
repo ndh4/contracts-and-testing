@@ -257,7 +257,9 @@
   (log-factory-message
    (if all-checks-pass? 'info 'error)
    @~a{
-       @(if all-checks-pass? "and basic sanity checks pass." "but with failing sanity checks.")
+       Experiment complete, @(if all-checks-pass?
+                                 "and basic sanity checks pass."
+                                 "but with failing sanity checks.")
        @(or-empty unexpected-state-encountered? "⚠ Some unexpected states were encountered.\n") @;
        @(or-empty mutants-have-error-output? "⚠ Some mutants logged error messages.\n")})
   all-checks-pass?)

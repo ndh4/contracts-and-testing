@@ -7,7 +7,8 @@
          "../configurations/configure-benchmark.rkt"
          "tests.rkt"
          "mutant-util.rkt"
-         "option.rkt")
+         "option.rkt"
+         (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
 (define-runtime-paths
   [configs-dir "../configurables"]
@@ -50,10 +51,15 @@
 
 (struct mutant*test (mutant test-mod test-id))
 
-(define (all-mutant*tests-for bench)
+(define (all-mutant*tests-for bench #:with-sanity-checks? with-sanity-checks?)
   (define select-mutants (configured:select-mutants))
-  (for*/list ([module-to-mutate-name (in-list (benchmark->mutatable-modules bench))]
-              [mutation-index (select-mutants module-to-mutate-name bench)]
+  (define (select-mutants/0-for-sanity-checks module-to-mutate-name)
+    (if module-to-mutate-name (select-mutants module-to-mutate-name bench) '(0)))
+  (for*/list ([module-to-mutate-name
+               (in-list (if with-sanity-checks?
+                            (cons #f (benchmark->mutatable-modules bench))
+                            (benchmark->mutatable-modules bench)))]
+              [mutation-index (select-mutants/0-for-sanity-checks module-to-mutate-name)]
               [module-under-test-name (in-list (benchmark->testable-modules bench))]
               [test-index (get-all-test-ids module-under-test-name bench)])
     (mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
@@ -173,8 +179,13 @@
                             'check-experiment-progress
                             "Unable to infer path to config for this experiment."))))]
 
+       ;; assume that the experiment-dir is two levels upward of the benchmark-dir
+       [experiment-dir
+        (simple-form-path (build-path benchmark-dir 'up 'up))]
+
        [_ (begin
-            (install-configuration! config-path)
+            (parameterize ([current-experiment-dir experiment-dir])
+              (install-configuration! config-path))
             (unless readable-output?
               (displayln @~a{
                              Inferred benchmark @(benchmark->name bench) @;
@@ -182,7 +193,7 @@
                                                              (simple-form-path config-path))
                              })))]
 
-       [all-mutant*tests (all-mutant*tests-for bench)]
+       [all-mutant*tests (all-mutant*tests-for bench #:with-sanity-checks? #t)]
 
        #;[progress-log-path
         (guess-path (path-replace-extension log-path "-progress.log")
