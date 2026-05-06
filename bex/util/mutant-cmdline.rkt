@@ -56,7 +56,7 @@
          "-i" (~a mutation-index)
          "-t" (~a timeout/s)
          "-g" (~a memory/gb)
-         "-c" config-path)
+         "-c" (~a (simple-form-path config-path)))
    (if fake-mutation?
        (list "-z")
        empty)
