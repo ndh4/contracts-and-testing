@@ -22,7 +22,8 @@
          delete-mutant!
          maybe-make-test-suite!
          make-result-suite
-         maybe-move-sanity!)
+         maybe-move-sanity!
+         bool->sqlint)
 
 (define-struct test-id [modul index check-enabled?]
   #:transparent)
@@ -73,11 +74,11 @@
    (format
     "CREATE TABLE ~a AS
       SELECT module_under_test, test_index, test_check_enabled, mutant_module, mutation_index from ~a
-      WHERE (module_under_test, test_index) IN ~a AND ~a AND configuration = $1"
+      JOIN ~a USING (module_under_test, test_index) WHERE ~a AND configuration = $1"
     new-name
     mapping
     suite
-    (test-passed=0 #:test-suite-table-name suite #:mapping-name mapping))
+    (test-passed=0 #:test-suite-name suite #:mapping-name mapping))
    conf)
   new-name)
 
@@ -106,26 +107,29 @@
    (format
     "DELETE FROM ~a
     WHERE (mutant_module, mutation_index)
-    IN (SELECT DISTINCT mutant_module, mutation_index FROM ~a WHERE module_under_test=$1 AND test_index=$2)"
+    IN (SELECT DISTINCT mutant_module, mutation_index FROM ~a WHERE module_under_test=$1 AND test_index=$2 AND test_check_enabled=$3)"
     kills-table
     kills-table)
    (test-id-modul test)
-   (test-id-index test)))
+   (test-id-index test)
+   (bool->sqlint (test-id-check-enabled? test))))
 
 (define (add-test! #:test test #:suite suite)
   (query-exec (dbc)
-              (format "INSERT INTO ~a VALUES ($1, $2)" suite)
+              (format "INSERT INTO ~a VALUES ($1, $2, $3)" suite)
               (test-id-modul test)
-              (test-id-index test)))
+              (test-id-index test)
+              (bool->sqlint (test-id-check-enabled? test))))
 
 (define (delete-test! #:test test #:kills-table kills-table)
   (query-exec
    (dbc)
    (format "DELETE FROM ~a
-                       WHERE module_under_test=$1 AND test_index=$2"
+                       WHERE module_under_test=$1 AND test_index=$2 AND test_check_enabled=$3"
            kills-table)
    (test-id-modul test)
-   (test-id-index test)))
+   (test-id-index test)
+   (bool->sqlint (test-id-check-enabled? test))))
 
 (define (delete-mutant! #:mutant mutant #:kills-table kills-table)
   (query-exec
@@ -178,3 +182,7 @@
 (define/contract (sqlint->bool b)
   (-> (or/c 0 1) boolean?)
   (equal? b 1))
+
+(define/contract (bool->sqlint b)
+  (-> boolean? (or/c 0 1))
+  (if b 1 0))

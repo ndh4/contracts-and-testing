@@ -60,9 +60,10 @@
    (format
     "CREATE TABLE ~a AS
     SELECT module_under_test, test_index, test_check_enabled FROM ~a
-    WHERE module_under_test != $1 OR test_index != $2"
+    WHERE module_under_test != $1 OR test_index != $2 OR test_check_enabled != $3"
     dest
     suite)
    (test-id-modul test)
-   (test-id-index test))
+   (test-id-index test)
+   (bool->sqlint (test-id-check-enabled? test)))
   dest)

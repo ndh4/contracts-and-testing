@@ -7,7 +7,7 @@
 
 (define dbc (make-parameter #f))
 
-(define/contract test-check-config (or/c 'yes_tc 'no_tc 'both)
+(define/contract test-check-config (or/c 'yes_tc 'no_tc 'both_tc)
   'yes_tc)
 
 ;; If we disable test checks, then instances of

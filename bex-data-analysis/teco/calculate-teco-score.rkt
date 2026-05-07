@@ -19,7 +19,7 @@
                               #:serialized-configuration configuration)
   (query-value
    (dbc)
-(printx   (apply
+   (apply
     format
     (cons
      "SELECT COUNT(*) from (SELECT DISTINCT mutant_module, mutation_index from ~a
@@ -30,7 +30,7 @@
                             AND ~a)"
      (append (build-list 6 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))
              (list (test-passed=0 #:test-suite-name test-suite-table-name #:mapping-name result-table-name)))))
-)   configuration))
+   configuration))
 
 (define (get-mutation-score #:result-table-name result-table-name
                             #:test-suite-table-name test-suite-table-name
