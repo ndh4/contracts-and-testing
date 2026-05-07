@@ -158,6 +158,19 @@
 (define (maybe-make-test-suite! #:src src-table #:dest dest-table)
   (query-exec
    (dbc)
-   (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT DISTINCT module_under_test, test_index from ~a"
+   (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT *
+                                             FROM (SELECT DISTINCT module_under_test, test_index FROM ~a)
+                                             JOIN (SELECT 0 as test_check_enabled WHERE ~a
+                                                                          UNION ALL
+                                                                          SELECT 1 WHERE ~a
+                                             )"
            dest-table
-           src-table)))
+           src-table
+           (bool->sqlstring (or (eq? test-check-config 'both_tc)
+                                (eq? test-check-config 'no_tc)))
+           (bool->sqlstring (or (eq? test-check-config 'both_tc)
+                                (eq? test-check-config 'yes_tc))))))
+
+(define/contract (bool->sqlstring b)
+  (-> boolean? (or/c "TRUE" "FALSE"))
+  (if b "TRUE" "FALSE"))

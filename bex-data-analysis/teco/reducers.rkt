@@ -108,12 +108,13 @@
       (slice "teco-04-23-2026@15:08:11" "mbta" 222222))])
 
   (define bm-name (slice-benchmark a-slice))
+  (define test-suite-name (format "~a_tests_~a" bm-name test-check-config))
 
   (parameterize ([dbc (db-connection a-slice)])
-    (maybe-make-test-suite! #:src bm-name #:dest (string-append bm-name "_tests"))
+    (maybe-make-test-suite! #:src bm-name #:dest test-suite-name)
     (maybe-move-sanity! bm-name)
     (run-reducers
      (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
-     #:test-suite (string-append bm-name "_tests")
+     #:test-suite test-suite-name
      #:test-mutant-mapping bm-name
      #:configuration (slice-config a-slice))))
