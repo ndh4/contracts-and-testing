@@ -12,7 +12,7 @@
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   (define tests
-    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index from ~a" suite))))
+    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index, test_check_enabled from ~a ORDER BY module_under_test, test_index" suite))))
 
   (printf
    "~n~a (~a contracts)~n"
@@ -31,7 +31,7 @@
                                 6))
   (printf "Test suite size: ~a~n" (length tests))
 
-  (define ordering (get-random-order tests)) ; sequence of test-ids
+  (define ordering (get-order tests)) ; sequence of test-ids
   (define ordering-map
     (for/hash ([test ordering]
                [idx (in-naturals)])
@@ -61,7 +61,7 @@
 
     (printf "Reduced test suite size: ~a~n"
             (length (query-rows (dbc)
-                                (format "SELECT module_under_test, test_index from ~a"
+                                (format "SELECT module_under_test, test_index, test_check_enabled from ~a"
                                         reduction-result))))
 
     #;(displayln (format "~a: ~a"
@@ -69,6 +69,11 @@
                          (get-mutation-score #:result-table-name mapping
                                              #:test-suite-table-name result-table
                                              #:serialized-configuration conf)))))
+
+(define (get-order tests)
+  (define-values (enabled disabled) (partition test-id-check-enabled? tests))
+  (append (get-random-order disabled)
+          (get-random-order enabled)))
 
 (define (get-random-order tests)
   (do-with-seed 12345 (lambda () (shuffle tests))))

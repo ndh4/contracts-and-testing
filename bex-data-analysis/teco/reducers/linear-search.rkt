@@ -59,7 +59,7 @@
    (dbc)
    (format
     "CREATE TABLE ~a AS
-    SELECT module_under_test, test_index FROM ~a
+    SELECT module_under_test, test_index, test_check_enabled FROM ~a
     WHERE module_under_test != $1 OR test_index != $2"
     dest
     suite)

@@ -66,12 +66,12 @@
       "SELECT
                  *
              FROM
-                 (SELECT DISTINCT module_under_test, test_index FROM ~a) AS T1
+                 (SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a) AS T1
              WHERE EXISTS
                  (SELECT
                       *
                   FROM
-                      (SELECT DISTINCT module_under_test, test_index FROM ~a) AS T2
+                      (SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a) AS T2
                   WHERE
                       T1.module_under_test <> T2.module_under_test AND T1.test_index <> T2.test_index
                     AND NOT EXISTS
@@ -168,7 +168,7 @@
      (dbc)
      (format
       "SELECT DISTINCT
-           module_under_test, test_index
+           module_under_test, test_index, test_check_enabled
        FROM
            ~a AS table1
        WHERE

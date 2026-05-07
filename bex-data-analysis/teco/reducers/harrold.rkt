@@ -158,7 +158,7 @@
    (dbc)
    (format
     "CREATE TABLE ~a AS
-      SELECT DISTINCT module_under_test, test_index FROM ~a Kills
+      SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a Kills
       INNER JOIN ~a MutantCard
        ON (Kills.mutant_module=MutantCard.mutant_module AND
            Kills.mutation_index=MutantCard.mutation_index)
@@ -194,7 +194,7 @@
        ON (List.module_under_test=CardKillCounts.module_under_test AND
            List.test_index=CardKillCounts.test_index)
       )
-      SELECT module_under_test, test_index FROM ListCardKillCounts
+      SELECT module_under_test, test_index, test_check_enabled FROM ListCardKillCounts
       WHERE count=(SELECT COALESCE(MAX(count), 0) FROM ListCardKillCounts)"
     new-name
     kills
@@ -259,7 +259,7 @@
 ;; table -> (listof test-id)
 (define (testlist->test-ids testlist)
   (map vec->test-id
-       (query-rows (dbc) (format "SELECT module_under_test, test_index FROM ~a" testlist))))
+       (query-rows (dbc) (format "SELECT module_under_test, test_index, test_check_enabled FROM ~a" testlist))))
 
 ;; Select the best test for cardinality CARD. Returns a test ID
 ;; nat table... -> test-id

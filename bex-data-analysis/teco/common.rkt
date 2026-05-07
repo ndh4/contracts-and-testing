@@ -24,7 +24,7 @@
          make-result-suite
          maybe-move-sanity!)
 
-(define-struct test-id [modul index]
+(define-struct test-id [modul index check-enabled?]
   #:transparent)
 
 ;; Should use inheritance but I'm too lazy to look up the syntax
@@ -34,7 +34,7 @@
 (define-struct slice [experiment benchmark config])
 
 (define (vec->test-id row)
-  (test-id (vector-ref row 0) (vector-ref row 1)))
+  (test-id (vector-ref row 0) (vector-ref row 1) (sqlint->bool (vector-ref row 2))))
 
 (define (vec->mutant-id row)
   (mutant-id (vector-ref row 0) (vector-ref row 1)))
@@ -72,12 +72,12 @@
    (dbc)
    (format
     "CREATE TABLE ~a AS
-      SELECT module_under_test, test_index, mutant_module, mutation_index from ~a
+      SELECT module_under_test, test_index, test_check_enabled, mutant_module, mutation_index from ~a
       WHERE (module_under_test, test_index) IN ~a AND ~a AND configuration = $1"
     new-name
     mapping
     suite
-    test-passed=0)
+    (test-passed=0 #:test-suite-table-name suite #:mapping-name mapping))
    conf)
   new-name)
 
@@ -88,9 +88,9 @@
   (query-rows
    (dbc)
    (format
-    "SELECT module_under_test, test_index, COUNT(*) from ~a
-                                          GROUP BY module_under_test, test_index
-     HAVING COUNT(*) = (SELECT(MAX(cnt)) FROM (SELECT COUNT(*) as cnt FROM ~a GROUP BY module_under_test, test_index))"
+    "SELECT module_under_test, test_index, test_check_enabled, COUNT(*) from ~a
+                                          GROUP BY module_under_test, test_index, test_check_enabled
+     HAVING COUNT(*) = (SELECT(MAX(cnt)) FROM (SELECT COUNT(*) as cnt FROM ~a GROUP BY module_under_test, test_index, test_check_enabled))"
     kills-table
     kills-table)))
 
@@ -174,3 +174,7 @@
 (define/contract (bool->sqlstring b)
   (-> boolean? (or/c "TRUE" "FALSE"))
   (if b "TRUE" "FALSE"))
+
+(define/contract (sqlint->bool b)
+  (-> (or/c 0 1) boolean?)
+  (equal? b 1))
