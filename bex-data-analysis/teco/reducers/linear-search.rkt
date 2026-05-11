@@ -26,10 +26,16 @@
 
   (copy-table! #:src suite #:dest starting-point)
 
+  (define ordering-with-testchecks-first
+    (sort (get-total-order)
+          (lambda (a b)
+            (and (test-id-check-enabled? a)
+                 (not (test-id-check-enabled? b))))))
+
   (define winner
     (for/fold ([accum starting-point])
               ([counter (in-naturals)]
-               [current-test (get-total-order)])
+               [current-test ordering-with-testchecks-first])
 
       (define new-suite
         (remove-test #:remove current-test

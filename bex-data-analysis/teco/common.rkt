@@ -41,7 +41,7 @@
   (mutant-id (vector-ref row 0) (vector-ref row 1)))
 
 (define (build-table-prefix #:base base #:config conf #:test-check-config test-check-config)
-  (format "~a_~a_~a" base conf test-check-config))
+  (format "~a_~a" base conf))
 
 (define (copy-table! #:src src #:dest dest)
   (drop-table! dest)
