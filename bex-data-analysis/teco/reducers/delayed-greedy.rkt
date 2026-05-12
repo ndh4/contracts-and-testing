@@ -73,7 +73,7 @@
                   FROM
                       (SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a) AS T2
                   WHERE
-                      T1.module_under_test <> T2.module_under_test AND T1.test_index <> T2.test_index AND T1.test_check_enabled <> T2.test_check_enabled
+                      (T1.module_under_test <> T2.module_under_test OR T1.test_index <> T2.test_index OR T1.test_check_enabled <> T2.test_check_enabled)
                     AND NOT EXISTS
                         (SELECT
                              *
@@ -125,7 +125,7 @@
                   FROM
                       (SELECT DISTINCT mutant_module, mutation_index FROM ~a) AS M1
                   WHERE
-                      M2.mutant_module <> M1.mutant_module AND M2.mutation_index <> M1.mutation_index
+                      (M2.mutant_module <> M1.mutant_module OR M2.mutation_index <> M1.mutation_index)
                     AND NOT EXISTS
                       (SELECT
                            *
