@@ -3,6 +3,7 @@
 (require db
          "../calculate-teco-score.rkt"
          "../db-params.rkt"
+         "../reduction-structs.rkt"
          "../common.rkt")
 
 (provide (contract-out [reduce-by-lin-search reducer/c]))

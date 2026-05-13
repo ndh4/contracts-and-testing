@@ -2,6 +2,7 @@
 
 (require db
          "../db-params.rkt"
+         "../reduction-structs.rkt"
          "../common.rkt")
 
 (provide (contract-out [reduce-by-delayed-greedy reducer/c]))

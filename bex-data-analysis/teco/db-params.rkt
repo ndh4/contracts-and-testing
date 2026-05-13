@@ -1,14 +1,12 @@
 #lang racket
 
 (provide dbc
+         tcc
          test-passed=0
-         test-passed=1
-         test-check-config)
+         test-passed=1)
 
 (define dbc (make-parameter #f))
-
-(define/contract test-check-config (or/c 'yes_tc 'no_tc 'both_tc)
-  'yes_tc)
+(define tcc (make-parameter #f))
 
 ;; If we disable test checks, then instances of
 ;; failure must exclude test-check failures.

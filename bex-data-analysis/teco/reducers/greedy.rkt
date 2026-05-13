@@ -1,6 +1,7 @@
 #lang racket
 
-(require "../common.rkt")
+(require "../common.rkt"
+         "../reduction-structs.rkt")
 
 (provide (contract-out [reduce-by-vanilla-greedy reducer/c]))
 
