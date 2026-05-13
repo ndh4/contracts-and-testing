@@ -3,6 +3,7 @@
 (require db
          "../calculate-teco-score.rkt"
          "../db-params.rkt"
+         "../reduction-structs.rkt"
          "../common.rkt")
 
 (provide reduce-by-harrold)
@@ -47,7 +48,7 @@
                            #:choose-test choose-test)
 
   (parameterize ([created-tables (mutable-set)]
-                 [table-prefix (format "~a_harrold_" (build-table-prefix #:base suite #:config conf #:dtc?-name dtc?-name))])
+                 [table-prefix (format "~a_harrold_" (build-table-prefix #:base suite #:config conf))])
     ;; "kills" binary relation
     (define kills-table
       (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf))
@@ -158,7 +159,7 @@
    (dbc)
    (format
     "CREATE TABLE ~a AS
-      SELECT DISTINCT module_under_test, test_index FROM ~a Kills
+      SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a Kills
       INNER JOIN ~a MutantCard
        ON (Kills.mutant_module=MutantCard.mutant_module AND
            Kills.mutation_index=MutantCard.mutation_index)
@@ -182,19 +183,20 @@
    (format
     "CREATE TABLE ~a AS
       WITH CardKillCounts AS (
-       SELECT Kills.module_under_test, Kills.test_index, COUNT(*) as count FROM ~a Kills
+       SELECT Kills.module_under_test, Kills.test_index, Kills.test_check_enabled, COUNT(*) as count FROM ~a Kills
        INNER JOIN (SELECT * FROM ~a WHERE card = $1 AND killed = FALSE) MutantCard
         ON (Kills.mutant_module=MutantCard.mutant_module AND
             Kills.mutation_index=MutantCard.mutation_index)
-       GROUP BY Kills.module_under_test, Kills.test_index
+       GROUP BY Kills.module_under_test, Kills.test_index, Kills.test_check_enabled
       ),
       ListCardKillCounts AS (
-       SELECT List.module_under_test, List.test_index, COALESCE(count, 0) AS count FROM CardKillCounts
+       SELECT List.module_under_test, List.test_index, List.test_check_enabled, COALESCE(count, 0) AS count FROM CardKillCounts
        RIGHT JOIN ~a List
        ON (List.module_under_test=CardKillCounts.module_under_test AND
-           List.test_index=CardKillCounts.test_index)
+           List.test_index=CardKillCounts.test_index AND
+           List.test_check_enabled=CardKillCounts.test_check_enabled)
       )
-      SELECT module_under_test, test_index FROM ListCardKillCounts
+      SELECT module_under_test, test_index, test_check_enabled FROM ListCardKillCounts
       WHERE count=(SELECT COALESCE(MAX(count), 0) FROM ListCardKillCounts)"
     new-name
     kills
@@ -224,7 +226,8 @@
         FROM ~a as List
         LEFT JOIN ~a Kills
          ON (List.module_under_test = Kills.module_under_test AND
-             List.test_index = Kills.test_index)
+             List.test_index = Kills.test_index AND
+             List.test_check_enabled = Kills.test_check_enabled)
         WHERE (Kills.mutant_module=MutantCard.mutant_module AND
                Kills.mutation_index=MutantCard.mutation_index)
       )"
@@ -247,19 +250,21 @@
         FROM ~a Kills
         WHERE (Kills.mutant_module=MutantCard.mutant_module AND
                Kills.mutation_index=MutantCard.mutation_index AND
-               Kills.test_index=~a AND
-               Kills.module_under_test=\"~a\")
+               Kills.test_index=$1 AND
+               Kills.module_under_test=$2 AND
+               Kills.test_check_enabled=$3)
       )"
     mutant-card-table
-    kills-table
+    kills-table)
     (test-id-index test-id)
-    (test-id-modul test-id))))
+    (test-id-modul test-id)
+    (bool->sqlint (test-id-check-enabled? test-id))))
 
 ;; convert a testlist (SQL table) to a list of test IDs
 ;; table -> (listof test-id)
 (define (testlist->test-ids testlist)
   (map vec->test-id
-       (query-rows (dbc) (format "SELECT module_under_test, test_index FROM ~a" testlist))))
+       (query-rows (dbc) (format "SELECT module_under_test, test_index, test_check_enabled FROM ~a" testlist))))
 
 ;; Select the best test for cardinality CARD. Returns a test ID
 ;; nat table... -> test-id

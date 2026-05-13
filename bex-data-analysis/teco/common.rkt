@@ -2,14 +2,10 @@
 
 (require db
          "db-params.rkt"
+         "reduction-structs.rkt"
          "calculate-teco-score.rkt")
 
-(provide (struct-out test-id)
-         vec->test-id
-         (struct-out mutant-id)
-         vec->mutant-id
-         (struct-out slice)
-         build-table-prefix
+(provide build-table-prefix
          copy-table!
          drop-table!
          reducer/c
@@ -24,23 +20,9 @@
          make-result-suite
          maybe-move-sanity!)
 
-(define-struct test-id [modul index]
-  #:transparent)
 
-;; Should use inheritance but I'm too lazy to look up the syntax
-(define-struct mutant-id [modul index]
-  #:transparent)
-
-(define-struct slice [experiment benchmark config])
-
-(define (vec->test-id row)
-  (test-id (vector-ref row 0) (vector-ref row 1)))
-
-(define (vec->mutant-id row)
-  (mutant-id (vector-ref row 0) (vector-ref row 1)))
-
-(define (build-table-prefix #:base base #:config conf #:dtc?-name dtc?-name)
-  (format "~a_~a_~a" base conf dtc?-name))
+(define (build-table-prefix #:base base #:config conf)
+  (format "~a_~a" base conf))
 
 (define (copy-table! #:src src #:dest dest)
   (drop-table! dest)
@@ -66,18 +48,18 @@
                               #:serialized-configuration conf))))
 
 (define (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
-  (define new-name (format "~a_kills" (build-table-prefix #:base mapping #:config conf #:dtc?-name dtc?-name)))
+  (define new-name (format "~a_kills" (build-table-prefix #:base suite #:config conf)))
   (drop-table! new-name)
   (query-exec
    (dbc)
    (format
     "CREATE TABLE ~a AS
-      SELECT module_under_test, test_index, mutant_module, mutation_index from ~a
-      WHERE (module_under_test, test_index) IN ~a AND ~a AND configuration = $1"
+      SELECT module_under_test, test_index, test_check_enabled, mutant_module, mutation_index from ~a
+      JOIN ~a USING (module_under_test, test_index) WHERE ~a AND configuration = $1"
     new-name
     mapping
     suite
-    test-passed=0)
+    (test-passed=0 #:test-suite-name suite #:mapping-name mapping))
    conf)
   new-name)
 
@@ -88,14 +70,14 @@
   (query-rows
    (dbc)
    (format
-    "SELECT module_under_test, test_index, COUNT(*) from ~a
-                                          GROUP BY module_under_test, test_index
-     HAVING COUNT(*) = (SELECT(MAX(cnt)) FROM (SELECT COUNT(*) as cnt FROM ~a GROUP BY module_under_test, test_index))"
+    "SELECT module_under_test, test_index, test_check_enabled, COUNT(*) from ~a
+                                          GROUP BY module_under_test, test_index, test_check_enabled
+     HAVING COUNT(*) = (SELECT(MAX(cnt)) FROM (SELECT COUNT(*) as cnt FROM ~a GROUP BY module_under_test, test_index, test_check_enabled))"
     kills-table
     kills-table)))
 
 (define (make-result-suite #:start-suite suite #:configuration conf #:algo-name algo-name)
-  (define new-name (format "~a_~a_result" (build-table-prefix #:base suite #:config conf #:dtc?-name dtc?-name) algo-name))
+  (define new-name (format "~a_~a_result" (build-table-prefix #:base suite #:config conf) algo-name))
   (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a" new-name))
   (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)
@@ -106,26 +88,29 @@
    (format
     "DELETE FROM ~a
     WHERE (mutant_module, mutation_index)
-    IN (SELECT DISTINCT mutant_module, mutation_index FROM ~a WHERE module_under_test=$1 AND test_index=$2)"
+    IN (SELECT DISTINCT mutant_module, mutation_index FROM ~a WHERE module_under_test=$1 AND test_index=$2 AND test_check_enabled=$3)"
     kills-table
     kills-table)
    (test-id-modul test)
-   (test-id-index test)))
+   (test-id-index test)
+   (bool->sqlint (test-id-check-enabled? test))))
 
 (define (add-test! #:test test #:suite suite)
   (query-exec (dbc)
-              (format "INSERT INTO ~a VALUES ($1, $2)" suite)
+              (format "INSERT INTO ~a VALUES ($1, $2, $3)" suite)
               (test-id-modul test)
-              (test-id-index test)))
+              (test-id-index test)
+              (bool->sqlint (test-id-check-enabled? test))))
 
 (define (delete-test! #:test test #:kills-table kills-table)
   (query-exec
    (dbc)
    (format "DELETE FROM ~a
-                       WHERE module_under_test=$1 AND test_index=$2"
+                       WHERE module_under_test=$1 AND test_index=$2 AND test_check_enabled=$3"
            kills-table)
    (test-id-modul test)
-   (test-id-index test)))
+   (test-id-index test)
+   (bool->sqlint (test-id-check-enabled? test))))
 
 (define (delete-mutant! #:mutant mutant #:kills-table kills-table)
   (query-exec
@@ -158,6 +143,19 @@
 (define (maybe-make-test-suite! #:src src-table #:dest dest-table)
   (query-exec
    (dbc)
-   (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT DISTINCT module_under_test, test_index from ~a"
+   (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT *
+                                             FROM (SELECT DISTINCT module_under_test, test_index FROM ~a)
+                                             JOIN (SELECT 0 as test_check_enabled WHERE ~a
+                                                                          UNION ALL
+                                                                          SELECT 1 WHERE ~a
+                                             )"
            dest-table
-           src-table)))
+           src-table
+           (bool->sqlstring (or (eq? (tcc) 'both_tc)
+                                (eq? (tcc) 'no_tc)))
+           (bool->sqlstring (or (eq? (tcc) 'both_tc)
+                                (eq? (tcc) 'yes_tc))))))
+
+(define/contract (bool->sqlstring b)
+  (-> boolean? (or/c "TRUE" "FALSE"))
+  (if b "TRUE" "FALSE"))
