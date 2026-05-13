@@ -40,7 +40,7 @@
 (define (vec->mutant-id row)
   (mutant-id (vector-ref row 0) (vector-ref row 1)))
 
-(define (build-table-prefix #:base base #:config conf #:test-check-config test-check-config)
+(define (build-table-prefix #:base base #:config conf)
   (format "~a_~a" base conf))
 
 (define (copy-table! #:src src #:dest dest)
@@ -67,7 +67,7 @@
                               #:serialized-configuration conf))))
 
 (define (make-kills-table #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
-  (define new-name (format "~a_kills" (build-table-prefix #:base mapping #:config conf #:test-check-config test-check-config)))
+  (define new-name (format "~a_kills" (build-table-prefix #:base suite #:config conf)))
   (drop-table! new-name)
   (query-exec
    (dbc)
@@ -96,7 +96,7 @@
     kills-table)))
 
 (define (make-result-suite #:start-suite suite #:configuration conf #:algo-name algo-name)
-  (define new-name (format "~a_~a_result" (build-table-prefix #:base suite #:config conf #:test-check-config test-check-config) algo-name))
+  (define new-name (format "~a_~a_result" (build-table-prefix #:base suite #:config conf) algo-name))
   (query-exec (dbc) (format "DROP TABLE IF EXISTS ~a" new-name))
   (query-exec (dbc) (format "CREATE TABLE ~a AS SELECT * FROM ~a WHERE FALSE" new-name suite))
   new-name)
