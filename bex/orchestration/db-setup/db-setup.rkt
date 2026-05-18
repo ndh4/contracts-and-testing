@@ -358,7 +358,7 @@
      #:check [(natural? (cpus))
               @~a{CPUs must be a natural number.}]
 
-     (printf "Setting up dbs for ~a\n" (benchmarks-to-run))
+     (printf "Setting up DBs for ~a~n" (benchmarks-to-run))
 
      (file-stream-buffer-mode (current-output-port) 'line)
 

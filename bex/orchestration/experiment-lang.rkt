@@ -121,7 +121,7 @@
           [the-db-setup-script (orchestration-info-db-setup-script orchestration-info)]
           [the-status-file {~? status-file-path #f}]
           [the-benchs (list benchmark-name ...)])
-      (printf "Orchestrating experiment for benchmarks ~a\n" the-benchs)
+      (printf "Orchestrating experiment for benchmarks ~a~n" the-benchs)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)
                                   "experiment-results"
