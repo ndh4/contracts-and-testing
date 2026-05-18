@@ -320,6 +320,7 @@
 
 (define (setup-dbs! a-host
                     db-setup-script-name ; assumed to be in bex/orchestration/db-setup
+                    [only-benchs #f] ; by default, sets up for all benchmarks in experiment-benchmarks
                     [handle-failure! (λ (reason)
                                        (raise-user-error 'update-host reason))]) 
   (unless (current-experiment-dir)
@@ -330,7 +331,11 @@
     (build-path (current-experiment-dir) "dbs"))
   ;; TODO configure num_cores
   (define cmd @~a{
-                  @(get-field host-racket-path a-host) -l 'bex/orchestration/db-setup/@db-setup-script-name' -- -x '@(current-experiment-dir)' --no-viz '@host-dbs-dir'
+                  @(get-field host-racket-path a-host) -l 'bex/orchestration/db-setup/@db-setup-script-name' @;
+                    -- @(string-join (map (λ (b) (format "-b ~a" b)) (or only-benchs '())) " ") @;
+                       -x '@(current-experiment-dir)' @;
+                       --no-viz @;
+                       '@host-dbs-dir'
                   })
   (printf "Setting up DBs on host '~a'\n" a-host)
   (unless (send a-host
