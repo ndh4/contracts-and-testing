@@ -14,6 +14,7 @@
   [scratch-dir "../../../../tmp/scratch"])
 
 (define cpus (make-parameter 5))
+(define benchmarks-to-run (make-parameter experiment-benchmarks))
 
 (begin-for-syntax
   (require syntax/parse
@@ -59,7 +60,7 @@
 (define (analyze-mutation/all-benchmarks! outdir mutation-analysis-config check-for-any-error?)
   (define analyses-outdir (build-path outdir "mutation-analyses"))
   (make-directory* analyses-outdir)
-  (for/list ([bench (in-list experiment-benchmarks)])
+  (for/list ([bench (in-list (benchmarks-to-run))])
     (analyze-mutation! bench analyses-outdir mutation-analysis-config check-for-any-error?)))
 
 (define/racket-runner (analyze-mutation! bench-name outdir mutation-analysis-config check-for-any-error?)
@@ -190,7 +191,7 @@
 (define (pre-compute-benchmark-results-for-erasure/all-benchmarks! outdir
                                                                    mutant-samples.rktdb
                                                                    pre-compute-config)
-  (for ([bench (in-list experiment-benchmarks)])
+  (for ([bench (in-list (benchmarks-to-run))])
     (pre-compute-benchmark-results-for-erasure! bench
                                                 outdir
                                                 mutant-samples.rktdb
@@ -341,9 +342,23 @@
                    "Only generate visualizations."
                    #:record
                    #:conflicts '(no-viz?)]
+                  #:multi
+                  [("-b" "--benchmark")
+                   'benchmarks
+                   ("A benchmark to generate dbs for. By default, generates dbs"
+                    "for all benchmarks in experiment-info.")
+                   #:collect ["benchmark"
+                              (λ (bench param)
+                                (benchmarks-to-run (cons bench (param)))
+                                benchmarks-to-run)
+                              ;; start with an empty parameter instead of adding
+                              ;; to experiment-benchmarks
+                              (make-parameter empty)]]
                   #:args [outdir])
      #:check [(natural? (cpus))
               @~a{CPUs must be a natural number.}]
+
+     (printf "Setting up DBs for ~a~n" (benchmarks-to-run))
 
      (file-stream-buffer-mode (current-output-port) 'line)
 

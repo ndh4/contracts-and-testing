@@ -48,14 +48,10 @@
     #:commit
     #:attributes [implementation compile-time-mode-name-str]
     [pattern (run-mode mode:mode-id
-                       {~optional {~seq #:only specific-benchmark:benchmark-id ...}}
                        {~optional {~seq #:relocate download-dir}}
                        {~optional {~seq #:name name}}
                        {~optional {~and #:record-outcomes record-outcomes-kw}})
              #:attr compile-time-mode-name-str (attribute mode.compile-time-name-str)
-             #:with [benchmark-name ...] (if (attribute specific-benchmark)
-                                             #'(specific-benchmark.str ...)
-                                             (datum->syntax this-syntax all-benchmarks))
              #:with record-outcomes? (if (or implicit-record-outcomes?
                                              (attribute record-outcomes-kw))
                                          #'#t
@@ -63,7 +59,7 @@
              #:with implementation #'(run-one-mode current-host
                                                    current-experiment-id
                                                    mode.str
-                                                   (list benchmark-name ...)
+                                                   current-benchs
                                                    {~? name #f}
                                                    current-status-file
                                                    record-outcomes?)]))
@@ -81,6 +77,9 @@
 (define-syntax-parameter current-status-file
   (λ _ #'#f))
 
+(define-syntax-parameter current-benchs
+  (λ _ #'#f))
+
 (define-simple-macro (module-begin top-level-e ...)
   (#%module-begin
    (module test racket/base) ;; no testing launching experiments...
@@ -90,6 +89,7 @@
                        {~alt
                         {~optional {~seq #:status-in status-file-path}}
                         {~optional {~and #:skip-setup skip-setup-kw}}
+                        {~optional {~seq #:only specific-benchmark:benchmark-id ...}}
                         {~optional {~and #:manual-outcome-recording skip-record-outcomes-kw}}} ...
                        {~var first-mode (run-mode-spec (not (attribute skip-record-outcomes-kw)))}
                        {~var more-modes (run-mode-spec #f)} ...)
@@ -102,6 +102,9 @@
                                                the-setup-config
                                                #:skip-recompile? (skip-recompile?)
                                                (handle-host-update-failure! the-experiment-id)))
+  #:with [benchmark-name ...] (if (attribute specific-benchmark)
+                                  #'(specific-benchmark.str ...)
+                                  (datum->syntax this-syntax all-benchmarks))
   (module+ main
     (define skip-recompile? (make-parameter #f))
     (command-line
@@ -116,7 +119,9 @@
           [the-experiment-id (orchestration-info-experiment-id orchestration-info)] ;; should be relative
           [the-setup-config (orchestration-info-setup-config orchestration-info)]
           [the-db-setup-script (orchestration-info-db-setup-script orchestration-info)]
-          [the-status-file {~? status-file-path #f}])
+          [the-status-file {~? status-file-path #f}]
+          [the-benchs (list benchmark-name ...)])
+      (printf "Orchestrating experiment for benchmarks ~a~n" the-benchs)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)
                                   "experiment-results"
@@ -136,10 +141,12 @@
         maybe-host-update
         (setup-dbs! the-host
                     the-db-setup-script
+                    the-benchs
                     (handle-host-db-setup-failure! the-experiment-id))
         (syntax-parameterize ([current-host (syntax-id-rules () [_ the-host])]
                               [current-experiment-id  (syntax-id-rules () [_ the-experiment-id])]
-                              [current-status-file (syntax-id-rules () [_ the-status-file])])
+                              [current-status-file (syntax-id-rules () [_ the-status-file])]
+                              [current-benchs (syntax-id-rules () [_ the-benchs])])
           first-mode.implementation
           more-modes.implementation ...)))))
 
