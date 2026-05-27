@@ -11,6 +11,7 @@
          "../util/progress-log.rkt"
          "../util/tests.rkt"
          "../util/log-controls.rkt"
+         "../util/mutant-cmdline.rkt"
          "../configurations/config.rkt"
          "../configurations/configure-benchmark.rkt"
          "../configurables/configurables.rkt"
@@ -397,18 +398,35 @@
                                               (build-path (data-output-dir)
                                                           (format "~a.rktd"
                                                                   mutant-id)))))
+    ;; record the args that the script will be run with (this is just to save to the database)
+    (define recorded-args
+      (make-mutant-runner-script-args the-benchmark-configuration
+                                      module-to-mutate-name
+                                      mutation-index
+                                      (current-configuration-path)
+                                      (current-experiment-dir)
+                                      #:fake-mutation? fake-mutation?
+                                      #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
+                                      #:test-id test-id
+                                      #:timeout/s (or timeout/s (default-timeout/s))
+                                      #:memory/gb (or memory/gb (default-memory-limit/gb))
+                                      #:save-output (and debug:save-individual-mutant-outputs?
+                                                         (build-path (data-output-dir)
+                                                                     (format "~a.rktd"
+                                                                             mutant-id)))))
     (define mutant*test-proc
       (mutant*test-process (mutant #f module-to-mutate-name mutation-index)
-                      precision-config
-                      outfile
-                      mutant-id
-                      (blame-trail 'test '())
-                      revival-counts
-                      ;; coerce to bool
-                      (and (or timeout/s memory/gb) #t)
-                      test-mod
-                      test-id
-                      fake-mutation?))
+                           precision-config
+                           outfile
+                           mutant-id
+                           (blame-trail 'test '())
+                           revival-counts
+                           ;; coerce to bool
+                           (and (or timeout/s memory/gb) #t)
+                           recorded-args
+                           test-mod
+                           test-id
+                           fake-mutation?))
     (log-factory
      info
      "    Spawned mutant runner with id [~a] for ~a @ ~a, testing ~a @ ~a > ~a."
@@ -452,6 +470,7 @@
                                             id the-blame-trail
                                             revival-counts
                                             increased-limits?
+                                            recorded-args
                                             test-mod
                                             test-id
                                             fake-mutation?))
@@ -481,7 +500,7 @@
                                       #:mutant-module (if fake-mutation? "NO_MUTATIONS" mutant-mod)
                                       #:mutation-index mutant-id
                                       #:run-status result
-                                      #:cmd-line-args "nothing")
+                                      #:cmd-line-args (string-join (cons "racket" recorded-args)))
        (log-factory info
                     @~a{
                         Sweeping up dead mutant [@id]: @mutant-mod @"@" @mutant-id, @;
@@ -673,7 +692,7 @@ Attempting revival ~a / ~a
 
   (define path (mutant-process-file mutant-proc))
   (define (report-malformed-output . _)
-    (match-define (mutant-process (mutant _ mod index) config _ id _ _ _)
+    (match-define (mutant-process (mutant _ mod index) config _ id _ _ _ _)
       mutant-proc)
     (log-factory warning
                  "Result read from mutant output not of the expected shape.

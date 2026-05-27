@@ -60,7 +60,7 @@
 ;; blame-trail:    blame-trail/c
 ;; revival-counts:  revivals/c
 ;; increased-limits?: boolean?
-(struct mutant-process (mutant config file id blame-trail revival-counts increased-limits?)
+(struct mutant-process (mutant config file id blame-trail revival-counts increased-limits? args)
   #:transparent)
 
 (struct mutant*test-process mutant-process (test-mod test-id fake-mutation?) #:transparent)

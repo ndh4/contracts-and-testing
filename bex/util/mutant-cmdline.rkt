@@ -7,21 +7,21 @@
 
 (provide (contract-out
           [make-mutant-runner-script-args
-           (benchmark-configuration/c
-            module-name?
-            natural?
-            path-string?
-            path-string?
-            #:fake-mutation? boolean?
-            #:fake-run? boolean?
-            #:log-mutation-info? boolean?
-            #:test-id (or/c #f number?)
-            #:timeout/s (or/c #f number?)
-            #:memory/gb (or/c #f number?)
-            #:save-output (or/c #f path-string?)
-            #:write-modules-to (or/c #f path-string?)
-            #:force-module-write? boolean?
-            . -> .
+           ({benchmark-configuration/c
+             module-name?
+             natural?
+             path-string?
+             path-string?
+             #:fake-mutation? boolean?}
+            {#:timeout/s (or/c #f number?)
+             #:test-id (or/c #f number?)
+             #:memory/gb (or/c #f number?)
+             #:fake-run? boolean?
+             #:log-mutation-info? boolean?
+             #:save-output (or/c #f path-string?)
+             #:write-modules-to (or/c #f path-string?)
+             #:force-module-write? boolean?}
+            . ->* .
             (listof string?))]))
 
 (define-runtime-path mutant-runner-path "../experiment/mutant-runner.rkt")
@@ -33,12 +33,12 @@
                                         config-path
                                         current-experiment-dir
 
-                                        #:fake-mutation? [fake-mutation? #f]
+                                        #:fake-mutation? fake-mutation?
                                         #:fake-run? [fake-run? #f]
                                         #:log-mutation-info? [log-mutation-info? #f]
-                                        #:test-id test-id
-                                        #:timeout/s timeout/s
-                                        #:memory/gb memory/gb
+                                        #:test-id [test-id #f]
+                                        #:timeout/s [timeout/s #f]
+                                        #:memory/gb [memory/gb #f]
                                         #:save-output [output-path #f]
 
                                         #:write-modules-to [dump-dir-path #f]
