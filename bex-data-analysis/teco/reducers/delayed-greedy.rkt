@@ -2,6 +2,7 @@
 
 (require db
          "../db-params.rkt"
+         "../reduction-structs.rkt"
          "../common.rkt")
 
 (provide (contract-out [reduce-by-delayed-greedy reducer/c]))
@@ -66,21 +67,21 @@
       "SELECT
                  *
              FROM
-                 (SELECT DISTINCT module_under_test, test_index FROM ~a) AS T1
+                 (SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a) AS T1
              WHERE EXISTS
                  (SELECT
                       *
                   FROM
-                      (SELECT DISTINCT module_under_test, test_index FROM ~a) AS T2
+                      (SELECT DISTINCT module_under_test, test_index, test_check_enabled FROM ~a) AS T2
                   WHERE
-                      T1.module_under_test <> T2.module_under_test AND T1.test_index <> T2.test_index
+                      (T1.module_under_test <> T2.module_under_test OR T1.test_index <> T2.test_index OR T1.test_check_enabled <> T2.test_check_enabled)
                     AND NOT EXISTS
                         (SELECT
                              *
                          FROM
                              ~a AS M1
                          WHERE
-                             T1.module_under_test = M1.module_under_test AND T1.test_index = M1.test_index -- t1 kills m1
+                             T1.module_under_test = M1.module_under_test AND T1.test_index = M1.test_index AND T1.test_check_enabled = M1.test_check_enabled -- t1 kills m1
                             AND NOT EXISTS
                                 (SELECT
                                      *
@@ -89,10 +90,10 @@
                                  WHERE
                                      M1.mutant_module = M2.mutant_module AND M1.mutation_index = M2.mutation_index -- m1 = m2
                                     AND
-                                     T2.module_under_test = M2.module_under_test AND T2.test_index = M2.test_index -- t2 kills m2
+                                     T2.module_under_test = M2.module_under_test AND T2.test_index = M2.test_index AND T2.test_check_enabled = M2.test_check_enabled -- t2 kills m2
                                     )
                          )
-                  ) LIMIT 1"
+                  ) ORDER BY test_check_enabled DESC LIMIT 1"
       kills-table
       kills-table
       kills-table
@@ -125,7 +126,7 @@
                   FROM
                       (SELECT DISTINCT mutant_module, mutation_index FROM ~a) AS M1
                   WHERE
-                      M2.mutant_module <> M1.mutant_module AND M2.mutation_index <> M1.mutation_index
+                      (M2.mutant_module <> M1.mutant_module OR M2.mutation_index <> M1.mutation_index)
                     AND NOT EXISTS
                       (SELECT
                            *
@@ -139,7 +140,7 @@
                             FROM
                                 ~a AS T2
                             WHERE
-                                T1.module_under_test = T2.module_under_test AND T1.test_index = T2.test_index -- t1 = t2
+                                T1.module_under_test = T2.module_under_test AND T1.test_index = T2.test_index AND T1.test_check_enabled = T2.test_check_enabled -- t1 = t2
                               AND
                                 T2.mutant_module = M2.mutant_module AND T2.mutation_index = M2.mutation_index -- t2 kills m2
                            )
@@ -168,7 +169,7 @@
      (dbc)
      (format
       "SELECT DISTINCT
-           module_under_test, test_index
+           module_under_test, test_index, test_check_enabled
        FROM
            ~a AS table1
        WHERE

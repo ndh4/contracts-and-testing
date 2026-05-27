@@ -1,0 +1,3 @@
+SELECT mutant_module, mutation_index from kcfa_0_yes_tc_kills
+EXCEPT
+SELECT mutant_module, mutation_index from kcfa_2222222_no_tc_kills

@@ -4,6 +4,8 @@
          "db-params.rkt"
          "calculate-teco-score.rkt"
          "common.rkt"
+         "reduction-structs.rkt"
+         "reductions-setup.rkt"
          "reducers/linear-search.rkt"
          "reducers/greedy.rkt"
          "reducers/harrold.rkt"
@@ -12,16 +14,22 @@
 
 (define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
   (define tests
-    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index from ~a" suite))))
+    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index, test_check_enabled from ~a ORDER BY module_under_test, test_index" suite))))
 
   (printf
-   "~n~a (~a contracts)~n"
+   "~n~a (~a contracts, ~a)~n"
    mapping
    (cond
      [(= conf 0) "no"]
+     [(or (= conf 11) (= conf 1111) (= conf 11111) (= conf 111111) (= conf 1111111) (= conf 11111111))
+      "type-level"]
      [(or (= conf 22) (= conf 2222) (= conf 22222) (= conf 222222) (= conf 2222222) (= conf 22222222))
       "full"]
-     [else "some"])) ;; code smell, but who really cares
+     [else "some"]) ;; code smell, but who really cares
+  (match (tcc)
+    ['yes_tc "test checks on"]
+    ['no_tc "test checks off"]
+    ['both_tc "test check mixed reduction"]))
   (printf "Mutation score: ~a~n"
           (real->decimal-string (get-mutation-score #:result-table-name mapping
                                                     #:test-suite-table-name suite
@@ -29,7 +37,7 @@
                                 6))
   (printf "Test suite size: ~a~n" (length tests))
 
-  (define ordering (get-random-order tests)) ; sequence of test-ids
+  (define ordering (get-order tests)) ; sequence of test-ids
   (define ordering-map
     (for/hash ([test ordering]
                [idx (in-naturals)])
@@ -59,7 +67,7 @@
 
     (printf "Reduced test suite size: ~a~n"
             (length (query-rows (dbc)
-                                (format "SELECT module_under_test, test_index from ~a"
+                                (format "SELECT module_under_test, test_index, test_check_enabled from ~a"
                                         reduction-result))))
 
     #;(displayln (format "~a: ~a"
@@ -67,6 +75,11 @@
                          (get-mutation-score #:result-table-name mapping
                                              #:test-suite-table-name result-table
                                              #:serialized-configuration conf)))))
+
+(define (get-order tests)
+  (define-values (enabled disabled) (partition test-id-check-enabled? tests))
+  (append (get-random-order disabled)
+          (get-random-order enabled)))
 
 (define (get-random-order tests)
   (do-with-seed 12345 (lambda () (shuffle tests))))
@@ -82,29 +95,20 @@
   (define db-path (build-path experiment-results (slice-experiment a-slice) "experiment-output" "db.sqlite"))
   (sqlite3-connect #:database db-path #:mode 'read/write))
 
-;; Alter slices as needed
-(for ([a-slice (list (slice "teco-04-20-2026@16:23:46" "kcfa" 0)
-      (slice "teco-04-20-2026@16:23:46" "kcfa" 2222222)
-      (slice "teco-04-21-2026@23:27:58" "morsecode" 0)
-      (slice "teco-04-21-2026@23:27:58" "morsecode" 2222)
-      (slice "teco-04-25-2026@16:15:01" "forth" 0)
-      (slice "teco-04-25-2026@16:15:01" "forth" 2222)
-      (slice "teco-04-22-2026@10:43:21" "sieve" 0)
-      (slice "teco-04-22-2026@10:43:21" "sieve" 22)
-      (slice "teco-04-24-2026@20:59:51" "dungeon" 0)
-      (slice "teco-04-24-2026@20:59:51" "dungeon" 22222)
-      (slice "teco-04-24-2026@13:59:38" "snake" 0)
-      (slice "teco-04-24-2026@13:59:38" "snake" 22222222)
-      (slice "teco-04-23-2026@15:08:11" "mbta" 0)
-      (slice "teco-04-23-2026@15:08:11" "mbta" 222222))])
+;; Run reducers
+(for* ([a-slice slices-to-process]
+       [test-check-config test-check-configs])
 
   (define bm-name (slice-benchmark a-slice))
 
-  (parameterize ([dbc (db-connection a-slice)])
-    (maybe-make-test-suite! #:src bm-name #:dest (string-append bm-name "_tests"))
+  (parameterize ([dbc (db-connection a-slice)]
+                 [tcc test-check-config])
+
+    (define test-suite-name (format "~a_tests_~a" bm-name (tcc)))
+    (maybe-make-test-suite! #:src bm-name #:dest test-suite-name)
     (maybe-move-sanity! bm-name)
     (run-reducers
      (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
-     #:test-suite (string-append bm-name "_tests")
+     #:test-suite test-suite-name
      #:test-mutant-mapping bm-name
      #:configuration (slice-config a-slice))))

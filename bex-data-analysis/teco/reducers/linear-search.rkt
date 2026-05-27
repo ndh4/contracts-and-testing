@@ -3,6 +3,7 @@
 (require db
          "../calculate-teco-score.rkt"
          "../db-params.rkt"
+         "../reduction-structs.rkt"
          "../common.rkt")
 
 (provide (contract-out [reduce-by-lin-search reducer/c]))
@@ -26,10 +27,16 @@
 
   (copy-table! #:src suite #:dest starting-point)
 
+  (define ordering-with-testchecks-first
+    (sort (get-total-order)
+          (lambda (a b)
+            (and (test-id-check-enabled? a)
+                 (not (test-id-check-enabled? b))))))
+
   (define winner
     (for/fold ([accum starting-point])
               ([counter (in-naturals)]
-               [current-test (get-total-order)])
+               [current-test ordering-with-testchecks-first])
 
       (define new-suite
         (remove-test #:remove current-test
@@ -48,7 +55,7 @@
          (drop-table! new-suite)
          accum])))
 
-  (define result-name (format "~a_linsearch_result" (build-table-prefix #:base suite #:config conf #:dtc?-name dtc?-name)))
+  (define result-name (format "~a_linsearch_result" (build-table-prefix #:base suite #:config conf)))
   (copy-table! #:src winner #:dest result-name)
   (drop-table! winner)
   result-name)
@@ -59,10 +66,11 @@
    (dbc)
    (format
     "CREATE TABLE ~a AS
-    SELECT module_under_test, test_index FROM ~a
-    WHERE module_under_test != $1 OR test_index != $2"
+    SELECT module_under_test, test_index, test_check_enabled FROM ~a
+    WHERE module_under_test != $1 OR test_index != $2 OR test_check_enabled != $3"
     dest
     suite)
    (test-id-modul test)
-   (test-id-index test))
+   (test-id-index test)
+   (bool->sqlint (test-id-check-enabled? test)))
   dest)

@@ -65,20 +65,30 @@
 
 ;; host<%> -> (option/c results?)
 (define (get-results a-host)
-  (define info-str
-    (send a-host
-          system/host/string
-          (get-field host-racket-path a-host)
-          (build-path (get-field host-utilities-path a-host) "check-experiment-results.rkt")
-          "-w"
-          (get-field host-output-path a-host)))
-  (match info-str
-    [(regexp "^#hash")
-     (call-with-input-string info-str read)]
+  (define outpath (get-field host-output-path a-host))
+  (cond
+    [(directory-exists? outpath)
+     (define info-str
+       (send a-host
+             system/host/string
+             (get-field host-racket-path a-host)
+             (build-path (get-field host-utilities-path a-host) "check-experiment-results.rkt")
+             "-w"
+             (get-field host-output-path a-host)))
+     (match info-str
+       [(regexp "^#hash")
+        (call-with-input-string info-str read)]
+       [else
+        (eprintf @~a{
+                     Unable to get experiment results summary for host @a-host, @;
+                     found: @~v[info-str]
+
+                     })
+        absent])]
     [else
      (eprintf @~a{
                   Unable to get experiment results summary for host @a-host, @;
-                  found: @~v[info-str]
+                  results directory @outpath does not yet exist
 
                   })
      absent]))
@@ -274,8 +284,7 @@
       [(? absent?)
        (displayln
         @~a{
-            Unable to get summary or jobs, likely due to missing internet connection, @;
-            just continuing to wait
+            Unable to get summary or jobs, just continuing to wait
             })
        (sleep (* sleep-period 60))
        (loop)]
@@ -311,6 +320,7 @@
 
 (define (setup-dbs! a-host
                     db-setup-script-name ; assumed to be in bex/orchestration/db-setup
+                    [only-benchs #f] ; by default, sets up for all benchmarks in experiment-benchmarks
                     [handle-failure! (λ (reason)
                                        (raise-user-error 'update-host reason))]) 
   (unless (current-experiment-dir)
@@ -321,7 +331,11 @@
     (build-path (current-experiment-dir) "dbs"))
   ;; TODO configure num_cores
   (define cmd @~a{
-                  @(get-field host-racket-path a-host) -l 'bex/orchestration/db-setup/@db-setup-script-name' -- -x '@(current-experiment-dir)' --no-viz '@host-dbs-dir'
+                  @(get-field host-racket-path a-host) -l 'bex/orchestration/db-setup/@db-setup-script-name' @;
+                    -- @(string-join (map (λ (b) (format "-b ~a" b)) (or only-benchs '())) " ") @;
+                       -x '@(current-experiment-dir)' @;
+                       --no-viz @;
+                       '@host-dbs-dir'
                   })
   (printf "Setting up DBs on host '~a'\n" a-host)
   (unless (send a-host
