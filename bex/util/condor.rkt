@@ -8,6 +8,7 @@
          "../configurations/configure-benchmark.rkt"
          "../configurables/configurables.rkt"
          "experiment-exns.rkt"
+         "mutant-cmdline.rkt"
          (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
 (define-runtime-path default-script-dir "../../../tmp")
@@ -187,7 +188,6 @@
                                     outfile
                                     config-path
 
-                                    mutant-runner-path
                                     mutant-error-log
                                     #:fake-mutation? [fake-mutation? #f]
                                     #:fake-run? [fake-run? #f]
@@ -197,42 +197,23 @@
                                     #:log-mutation-info? [log-mutation-info? #f]
                                     #:save-output [output-path #f]
 
-                                    #:write-to-sql? [write-to-sql? #f]
                                     #:write-modules-to [dump-dir-path #f]
                                     #:force-module-write? [force-module-write? #f])
   (define args
-    (flatten (list
-              (if log-mutation-info?
-                  (list "-O" "info@mutate")
-                  empty)
-              "--"
-              (~a mutant-runner-path)
-              "-x" (~a (simple-form-path (current-experiment-dir)))
-              "-b" (serialize-benchmark-configuration a-benchmark-configuration)
-              "-T" (~a test-id)
-              "-M" (~a module-to-mutate)
-              "-i" (~a mutation-index)
-              "-t" (~a timeout/s)
-              "-g" (~a memory/gb)
-              "-c" (~a (simple-form-path config-path))
-              (if fake-mutation?
-                  (list "-z")
-                  empty)
-              (if fake-run?
-                  (list "--fake-run")
-                  empty)
-              (if write-to-sql?
-                  (list "-d")
-                  empty)
-              (if output-path
-                  (list "-O" output-path)
-                  empty)
-              (if dump-dir-path
-                  (list "-w" dump-dir-path)
-                  empty)
-              (if force-module-write?
-                  '("-f")
-                  empty))))
+    (make-mutant-runner-script-args a-benchmark-configuration
+                                    module-to-mutate
+                                    mutation-index
+                                    config-path
+                                    (current-experiment-dir)
+                                    #:fake-mutation? fake-mutation?
+                                    #:fake-run? fake-run?
+                                    #:log-mutation-info? log-mutation-info?
+                                    #:test-id test-id
+                                    #:timeout/s timeout/s
+                                    #:memory/gb memory/gb
+                                    #:save-output output-path
+                                    #:write-modules-to dump-dir-path
+                                    #:force-module-write? force-module-write?))
   (define id-box
     (enqueue-batched-mutant! (mutant-run-info args
                                               timeout/s

@@ -48,7 +48,6 @@
   (define memory/gb (make-parameter #f))
   (define mutant-output-path (make-parameter #f))
   (define configuration-path (make-parameter #f))
-  (define write-to-database? (make-parameter #f))
   (define fake-mutation? (make-parameter #f))
   (define fake-run? (make-parameter #f))
 
@@ -117,11 +116,7 @@
 
    [("--fake-run")
     "Is this a fake run for the purpose of inital mutant aggregation?"
-    (fake-run? #t)]
-
-   [("-d" "--database")
-    "Should the result be written to a database?"
-    (write-to-database? #t)])
+    (fake-run? #t)])
 
   (define mutant-output-path-port
     (match (mutant-output-path)
@@ -149,15 +144,6 @@
      @~a{Error: Missing mandatory argument: @missing-arg}))
 
   (install-configuration! (configuration-path))
-
-  ;; set up the sqlite db
-  (define conn ((configured:connect-to-db)))
-  (define db-table-name (and (write-to-database?)
-                             (benchmark->name (the-benchmark-configuration))))
-
-  ;; we don't want to write to the database during db-setup, for instance
-  (when (write-to-database?)
-    ((configured:ensure-table!) db-table-name conn))
 
   (define the-program
     (unify-program-for-running
@@ -198,15 +184,6 @@
          #:suppress-output? (not (mutant-output-path)))))
   (when mutant-output-path-port
     (close-output-port mutant-output-path-port))
-  (when (write-to-database?)
-   ((configured:add-table-entry!) db-table-name conn
-      #:configuration (benchmark-configuration-config (the-benchmark-configuration))
-      #:module-under-test (path->string (file-name-from-path (mod-path (program-main the-program))))
-      #:test-index (test-id)
-      #:mutant-module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
-      #:mutation-index (mutation-index)
-      #:run-status the-run-status
-      #:cmd-line-args (~a (current-command-line-arguments))))
 
   (writeln the-run-status)]
 
@@ -216,16 +193,6 @@
    ;; So, we assume that the test passes.
 
 ;(printf "Mutant-module is ~a~n" (path->string (file-name-from-path (module-to-mutate))))
-   (when (write-to-database?)
-      ((configured:add-table-entry!) db-table-name conn
-         #:configuration (benchmark-configuration-config (the-benchmark-configuration))
-         #:module-under-test (path->string (file-name-from-path (mod-path (program-main the-program))))
-         #:test-index (test-id)
-         #:mutant-module (if (fake-mutation?) "NO_MUTATIONS" (module-to-mutate))
-         #:mutation-index (mutation-index)
-         #:run-status 'skipped
-         #:cmd-line-args (~a (current-command-line-arguments))))
-
    (define the-run-status
    (run-status (module-to-mutate)
               (mutation-index) #f 'skipped #f #f #f #f #f))

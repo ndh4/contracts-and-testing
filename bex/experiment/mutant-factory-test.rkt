@@ -102,7 +102,7 @@
 (define mutant0 (mutant #f mutant0-mod 0))
 (define mutant1 (mutant #f mutant1-mod 1))
 (define/match (mp->dead a-mp [result (file->value (mutant-process-file a-mp))])
-  [{(mutant-process mutant config _ id blame-trail _ increased-limits?)
+  [{(mutant-process mutant config _ id blame-trail _ increased-limits? _)
     _}
    (dead-mutant-process mutant
                         config

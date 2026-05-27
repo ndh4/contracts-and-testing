@@ -14,7 +14,6 @@
              #:log-mutation-info? boolean?
              #:fake-run? boolean?
              #:save-output (or/c #f path-string?)
-             #:write-to-sql? boolean?
              #:write-modules-to (or/c #f path-string?)
              #:force-module-write? boolean?}
             . ->* .
@@ -51,9 +50,9 @@
          "../util/log-controls.rkt"
          "../configurables/configurables.rkt"
          "experiment-exns.rkt"
+         "mutant-cmdline.rkt"
          (only-in "../orchestration/experiment-info.rkt" current-experiment-dir))
 
-(define-runtime-path mutant-runner-path "../experiment/mutant-runner.rkt")
 (define racket-path (find-executable-path (find-system-path 'exec-file)))
 (define timeout-path (find-executable-path "timeout"))
 
@@ -101,7 +100,6 @@
                              #:memory/gb [memory/gb #f]
                              #:log-mutation-info? [log-mutation-info? (current-mutant-runner-log-mutation-info?)]
                              #:save-output [output-path #f]
-                             #:write-to-sql? [write-to-sql? #f]
                              #:write-modules-to [dump-dir-path #f]
                              #:force-module-write? [force-module-write? #f])
 ; TODO: move this step to somewhere lower-down
@@ -116,7 +114,6 @@
                                    mutation-index
                                    outfile
                                    config-path
-                                   mutant-runner-path
                                    (mutant-error-log)
                                    #:fake-mutation? fake-mutation?
                                    #:fake-run? fake-run?
@@ -126,7 +123,6 @@
                                    #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
                                    #:save-output output-path
 
-                                   #:write-to-sql? write-to-sql?
                                    #:write-modules-to dump-dir-path
                                    #:force-module-write? force-module-write?))]
     [else
@@ -145,40 +141,20 @@
                       timeout-path "-k" "5" (~a (if timeout/s (* 1.5 timeout/s) 0))
 
                       racket-path
-                      (append
-                       (if log-mutation-info?
-                           (list "-O" "info@mutate")
-                           empty)
-                       (list "--"
-                             mutant-runner-path
-                             "-x" (current-experiment-dir)
-                             "-b" (serialize-benchmark-configuration a-benchmark-configuration)
-                             "-T" (~a test-id)
-                             "-M" (~a module-to-mutate)
-                             "-i" (~a mutation-index)
-                             "-t" (~a (or timeout/s
-                                          (default-timeout/s)))
-                             "-g" (~a (or memory/gb
-                                          (default-memory-limit/gb)))
-                             "-c" config-path)
-                       (if fake-mutation?
-                           (list "-z")
-                           empty)
-                       (if fake-run?
-                           (list "--fake-run")
-                           empty)
-                       (if write-to-sql?
-                           (list "-d")
-                           empty)
-                       (if output-path
-                           (list "-O" output-path)
-                           empty)
-                       (if dump-dir-path
-                           (list "-w" dump-dir-path)
-                           empty)
-                       (if force-module-write?
-                           '("-f")
-                           empty))))
+                      (make-mutant-runner-script-args a-benchmark-configuration
+                                                      module-to-mutate
+                                                      mutation-index
+                                                      config-path
+                                                      (current-experiment-dir)
+                                                      #:fake-mutation? fake-mutation?
+                                                      #:fake-run? fake-run?
+                                                      #:log-mutation-info? log-mutation-info?
+                                                      #:test-id test-id
+                                                      #:timeout/s (or timeout/s (default-timeout/s))
+                                                      #:memory/gb (or memory/gb (default-memory-limit/gb))
+                                                      #:save-output output-path
+                                                      #:write-modules-to dump-dir-path
+                                                      #:force-module-write? force-module-write?)))
              (close-output-port runner-in)
              runner-ctl))))
              ]))
