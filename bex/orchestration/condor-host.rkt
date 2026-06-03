@@ -75,6 +75,7 @@
 
     (define/public (submit-job! benchmark
                                 config-name ; without .rkt
+                                #:contract-setting contract-setting
                                 #:mode [record/check-mode 'check]
                                 #:cpus [cpus "decide"]
                                 #:name [name benchmark])
@@ -102,7 +103,7 @@
                # Set the environment
                Getenv = True
 
-               Arguments = "@(make-experiment-runner-script-args benchmark config-name record/check-mode cpus name)"
+               Arguments = "@(make-experiment-runner-script-args benchmark config-name record/check-mode cpus contract-setting name)"
                Executable = @host-experiment-runner-script-path
                Error = condor-output.txt
                Output = condor-output.txt

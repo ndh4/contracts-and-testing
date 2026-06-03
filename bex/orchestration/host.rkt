@@ -37,7 +37,8 @@
                             (or/c job-descr/c
                                   (list/c job-descr/c job-descr/c)))))]
                   [submit-job! (->*m {string?
-                                      string?}
+                                      string?
+                                      #:contract-setting (or/c 'max 'types 'none)}
                                      {#:mode (or/c 'check 'record)
                                       #:cpus (or/c "decide" natural?)
                                       #:name string?}
@@ -120,6 +121,7 @@
                                                        config-name ; without .rkt
                                                        record/check-mode
                                                        cpus
+                                                       contract-setting
                                                        name)
       @~a{
           '@benchmark' @;
@@ -127,6 +129,7 @@
           '@record/check-mode' @;
           '@(current-experiment-dir)' @;
           '@cpus' @;
+          '@contract-setting' @;
           '@name'
           })
 

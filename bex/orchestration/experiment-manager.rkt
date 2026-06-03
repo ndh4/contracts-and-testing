@@ -168,9 +168,9 @@
     benchmark))
 
 (define (restart-job! a-host job-info)
-  (match-define (list benchmark config) job-info)
-  (option-let* ([_ (send a-host cancel-job! benchmark config)]
-                [_ (send a-host submit-job! benchmark config)])
+  (match-define (list benchmark config contract-setting) job-info)
+  (option-let* ([_ (send a-host cancel-job! benchmark config #:contract-setting contract-setting)]
+                [_ (send a-host submit-job! benchmark config #:contract-setting contract-setting)])
                (void)))
 
 (define job-restart-history (make-hash))
@@ -501,7 +501,7 @@
                            all-job-info))
       (newline)))))
 
-(define (launch-benchmarks! a-host config-name benchmark-names
+(define (launch-benchmarks! a-host config-name benchmark-names contract-levels
                             [handle-failure! (λ (benchmark)
                                                (displayln
                                                 @~a{
@@ -510,6 +510,8 @@
                                                     }))]
                             #:outcome-checking-mode [outcome-checking-mode 'check])
   (for ([benchmark (in-list benchmark-names)]
+        #:when #t
+        [contract-setting (in-list contract-levels)]
         [i         (in-naturals)])
     ;; lltodo: the submission here can be batched
     ;; > This is (slightly) harder than the progress checks, just because of the job files.
@@ -517,6 +519,7 @@
                (zero? (modulo i 3)))
       (sleep (* 2 60)))
     (when (absent? (send a-host submit-job! benchmark config-name
+                         #:contract-setting contract-setting
                          #:mode outcome-checking-mode))
       (handle-failure! benchmark))))
 

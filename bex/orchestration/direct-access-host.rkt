@@ -93,13 +93,14 @@
 
     (define/public (submit-job! benchmark
                                 config-name ; without .rkt
+                                #:contract-setting contract-setting
                                 #:mode [record/check-mode 'check]
                                 #:cpus [cpus cpu-count]
                                 #:name [name benchmark])
       (setup-job-management!)
       (option-let*
        ([_ (thread-send queueing-thd
-                        `(submit ,(list benchmark config-name record/check-mode cpus name))
+                        `(submit ,(list benchmark config-name record/check-mode cpus contract-setting name))
                         (thunk absent))])
        (thread-receive)))
     (define/public (cancel-job! benchmark config-name)

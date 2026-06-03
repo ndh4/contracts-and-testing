@@ -60,6 +60,7 @@
                                                    current-experiment-id
                                                    mode.str
                                                    current-benchs
+                                                   current-ctc-levels
                                                    {~? name #f}
                                                    current-status-file
                                                    record-outcomes?)]))
@@ -80,12 +81,16 @@
 (define-syntax-parameter current-benchs
   (λ _ #'#f))
 
+(define-syntax-parameter current-ctc-levels
+  (λ _ #'#f))
+
 (define-simple-macro (module-begin top-level-e ...)
   (#%module-begin
    (module test racket/base) ;; no testing launching experiments...
    top-level-e ...))
 
 (define-simple-macro (with-configuration [host configuration]
+                       {~seq #:contract-levels contract-level ...}
                        {~alt
                         {~optional {~seq #:status-in status-file-path}}
                         {~optional {~and #:skip-setup skip-setup-kw}}
@@ -105,6 +110,7 @@
   #:with [benchmark-name ...] (if (attribute specific-benchmark)
                                   #'(specific-benchmark.str ...)
                                   (datum->syntax this-syntax all-benchmarks))
+  #:with [ctc-level ...] #'('contract-level ...)
   (module+ main
     (define skip-recompile? (make-parameter #f))
     (command-line
@@ -120,7 +126,8 @@
           [the-setup-config (orchestration-info-setup-config orchestration-info)]
           [the-db-setup-script (orchestration-info-db-setup-script orchestration-info)]
           [the-status-file {~? status-file-path #f}]
-          [the-benchs (list benchmark-name ...)])
+          [the-benchs (list benchmark-name ...)]
+          [the-ctc-levels (list ctc-level ...)])
       (printf "Orchestrating experiment for benchmarks ~a~n" the-benchs)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)
@@ -146,7 +153,8 @@
         (syntax-parameterize ([current-host (syntax-id-rules () [_ the-host])]
                               [current-experiment-id  (syntax-id-rules () [_ the-experiment-id])]
                               [current-status-file (syntax-id-rules () [_ the-status-file])]
-                              [current-benchs (syntax-id-rules () [_ the-benchs])])
+                              [current-benchs (syntax-id-rules () [_ the-benchs])]
+                              [current-ctc-levels (syntax-id-rules () [_ the-ctc-levels])])
           first-mode.implementation
           more-modes.implementation ...)))))
 
@@ -199,6 +207,7 @@
                       experiment-id
                       mode-name
                       benchmark-names
+                      contract-levels
                       name
                       status-file
                       record-outcomes?)
@@ -223,7 +232,7 @@
                          (raise-user-error 'check-host-empty! "Aborted."))))
   (send host setup-job-management!)
   (displayln @~a{Submitting benchmark jobs...})
-  (launch-benchmarks! host mode-name benchmark-names
+  (launch-benchmarks! host mode-name benchmark-names contract-levels
                       (handle-launch-benchmarks-failure! experiment-id)
                       #:outcome-checking-mode (if record-outcomes? 'record 'check))
   (displayln @~a{Waiting for benchmarks to finish...})

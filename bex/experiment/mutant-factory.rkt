@@ -914,6 +914,7 @@ Mutant: [~a] ~a @ ~a with config:
 (module+ main
   (require racket/cmdline)
   (define bench-path-to-run (make-parameter #f))
+  (define ctc-setting (make-parameter #f))
   (define metadata-file (make-parameter #f))
   (define configuration-path (make-parameter #f))
   (command-line
@@ -926,6 +927,10 @@ Mutant: [~a] ~a @ ~a with config:
     path
     "Path to benchmark to run. Mandatory."
     (bench-path-to-run path)]
+   [("-t" "--contract-setting")
+    contract-setting
+    "Contract setting (max, types, or none). Mandatory."
+    (ctc-setting (string->symbol contract-setting))]
    [("-c" "--config")
     path
     "Path to the configuration to use. Mandatory."
@@ -1047,13 +1052,12 @@ Mutant: [~a] ~a @ ~a with config:
     (parameterize ([date-display-format 'iso-8601]
                    [current-sqlite-db-connection conn]
                    [current-sqlite-db-table-name db-table-name])
-      (for ([setting '(max none)])
-        (define config (make-bench-config bench-to-run setting))
-        (run-all-mutants*config bench-to-run
-                                config
-                                ;; #:log-progress (make-progress-logger log-progress!/raw)
-                                ;; #:load-progress make-cached-results-function
-                                ))))
+      (define config (make-bench-config bench-to-run (contract-setting)))
+      (run-all-mutants*config bench-to-run
+                              config
+                              ;; #:log-progress (make-progress-logger log-progress!/raw)
+                              ;; #:load-progress make-cached-results-function
+                              )))
 
   #;(finalize-log!)
   (finalize-configuration-outcomes!)
