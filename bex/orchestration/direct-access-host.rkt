@@ -204,9 +204,9 @@
                    (define new-q (rest current-q))
                    ;; This unpacking is necessary because apparently there's no
                    ;; way to do an `apply`-type application of a private method.
-                   (match-define (list benchmark config-name record/check-mode cpus name)
+                   (match-define (list benchmark config-name record/check-mode cpus ctc-setting name)
                      (first current-q))
-                   (launch-job! benchmark config-name record/check-mode cpus name)
+                   (launch-job! benchmark config-name record/check-mode cpus ctc-setting name)
                    (write-data-store! new-q))
             (thunk (displayln @~a{
                                   Warning: couldn't launch next job @;

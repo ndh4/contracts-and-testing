@@ -29,6 +29,14 @@
              #:when (member (symbol->string (syntax->datum #'name)) all-benchmarks)
              #:with str (datum->syntax this-syntax (symbol->string (syntax->datum #'name)))])
 
+  (define-syntax-class ctc-setting
+    #:description "contract level"
+    #:commit
+    #:attributes [sym]
+      [pattern kw:id
+               #:when (member (syntax->datum #'kw) '(max types none))
+               #:with sym (datum->syntax this-syntax (syntax->datum #'kw))])
+
   (define-runtime-path configs-dir "../configurables/configs")
   (define-syntax-class mode-id
     #:description "a mode name, corresponding to a configuration file name"
@@ -90,7 +98,7 @@
    top-level-e ...))
 
 (define-simple-macro (with-configuration [host configuration]
-                       {~seq #:contract-levels contract-level ...}
+                       {~seq #:contract-levels contract-level:ctc-setting ...}
                        {~alt
                         {~optional {~seq #:status-in status-file-path}}
                         {~optional {~and #:skip-setup skip-setup-kw}}
@@ -110,7 +118,7 @@
   #:with [benchmark-name ...] (if (attribute specific-benchmark)
                                   #'(specific-benchmark.str ...)
                                   (datum->syntax this-syntax all-benchmarks))
-  #:with [ctc-level ...] #'('contract-level ...)
+  #:with [ctc-level ...] #'('contract-level.sym ...)
   (module+ main
     (define skip-recompile? (make-parameter #f))
     (command-line
@@ -128,7 +136,7 @@
           [the-status-file {~? status-file-path #f}]
           [the-benchs (list benchmark-name ...)]
           [the-ctc-levels (list ctc-level ...)])
-      (printf "Orchestrating experiment for benchmarks ~a~n" the-benchs)
+      (printf "Orchestrating experiment for benchmarks ~a and contract-levels ~a~n" the-benchs the-ctc-levels)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)
                                   "experiment-results"

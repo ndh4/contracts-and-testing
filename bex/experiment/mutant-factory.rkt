@@ -914,7 +914,7 @@ Mutant: [~a] ~a @ ~a with config:
 (module+ main
   (require racket/cmdline)
   (define bench-path-to-run (make-parameter #f))
-  (define ctc-setting (make-parameter #f))
+  (define contract-setting (make-parameter #f))
   (define metadata-file (make-parameter #f))
   (define configuration-path (make-parameter #f))
   (command-line
@@ -928,9 +928,9 @@ Mutant: [~a] ~a @ ~a with config:
     "Path to benchmark to run. Mandatory."
     (bench-path-to-run path)]
    [("-t" "--contract-setting")
-    contract-setting
+    ctc-setting
     "Contract setting (max, types, or none). Mandatory."
-    (ctc-setting (string->symbol contract-setting))]
+    (contract-setting (string->symbol ctc-setting))]
    [("-c" "--config")
     path
     "Path to the configuration to use. Mandatory."

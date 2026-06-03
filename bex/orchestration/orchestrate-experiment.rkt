@@ -4,8 +4,10 @@
 
 (define-runtime-path status-file "../../../experiment-status.txt")
 
-(with-configuration [local
+(with-configuration [nathaniel
                      teco]
+  #:contract-levels max types none
+  #:only abm_test
   #:status-in status-file
   #:manual-outcome-recording
   (run-mode teco-prime #:record-outcomes))
