@@ -6,7 +6,7 @@
 
 (with-configuration [nathaniel
                      teco]
-  #:contract-levels max types none
+  #:contract-levels max types
   #:only abm_test
   #:status-in status-file
   #:manual-outcome-recording

@@ -115,12 +115,13 @@
                                  config-name ; without .rkt
                                  record/check-mode
                                  cpus
+                                 ctc-setting
                                  name)
       (define run-cmd
         @~a{
             @env-vars @;
             '@host-experiment-runner-script-path' @;
-            @(make-experiment-runner-script-args benchmark config-name record/check-mode cpus name)
+            @(make-experiment-runner-script-args benchmark config-name record/check-mode cpus ctc-setting name)
             })
       (log-experiment-manager-debug @~a{launching job with cmd: @run-cmd})
       (option-let*
