@@ -128,13 +128,13 @@
              absent)]))
 
 ;; summary/c :=
-;; (hash 'completed                         (listof (list/c string? string?))
-;;       (or/c 'incomplete 'errored 'other) (listof (list/c string? string? (option/c real?))))
+;; (hash 'completed                         (listof (list/c string? string? string?))
+;;       (or/c 'incomplete 'errored 'other) (listof (list/c string? string? string? (option/c real?))))
 
 ;; host<%> -> (option/c summary/c)
 (define (summarize-experiment-status a-host)
   (define (add-progress incomplete-benchs)
-    (match-define (list (list names _) ...) incomplete-benchs)
+    (match-define (list (list names _ _) ...) incomplete-benchs)
     (define progresses (apply get-progress a-host names))
     (for/list ([job-id (in-list incomplete-benchs)]
                [progress (in-list (if (absent? progresses)

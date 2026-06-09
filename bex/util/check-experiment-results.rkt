@@ -32,11 +32,13 @@
 
  (define statuses
    (for/hash ([bench-dir (in-list (directory-list data-dir #:build? #t))]
-              #:when (path-to-existant-directory? bench-dir))
-
+              #:when (path-to-existant-directory? bench-dir)
+              [ctc-level-dir (in-list (directory-list bench-dir #:build? #t))]
+              #:when (path-to-existant-directory? ctc-level-dir))
+    (printf "Here and ctc-lev-dir = ~a~n~n" ctc-level-dir)
      (define bench-dir-name (basename bench-dir))
-     (define contents (directory-list bench-dir #:build? #t))
-     (define-values {log-path status ended-with-err? config}
+     (define contents (directory-list ctc-level-dir #:build? #t))
+     (define-values {log-path status ended-with-err? config ctc-level}
        (match (findf (λ (p) (and (regexp-match? @regexp{^[_A-Za-z0-9]+\.log$}
                                                 (basename p))
                                  (not (equal? (basename p)
@@ -44,15 +46,15 @@
                      contents)
          [(? path-to-existant-file? log-path)
           (define-values {status ended-with-err?} (extract-experiment-status log-path))
-          (define config
+          (define-values {config ctc-level}
             (with-input-from-file log-path
               (thunk
-               (match (regexp-match #px"Running experiment with config [^ ]+/([^/]+).rkt"
+               (match (regexp-match #px"Running experiment with config [^ ]+/([^/]+).rkt and contract level (max|types|none)"
                                     (current-input-port))
-                 [(list _ config-name) (~a config-name)]
+                 [(list _ config-name ctc-level) (values (~a config-name) (~a ctc-level))]
                  [else '?]))))
-          (values log-path status ended-with-err? config)]
-         [else (values #f '? '? '?)]))
+          (values log-path status ended-with-err? config ctc-level)]
+         [else (values #f '? '? '? '?)]))
 
      (define errs?
        (cond [(equal? status 'complete)
@@ -64,7 +66,7 @@
                 [(? path-string? err-log-path) (not (<= (file-size err-log-path) 1))]
                 [else '?])]))
 
-     (values bench-dir-name
+     (values (cons bench-dir-name ctc-level)
              (list status errs? config))))
 
  (define (format-name name)
@@ -73,30 +75,33 @@
           (define len (string-length name))
           (~a name (make-string (- 15 len) #\space))]))
 
+(define (build-status-list statuses condition?)
+  (for/list ([{key status} (in-hash statuses)]
+             #:when (condition? status))
+    (define name (car key))
+    (define ctc-level (cdr key))
+    (list (format-name name) (third status) ctc-level)))
+
  (define complete/no-errors
-   (for/list ([{name status} (in-hash statuses)]
-              #:when (match status
-                       [(list 'complete #f config) #t]
-                       [else #f]))
-     (list (format-name name) (third status))))
+   (build-status-list statuses
+     (lambda (status) (match status
+                        [(list 'complete #f config) #t]
+                        [else #f]))))
  (define complete/errors
-   (for/list ([{name status} (in-hash statuses)]
-              #:when (match status
-                       [(list 'complete #t config) #t]
-                       [else #f]))
-     (list (format-name name) (third status))))
+   (build-status-list statuses
+     (lambda (status) (match status
+                        [(list 'complete #t config) #t]
+                        [else #f]))))
  (define incomplete/no-errors
-   (for/list ([{name status} (in-hash statuses)]
-              #:when (match status
-                       [(list 'incomplete #f config) #t]
-                       [else #f]))
-     (list (format-name name) (third status))))
+   (build-status-list statuses
+     (lambda (status) (match status
+                        [(list 'incomplete #f config) #t]
+                        [else #f]))))
  (define incomplete/other
-   (for/list ([{name status} (in-hash statuses)]
-              #:when (match status
-                       [(list 'incomplete (not #f) config) #t]
-                       [else #f]))
-     (list (format-name name) (third status))))
+   (build-status-list statuses
+     (lambda (status) (match status
+                        [(list 'incomplete (not #f) config) #t]
+                        [else #f]))))
 
  (define all-others
    (set-subtract (hash-keys statuses)

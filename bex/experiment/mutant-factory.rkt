@@ -1039,7 +1039,8 @@ Mutant: [~a] ~a @ ~a with config:
   (log-factory info
                @~a{
                    Running experiment with config @;
-                   @(configuration-path)
+                   @(configuration-path) and contract level @;
+                   @(contract-setting)
                    })
 
   ;; Create the sqlite database and the table for this benchmark

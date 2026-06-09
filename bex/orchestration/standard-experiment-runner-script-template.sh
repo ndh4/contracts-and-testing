@@ -45,7 +45,7 @@ elif [ "$CPUS" = "decide" ]; then
 fi
 
 if [ "$OUTPUT_DIR_NAME" = "" ]; then
-    OUTPUT_DIR_NAME="$BENCH"
+    OUTPUT_DIR_NAME="$BENCH/$CONTRACT_SETTING"
 fi
 
 KEEP_GOING_FLAG="-k"
