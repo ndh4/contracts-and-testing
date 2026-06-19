@@ -35,7 +35,6 @@
               #:when (path-to-existant-directory? bench-dir)
               [ctc-level-dir (in-list (directory-list bench-dir #:build? #t))]
               #:when (path-to-existant-directory? ctc-level-dir))
-    (printf "Here and ctc-lev-dir = ~a~n~n" ctc-level-dir)
      (define bench-dir-name (basename bench-dir))
      (define contents (directory-list ctc-level-dir #:build? #t))
      (define-values {log-path status ended-with-err? config ctc-level}

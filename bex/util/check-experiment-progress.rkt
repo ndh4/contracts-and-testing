@@ -144,10 +144,12 @@
 
  (define %s
    (for/list ([benchmark-dir (in-list benchmark-dirs)]
+              #:when #t
+              [ctc-level-dir (in-list (directory-list benchmark-dir #:build? #t))]
               [log-name (in-sequences log-names (in-cycle (in-value #f)))])
      (option-let*
       ([log-path
-        (guess-path benchmark-dir (or log-name (~a (basename benchmark-dir) ".log"))
+        (guess-path ctc-level-dir (or log-name (~a (basename ctc-level-dir) ".log"))
                     #:fail-thunk
                     (λ (path)
                       (if readable-output?

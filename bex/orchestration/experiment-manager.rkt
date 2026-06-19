@@ -100,17 +100,19 @@
   (findf (prefix-or-suffix-of benchmark-data-name)
          experiment-benchmarks))
 
-;; host? (listof string?) -> (option/c (listof (option/c (and/c real? (between/c 0 1)))))
-(define (get-progress a-host . benchmarks)
+;; host? (listof (cons/c symbol? symbol?)) -> (option/c (listof (option/c (and/c real? (between/c 0 1)))))
+(define (get-progress a-host benchmarks+ctc-levels)
   #;(define benchmark
     (if (member benchmark experiment-benchmarks)
         benchmark
         (try-infer-benchmark-from-data-name benchmark)))
-  (cond [(empty? benchmarks)
+  (cond [(empty? benchmarks+ctc-levels)
          empty]
         [else
-         (define benchmark-paths (for/list ([benchmark (in-list benchmarks)])
-                                   (build-path (get-field host-output-path a-host) benchmark)))
+         (define benchmark+level-paths (for/list ([benchmark+ctc-level (in-list benchmarks+ctc-levels)])
+                                   (define benchmark (car benchmark+ctc-level))
+                                   (define ctc-level (cdr benchmark+ctc-level))
+                                   (build-path (get-field host-output-path a-host) benchmark ctc-level)))
          (define progress-str
            (send a-host
                  system/host/string
@@ -118,7 +120,7 @@
                  (build-path (get-field host-utilities-path a-host) "check-experiment-progress.rkt")
                  "-r"
                  .
-                 benchmark-paths))
+                 benchmark+level-paths))
          (define progresses (string->value progress-str))
          (if (list? progresses)
              (for/list ([% (in-list progresses)])
@@ -134,8 +136,8 @@
 ;; host<%> -> (option/c summary/c)
 (define (summarize-experiment-status a-host)
   (define (add-progress incomplete-benchs)
-    (match-define (list (list names _ _) ...) incomplete-benchs)
-    (define progresses (apply get-progress a-host names))
+    (match-define (list (list names _ ctc-levels) ...) incomplete-benchs)
+    (define progresses (get-progress a-host (map cons names ctc-levels)))
     (for/list ([job-id (in-list incomplete-benchs)]
                [progress (in-list (if (absent? progresses)
                                       (make-list (length incomplete-benchs) absent)
