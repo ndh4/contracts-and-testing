@@ -93,13 +93,14 @@
 
     (define/public (submit-job! benchmark
                                 config-name ; without .rkt
+                                #:contract-setting contract-setting
                                 #:mode [record/check-mode 'check]
                                 #:cpus [cpus cpu-count]
                                 #:name [name benchmark])
       (setup-job-management!)
       (option-let*
        ([_ (thread-send queueing-thd
-                        `(submit ,(list benchmark config-name record/check-mode cpus name))
+                        `(submit ,(list benchmark config-name record/check-mode cpus contract-setting name))
                         (thunk absent))])
        (thread-receive)))
     (define/public (cancel-job! benchmark config-name)
@@ -114,12 +115,13 @@
                                  config-name ; without .rkt
                                  record/check-mode
                                  cpus
+                                 ctc-setting
                                  name)
       (define run-cmd
         @~a{
             @env-vars @;
             '@host-experiment-runner-script-path' @;
-            @(make-experiment-runner-script-args benchmark config-name record/check-mode cpus name)
+            @(make-experiment-runner-script-args benchmark config-name record/check-mode cpus ctc-setting name)
             })
       (log-experiment-manager-debug @~a{launching job with cmd: @run-cmd})
       (option-let*
@@ -203,9 +205,9 @@
                    (define new-q (rest current-q))
                    ;; This unpacking is necessary because apparently there's no
                    ;; way to do an `apply`-type application of a private method.
-                   (match-define (list benchmark config-name record/check-mode cpus name)
+                   (match-define (list benchmark config-name record/check-mode cpus ctc-setting name)
                      (first current-q))
-                   (launch-job! benchmark config-name record/check-mode cpus name)
+                   (launch-job! benchmark config-name record/check-mode cpus ctc-setting name)
                    (write-data-store! new-q))
             (thunk (displayln @~a{
                                   Warning: couldn't launch next job @;

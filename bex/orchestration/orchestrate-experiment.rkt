@@ -6,6 +6,8 @@
 
 (with-configuration [local
                      teco]
+  #:contract-levels max types
+  #:only abm_test
   #:status-in status-file
   #:manual-outcome-recording
   (run-mode teco-prime #:record-outcomes))

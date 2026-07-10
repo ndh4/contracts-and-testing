@@ -100,17 +100,19 @@
   (findf (prefix-or-suffix-of benchmark-data-name)
          experiment-benchmarks))
 
-;; host? (listof string?) -> (option/c (listof (option/c (and/c real? (between/c 0 1)))))
-(define (get-progress a-host . benchmarks)
+;; host? (listof (cons/c symbol? symbol?)) -> (option/c (listof (option/c (and/c real? (between/c 0 1)))))
+(define (get-progress a-host benchmarks+ctc-levels)
   #;(define benchmark
     (if (member benchmark experiment-benchmarks)
         benchmark
         (try-infer-benchmark-from-data-name benchmark)))
-  (cond [(empty? benchmarks)
+  (cond [(empty? benchmarks+ctc-levels)
          empty]
         [else
-         (define benchmark-paths (for/list ([benchmark (in-list benchmarks)])
-                                   (build-path (get-field host-output-path a-host) benchmark)))
+         (define benchmark+level-paths (for/list ([benchmark+ctc-level (in-list benchmarks+ctc-levels)])
+                                   (define benchmark (car benchmark+ctc-level))
+                                   (define ctc-level (cdr benchmark+ctc-level))
+                                   (build-path (get-field host-output-path a-host) benchmark ctc-level)))
          (define progress-str
            (send a-host
                  system/host/string
@@ -118,7 +120,7 @@
                  (build-path (get-field host-utilities-path a-host) "check-experiment-progress.rkt")
                  "-r"
                  .
-                 benchmark-paths))
+                 benchmark+level-paths))
          (define progresses (string->value progress-str))
          (if (list? progresses)
              (for/list ([% (in-list progresses)])
@@ -128,14 +130,14 @@
              absent)]))
 
 ;; summary/c :=
-;; (hash 'completed                         (listof (list/c string? string?))
-;;       (or/c 'incomplete 'errored 'other) (listof (list/c string? string? (option/c real?))))
+;; (hash 'completed                         (listof (list/c string? string? string?))
+;;       (or/c 'incomplete 'errored 'other) (listof (list/c string? string? string? (option/c real?))))
 
 ;; host<%> -> (option/c summary/c)
 (define (summarize-experiment-status a-host)
   (define (add-progress incomplete-benchs)
-    (match-define (list (list names _) ...) incomplete-benchs)
-    (define progresses (apply get-progress a-host names))
+    (match-define (list (list names _ ctc-levels) ...) incomplete-benchs)
+    (define progresses (get-progress a-host (map cons names ctc-levels)))
     (for/list ([job-id (in-list incomplete-benchs)]
                [progress (in-list (if (absent? progresses)
                                       (make-list (length incomplete-benchs) absent)
@@ -168,9 +170,9 @@
     benchmark))
 
 (define (restart-job! a-host job-info)
-  (match-define (list benchmark config) job-info)
-  (option-let* ([_ (send a-host cancel-job! benchmark config)]
-                [_ (send a-host submit-job! benchmark config)])
+  (match-define (list benchmark config contract-setting) job-info)
+  (option-let* ([_ (send a-host cancel-job! benchmark config #:contract-setting contract-setting)]
+                [_ (send a-host submit-job! benchmark config #:contract-setting contract-setting)])
                (void)))
 
 (define job-restart-history (make-hash))
@@ -501,7 +503,7 @@
                            all-job-info))
       (newline)))))
 
-(define (launch-benchmarks! a-host config-name benchmark-names
+(define (launch-benchmarks! a-host config-name benchmark-names contract-levels
                             [handle-failure! (λ (benchmark)
                                                (displayln
                                                 @~a{
@@ -510,6 +512,8 @@
                                                     }))]
                             #:outcome-checking-mode [outcome-checking-mode 'check])
   (for ([benchmark (in-list benchmark-names)]
+        #:when #t
+        [contract-setting (in-list contract-levels)]
         [i         (in-naturals)])
     ;; lltodo: the submission here can be batched
     ;; > This is (slightly) harder than the progress checks, just because of the job files.
@@ -517,6 +521,7 @@
                (zero? (modulo i 3)))
       (sleep (* 2 60)))
     (when (absent? (send a-host submit-job! benchmark config-name
+                         #:contract-setting contract-setting
                          #:mode outcome-checking-mode))
       (handle-failure! benchmark))))
 

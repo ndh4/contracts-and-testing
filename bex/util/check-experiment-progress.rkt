@@ -14,6 +14,9 @@
   [configs-dir "../configurables"]
   [experiment-launch-dir "../../.."])
 
+(define (penultimate-path-element path)
+  (cadr (reverse (explode-path path))))
+
 (define (guess-path #:fail-thunk fail-f . parts)
   (define path (apply build-path parts))
   (if (or (path-to-existant-directory? path)
@@ -37,13 +40,13 @@
 
 (define (infer-configuration log-path #:fail-thunk fail-thunk)
   (match (system/string @~a{grep -E 'Running experiment with config' @log-path})
-    [(regexp #rx"(?m:config (.+)$)" (list _ path))
+    [(regexp #rx"(?m:config (.+) and contract level (.+)$)" (list _ path))
      #:when (path-to-existant-file? path)
      path]
-    [(regexp #rx"(?m:config (.+)$)" (list _ path))
+    [(regexp #rx"(?m:config (.+) and contract level (.+)$)" (list _ path _))
      #:when (path-to-existant-file? (build-path experiment-launch-dir path))
      (build-path experiment-launch-dir path)]
-    [(regexp #rx"(?m:config .+/(.+)$)" (list _ config-name))
+    [(regexp #rx"(?m:config .+/(.+) and contract level (.+)$)" (list _ config-name _))
      #:when (path-to-existant-file? (build-path configs-dir config-name))
      (build-path configs-dir config-name)]
     [else
@@ -91,9 +94,8 @@
   ;; will run for a given experiment. As it stands, adding a config in
   ;; experiment-manager does not get reflected here, so we will get progress
   ;; values greater than 1
-  (define configs '(none max))
   (/ (num-rows dbc bench-name)
-     (* (length all-mutant*tests) (length configs))))
+     (length all-mutant*tests)))
 
 (define (progress-bar-string % #:width width)
   (define head-pos (inexact->exact (round (* % width))))
@@ -118,12 +120,12 @@
  #:arguments {[(hash-table ['watch watch-mode?]
                            ['log-name log-names]
                            ['readable-output? readable-output?])
-               benchmark-dirs]
+               bench-con-level-dirs]
               #:once-each
               [("-w" "--watch")
                'watch
                ("Interactively show a progress bar that updates every 5 sec."
-                "Only works with a single benchmark-dir.")
+                "Only works with a single bench-con-level-dir.")
                #:record]
               [("-r" "--readable")
                'readable-output?
@@ -132,22 +134,22 @@
               #:multi
               [("-l" "--log-name")
                'log-name
-               ("Explicitly provide the log file name. (one per benchmark-dir)")
+               ("Explicitly provide the log file name. (one per bench-con-level-dir)")
                #:collect {"path" cons empty}]
               ;; Benchmark directories in experiment-output. Need log in
               ;; directory to infer configuration
-              #:args benchmark-dirs}
- #:check [(andmap path-to-existant-directory? benchmark-dirs)
-          @~a{Unable to find @(filter-not path-to-existant-directory? benchmark-dirs)}]
- #:check [(not (and watch-mode? (not (= (length benchmark-dirs) 1))))
-          @~a{Watch mode can only be specified with a single benchmark-dir.}]
+              #:args bench-con-level-dirs}
+ #:check [(andmap path-to-existant-directory? bench-con-level-dirs)
+          @~a{Unable to find @(filter-not path-to-existant-directory? bench-con-level-dirs)}]
+ #:check [(not (and watch-mode? (not (= (length bench-con-level-dirs) 1))))
+          @~a{Watch mode can only be specified with a single bench-con-level-dir.}]
 
  (define %s
-   (for/list ([benchmark-dir (in-list benchmark-dirs)]
+   (for/list ([bench-con-level-dir (in-list bench-con-level-dirs)]
               [log-name (in-sequences log-names (in-cycle (in-value #f)))])
      (option-let*
       ([log-path
-        (guess-path benchmark-dir (or log-name (~a (basename benchmark-dir) ".log"))
+        (guess-path bench-con-level-dir (or log-name (~a (penultimate-path-element bench-con-level-dir) ".log"))
                     #:fail-thunk
                     (λ (path)
                       (if readable-output?
@@ -155,7 +157,6 @@
                           (raise-user-error
                            'guess-path
                            @~a{Unable to infer log path. Guessed: @path}))))]
-
        [bench
         (infer-benchmark
          log-path
@@ -179,9 +180,9 @@
                             'check-experiment-progress
                             "Unable to infer path to config for this experiment."))))]
 
-       ;; assume that the experiment-dir is two levels upward of the benchmark-dir
+       ;; assume that the experiment-dir is three levels upward of the bench-con-level-dir
        [experiment-dir
-        (simple-form-path (build-path benchmark-dir 'up 'up))]
+        (simple-form-path (build-path bench-con-level-dir 'up 'up 'up))]
 
        [_ (begin
             (parameterize ([current-experiment-dir experiment-dir])
