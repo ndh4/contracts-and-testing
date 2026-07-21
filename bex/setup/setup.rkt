@@ -514,7 +514,7 @@
 
  (dry-run? (hash-ref flags 'dry-run))
  (define root (hash-ref flags 'root-path))
- (define racket-dir (simple-form-path (build-path root "racket")))
+ (define racket-dir (simple-form-path (build-path (find-system-path 'exec-file) 'up 'up)))
  #;(define TR-dir
    (simple-form-path (or (hash-ref flags 'tr-path)
                          (build-path root "typed-racket"))))

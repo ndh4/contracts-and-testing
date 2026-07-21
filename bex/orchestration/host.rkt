@@ -51,7 +51,7 @@
     (init-field hostname
                 host-project-path)
     (field [data-store-path 'unknown] ;; used by the host to store job data
-           [host-racket-path (build-path host-project-path "racket" "bin" "racket")]
+           [host-racket-path (find-executable-path (find-system-path 'exec-file))]
            [host-utilities-path
             (build-path host-project-path "contracts-and-testing" "bex" "util")]
            [host-output-path 'unknown] ;; experiment-output
