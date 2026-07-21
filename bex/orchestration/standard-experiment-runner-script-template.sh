@@ -67,7 +67,7 @@ mkdir -p $OUTPUT_DIR
 mkdir -p $DATA_DIR
 
 hostname >> $OUTPUT_DIR/$BENCH.log
-"$RACKET_PATH/bin/racket" -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
+"$RACKET_PATH" -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
     -x "$EXPERIMENT_DIR" \
     -b "$BENCHMARKS_PATH/$BENCH" \
     -t "$CONTRACT_SETTING" \
