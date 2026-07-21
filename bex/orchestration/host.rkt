@@ -128,6 +128,7 @@
           '@|config-name|.rkt' @;
           '@record/check-mode' @;
           '@(current-experiment-dir)' @;
+          '@host-racket-path' @;
           '@cpus' @;
           '@contract-setting' @;
           '@name'
