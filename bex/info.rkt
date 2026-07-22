@@ -13,7 +13,7 @@
                "typed-racket-lib"
                "https://github.com/LLazarek/rscript.git"
                "https://github.com/LLazarek/ruinit.git"
-               "process-queue"
+               "https://github.com/breitnw/process-queue.git?path=process-queue#defer-update-kw"
                "mutate-lib"
                "mutate-test"
                "mutate-mutators"

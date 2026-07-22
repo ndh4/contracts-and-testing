@@ -451,7 +451,8 @@
                                      [total-mutants-spawned
                                       (add1 mutants-spawned)]))
    spawn-the-mutant
-   this-mutant-priority))
+   this-mutant-priority
+   #:defer-update? #t))
 
 ;; There is some common housekeeping that must be performed in every mutant
 ;; will, regardless of what kind of mutant or the details of its particular will.
