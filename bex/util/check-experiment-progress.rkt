@@ -17,6 +17,10 @@
 (define (penultimate-path-element path)
   (cadr (reverse (explode-path path))))
 
+(define (final-path-element path)
+  (define-values (_base name _must-be-dir?) (split-path path))
+  name)
+
 (define (guess-path #:fail-thunk fail-f . parts)
   (define path (apply build-path parts))
   (if (or (path-to-existant-directory? path)
@@ -74,27 +78,35 @@
      ;; TODO what is sample size?
      (* (sample-size) (length all-mutants))))
 
+(define/contract (configuration-string-matches ctc-level)
+  (-> (or/c "max" "types" "none") string?)
+  (case ctc-level
+    [("max")   "configuration=22222222 OR configuration=2222222 OR configuration=222222 OR configuration=22222 OR configuration=2222 OR configuration=222 OR configuration=22 OR configuration=2"]
+    [("types") "configuration=11111111 OR configuration=1111111 OR configuration=111111 OR configuration=11111 OR configuration=1111 OR configuration=111 OR configuration=11 OR configuration=1"]
+    [("none")  "configuration=0"]))
+
 ;; Query the number of rows in a sqlite table (0 if the table does not exist)
-(define/contract (num-rows dbc table-name)
-  (connection? string? . -> . natural-number/c)
+(define/contract (num-rows dbc table-name ctc-level)
+  (connection? string? (or/c "max" "types" "none") . -> . natural-number/c)
   (if (table-exists? dbc table-name)
       (query-value
        dbc
        (format
-        "SELECT COUNT(*) FROM ~a"
-        table-name))
+        "SELECT COUNT(*) FROM ~a WHERE ~a"
+        table-name
+        (configuration-string-matches ctc-level)))
       0))
 
 ;; FIXME this will break if dbc is not a connection. A better approach would be
 ;; have a db setup function that returns a set of functions to modify the db,
 ;; but never actually hand the user control of the db
-(define/contract (check-progress-percentage/dbc dbc bench-name all-mutant*tests)
-  (connection? string? (listof mutant*test?) . -> . (and/c real? positive? (<=/c 1)))
+(define/contract (check-progress-percentage/dbc dbc bench-name ctc-level all-mutant*tests)
+  (connection? string? (or/c "max" "types" "none") (listof mutant*test?) . -> . (and/c real? (not/c negative?) (<=/c 1)))
   ;; GROSS HACK there should really be a global enumeration of the configs that
   ;; will run for a given experiment. As it stands, adding a config in
   ;; experiment-manager does not get reflected here, so we will get progress
   ;; values greater than 1
-  (/ (num-rows dbc bench-name)
+  (/ (num-rows dbc bench-name ctc-level)
      (length all-mutant*tests)))
 
 (define (progress-bar-string % #:width width)
@@ -170,6 +182,8 @@
                                 Are you running from the same directory the experiment was run?
                                 }))))]
 
+       [ctc-level (path->string (final-path-element bench-con-level-dir))]
+
        [config-path
         (infer-configuration
          log-path
@@ -210,9 +224,9 @@
       (cond [watch-mode?
              (define period 5)
              (define start-time (current-inexact-milliseconds))
-             (define start-% (check-progress-percentage/dbc dbc (benchmark->name bench) all-mutant*tests))
+             (define start-% (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level all-mutant*tests))
              (let loop ()
-               (define % (check-progress-percentage/dbc dbc (benchmark->name bench) all-mutant*tests))
+               (define % (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level all-mutant*tests))
                (define pretty-%
                  (truncate-string-to (~a (* (/ (truncate (* % 1000)) 1000.0) 100))
                                      4))
@@ -240,7 +254,7 @@
                  (sleep period)
                  (loop)))]
             [else
-             (define % (exact->inexact (check-progress-percentage/dbc dbc (benchmark->name bench) all-mutant*tests)))
+             (define % (exact->inexact (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level all-mutant*tests)))
              (if readable-output?
                  %
                  (displayln %))]))))
