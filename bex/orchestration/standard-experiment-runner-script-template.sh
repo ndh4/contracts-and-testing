@@ -6,8 +6,9 @@ BENCH="$1"
 CONFIG_NAME="$2"
 RECORD_CHECK_CONFIG_PARITY="$3"
 EXPERIMENT_DIR="$4"
-CPUS="$5"
-CONTRACT_SETTING="$6"
+RACKET_PATH="$5"
+CPUS="$6"
+CONTRACT_SETTING="$7"
 
 KEEP_GOING="y"
 
@@ -66,7 +67,7 @@ mkdir -p $OUTPUT_DIR
 mkdir -p $DATA_DIR
 
 hostname >> $OUTPUT_DIR/$BENCH.log
-./racket/bin/racket -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
+"$RACKET_PATH" -l errortrace -t contracts-and-testing/bex/experiment/mutant-factory.rkt -- \
     -x "$EXPERIMENT_DIR" \
     -b "$BENCHMARKS_PATH/$BENCH" \
     -t "$CONTRACT_SETTING" \

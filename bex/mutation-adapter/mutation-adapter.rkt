@@ -1397,8 +1397,8 @@
     (apply-contract (dict-ref kw-ctc-pairs kw (thunk any/c)) kw-arg)))
 
 (require (only-in rackunit require/expose))
-(require/expose racket/private/class-c-old (build-class/c
-                                            build-internal-class/c))
+(require/expose racket/private/class-c (build-class/c
+                                        build-internal-class/c))
 (define-adapter delegating-class/c (init-field-name-ctc-pairs
                                     field-name-ctc-pairs
                                     method-name-ctc-pairs)
