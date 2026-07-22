@@ -87,7 +87,7 @@
 
 ;; Query the number of rows in a sqlite table (0 if the table does not exist)
 (define/contract (num-rows dbc table-name ctc-level)
-  (connection? string? . -> . natural-number/c)
+  (connection? string? (or/c "max" "types" "none") . -> . natural-number/c)
   (if (table-exists? dbc table-name)
       (query-value
        dbc
