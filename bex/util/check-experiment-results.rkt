@@ -51,7 +51,7 @@
                (match (regexp-match #px"Running experiment with config [^ ]+/([^/]+).rkt and contract level (max|types|none)"
                                     (current-input-port))
                  [(list _ config-name ctc-level) (values (~a config-name) (~a ctc-level))]
-                 [else '?]))))
+                 [else (values '? '?)]))))
           (values log-path status ended-with-err? config ctc-level)]
          [else (values #f '? '? '? '?)]))
 
