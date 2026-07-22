@@ -101,7 +101,7 @@
 ;; have a db setup function that returns a set of functions to modify the db,
 ;; but never actually hand the user control of the db
 (define/contract (check-progress-percentage/dbc dbc bench-name ctc-level all-mutant*tests)
-  (connection? string? (or/c "max" "types" "none") (listof mutant*test?) . -> . (and/c real? (not negative?) (<=/c 1)))
+  (connection? string? (or/c "max" "types" "none") (listof mutant*test?) . -> . (and/c real? (not/c negative?) (<=/c 1)))
   ;; GROSS HACK there should really be a global enumeration of the configs that
   ;; will run for a given experiment. As it stands, adding a config in
   ;; experiment-manager does not get reflected here, so we will get progress
