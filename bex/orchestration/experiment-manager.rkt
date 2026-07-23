@@ -16,6 +16,7 @@
          zythos-ssh/one-job-per-mutant
          zythos-local/one-job-per-mode
          zythos-local/one-job-per-mutant/batched
+         zythos-local/one-job-per-mutant
          benbox
          local
          nathaniel)
