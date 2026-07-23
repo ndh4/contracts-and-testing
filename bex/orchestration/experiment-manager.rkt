@@ -78,7 +78,12 @@
      (error info-str)
      (match info-str
        [(regexp "^#hash")
-        (call-with-input-string info-str read)]
+        (cond
+         [(string-contains? info-str "?")
+          (eprintf @~a{Unable to get experiment results summary for host @a-host, @;
+                       found: @~v[info-str]})
+          absent]
+         [else (call-with-input-string info-str read)])]
        [else
         (eprintf @~a{
                      Unable to get experiment results summary for host @a-host, @;
