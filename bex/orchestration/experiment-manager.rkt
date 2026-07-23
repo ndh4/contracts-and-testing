@@ -75,6 +75,7 @@
              (build-path (get-field host-utilities-path a-host) "check-experiment-results.rkt")
              "-w"
              (get-field host-output-path a-host)))
+     (error info-str)
      (match info-str
        [(regexp "^#hash")
         (call-with-input-string info-str read)]
