@@ -604,5 +604,12 @@
        [host-project-path (simple-form-path project-path)]
        [env-vars "BEX_CONDOR_MACHINES='fix allagash piraat maudite tremens guldendraak' BEX_CONDOR_BATCH_SIZE=5"]))
 
+(define zythos-local/one-job-per-mutant
+  (new local-direct-host%
+       [cpu-count 112]
+       [hostname "zythos-local"]
+       [host-project-path (simple-form-path project-path)]
+       [env-vars "BEX_CONDOR_MACHINES='fix allagash piraat'"]))
+
 
 (define hosts (list zythos-local/one-job-per-mutant/batched))
