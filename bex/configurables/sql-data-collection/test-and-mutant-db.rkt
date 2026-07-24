@@ -102,7 +102,7 @@
      context-stack
      result-value)
     (cond [(run-status? run-status)
-           (values (eq? (run-status-outcome run-status) 'completed)
+           (values (or (eq? (run-status-outcome run-status) 'completed) (eq? (run-status-outcome run-status) 'skipped))
                    (~a (run-status-outcome run-status))
                    (~a (run-status-blamed run-status))
                    (~a (run-status-errortrace-text run-status))
