@@ -15,6 +15,7 @@
              #:fake-mutation? boolean?}
             {#:timeout/s (or/c #f number?)
              #:test-id (or/c #f number?)
+             #:test-type (or/c #f string?)
              #:memory/gb (or/c #f number?)
              #:fake-run? boolean?
              #:log-mutation-info? boolean?
@@ -37,6 +38,7 @@
                                         #:fake-run? [fake-run? #f]
                                         #:log-mutation-info? [log-mutation-info? #f]
                                         #:test-id [test-id #f]
+                                        #:test-type [test-type #f]
                                         #:timeout/s [timeout/s #f]
                                         #:memory/gb [memory/gb #f]
                                         #:save-output [output-path #f]
@@ -50,6 +52,7 @@
    (list "--"
          (~a (simple-form-path mutant-runner-path))
          "-x" (~a (simple-form-path current-experiment-dir))
+         "-d" (~a test-type)
          "-b" (serialize-benchmark-configuration a-benchmark-configuration)
          "-T" (~a test-id)
          "-M" (~a module-to-mutate)

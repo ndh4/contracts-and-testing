@@ -11,6 +11,7 @@
           [add-table-entry! (valid-table-name/c
                              dummy-connection
                              #:configuration config/c
+                             #:test-type string?
                              #:module-under-test string?
                              #:test-index natural-number/c
                              #:mutant-module string?
@@ -43,6 +44,7 @@
 
 (define (add-table-entry! _table-name _dbc
                           #:configuration _configuration
+                          #:test-type _test-type
                           #:module-under-test _module-under-test
                           #:test-index _test-index
                           #:mutant-module _mutant-module

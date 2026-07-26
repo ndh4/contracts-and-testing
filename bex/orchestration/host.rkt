@@ -38,7 +38,8 @@
                                   (list/c job-descr/c job-descr/c)))))]
                   [submit-job! (->*m {string?
                                       string?
-                                      #:contract-setting (or/c 'max 'types 'none)}
+                                      #:contract-setting (or/c 'max 'types 'none)
+                                      #:test-type (or/c "hand" "rand")}
                                      {#:mode (or/c 'check 'record)
                                       #:cpus (or/c "decide" natural?)
                                       #:name string?}
@@ -122,6 +123,7 @@
                                                        record/check-mode
                                                        cpus
                                                        contract-setting
+                                                       test-type
                                                        name)
       @~a{
           '@benchmark' @;
@@ -131,6 +133,7 @@
           '@host-racket-path' @;
           '@cpus' @;
           '@contract-setting' @;
+          '@test-type' @;
           '@name'
           })
 

@@ -6,7 +6,8 @@
 
 (with-configuration [local
                      teco]
-  #:contract-levels max types
+  #:contract-levels max types none
+  #:test-types "hand" "rand"
   #:only abm_test
   #:status-in status-file
   #:manual-outcome-recording

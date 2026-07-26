@@ -69,6 +69,7 @@
                                                    mode.str
                                                    current-benchs
                                                    current-ctc-levels
+                                                   current-test-types
                                                    {~? name #f}
                                                    current-status-file
                                                    record-outcomes?)]))
@@ -92,6 +93,9 @@
 (define-syntax-parameter current-ctc-levels
   (λ _ #'#f))
 
+(define-syntax-parameter current-test-types
+  (λ _ #'#f))
+
 (define-simple-macro (module-begin top-level-e ...)
   (#%module-begin
    (module test racket/base) ;; no testing launching experiments...
@@ -99,6 +103,7 @@
 
 (define-simple-macro (with-configuration [host configuration]
                        {~seq #:contract-levels contract-level:ctc-setting ...}
+                       {~seq #:test-types test-type:string ...}
                        {~alt
                         {~optional {~seq #:status-in status-file-path}}
                         {~optional {~and #:skip-setup skip-setup-kw}}
@@ -135,8 +140,9 @@
           [the-db-setup-script (orchestration-info-db-setup-script orchestration-info)]
           [the-status-file {~? status-file-path #f}]
           [the-benchs (list benchmark-name ...)]
-          [the-ctc-levels (list ctc-level ...)])
-      (printf "Orchestrating experiment for benchmarks ~a and contract-levels ~a~n" the-benchs the-ctc-levels)
+          [the-ctc-levels (list ctc-level ...)]
+          [the-test-types (list test-type ...)])
+      (printf "Orchestrating experiment for benchmarks ~a and contract-levels ~a and test-types ~a~n" the-benchs the-ctc-levels the-test-types)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)
                                   "experiment-results"
@@ -162,7 +168,8 @@
                               [current-experiment-id  (syntax-id-rules () [_ the-experiment-id])]
                               [current-status-file (syntax-id-rules () [_ the-status-file])]
                               [current-benchs (syntax-id-rules () [_ the-benchs])]
-                              [current-ctc-levels (syntax-id-rules () [_ the-ctc-levels])])
+                              [current-ctc-levels (syntax-id-rules () [_ the-ctc-levels])]
+                              [current-test-types (syntax-id-rules () [_ the-test-types])])
           first-mode.implementation
           more-modes.implementation ...)))))
 
@@ -216,6 +223,7 @@
                       mode-name
                       benchmark-names
                       contract-levels
+                      test-types
                       name
                       status-file
                       record-outcomes?)
@@ -240,7 +248,7 @@
                          (raise-user-error 'check-host-empty! "Aborted."))))
   (send host setup-job-management!)
   (displayln @~a{Submitting benchmark jobs...})
-  (launch-benchmarks! host mode-name benchmark-names contract-levels
+  (launch-benchmarks! host mode-name benchmark-names contract-levels test-types
                       (handle-launch-benchmarks-failure! experiment-id)
                       #:outcome-checking-mode (if record-outcomes? 'record 'check))
   (displayln @~a{Waiting for benchmarks to finish...})

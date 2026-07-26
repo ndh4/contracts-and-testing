@@ -17,6 +17,7 @@
           [add-table-entry! (valid-table-name/c
                              connection?
                              #:configuration config/c
+                             #:test-type string?
                              #:module-under-test string?
                              #:test-index natural-number/c
                              #:mutant-module string?
@@ -67,6 +68,7 @@
    (format
     "CREATE TABLE IF NOT EXISTS ~a (
   configuration INTEGER,
+  test_type TEXT,
   module_under_test TEXT,
   test_index INTEGER,
   mutant_module TEXT,
@@ -79,13 +81,14 @@
   context_stack TEXT,
   result_value TEXT,
   cmd_line_args TEXT,
-  PRIMARY KEY (configuration, module_under_test, test_index, mutant_module, mutation_index)
+  PRIMARY KEY (configuration, test_type, module_under_test, test_index, mutant_module, mutation_index)
   ON CONFLICT REPLACE
   )"
     table-name)))
 
 (define (add-table-entry! table-name dbc
                           #:configuration configuration
+                          #:test-type test-type
                           #:module-under-test module-under-test
                           #:test-index test-index
                           #:mutant-module mutant-module
@@ -121,11 +124,12 @@
    dbc
    (format
     "INSERT OR REPLACE INTO ~a
-                    (configuration, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_text, errortrace_stack, context_stack, result_value, cmd_line_args)
-                    VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)"
+                    (configuration, test_type, module_under_test, test_index, mutant_module, mutation_index, test_passed, outcome, blamed, errortrace_text, errortrace_stack, context_stack, result_value, cmd_line_args)
+                    VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)"
     table-name)
 
    ((configured:serialize-config) configuration)
+   test-type
    module-under-test
    test-index
    mutant-module

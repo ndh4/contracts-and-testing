@@ -141,6 +141,7 @@
 ;; Main entry point of the factory
 (define/contract (run-all-mutants*config bench
                                          config
+                                         test-type
                                          ;; #:log-progress log-progress!
                                          ;; #:load-progress load-result-cache
                                          )
@@ -184,14 +185,14 @@
                              (+ max-timeout 30)))))
 
     (define starting-q-with-sanity
-      (run-mutant*tests bench config starting-q #f))
+      (run-mutant*tests bench config test-type starting-q #f))
 
     (define process-q
       (for/fold ([process-q starting-q-with-sanity])
                 ([module-to-mutate-name mutatable-module-names]
                  #:when #t
                  [mutation-index (select-mutants module-to-mutate-name bench)])
-        (run-mutant*tests bench config process-q (mutant #f module-to-mutate-name mutation-index))))
+        (run-mutant*tests bench config test-type process-q (mutant #f module-to-mutate-name mutation-index))))
 
 
     (log-factory info "Finished enqueing all test mutants. Waiting...")
@@ -270,7 +271,7 @@
 ;; and spawns mutants for each samples point
 ;; Note that sampling the precision lattice is done indirectly by
 ;; just generating random configs
-(define/contract (run-mutant*tests benchmark config process-q mutant-program)
+(define/contract (run-mutant*tests benchmark config test-type process-q mutant-program)
   (benchmark/c process-queue? #;(process-queue/c factory/c) (or/c mutant/c #f) . -> . (process-queue/c factory/c))
 
   (define module-to-mutate-name (and mutant-program (mutant-module mutant-program)))
@@ -287,9 +288,10 @@
 
   (for*/fold ([process-q process-q])
                   ([test-mod testable-modules]
-                  [test-id (get-all-test-ids test-mod benchmark)])
+                   [test-id (get-all-test-ids test-type test-mod benchmark)])
     (log-factory debug
-                  "  Trying to spawn test for ~a @ ~a."
+                  "  Trying to spawn test for [~a] ~a @ ~a."
+                  test-type
                   test-mod
                   test-id)
 
@@ -309,6 +311,7 @@
       info
       @~a{
           Spawning test mutant for @;
+          [@test-type] @;
           @module-to-mutate-name @"@" @mutation-index @;
           @test-mod @"@" @test-id @;
           because nothing found in cache
@@ -316,6 +319,7 @@
      (spawn-mutant*test process-q
                    (or module-to-mutate-name test-mod)
                    (or mutation-index 0)
+                   test-type
                    test-mod
                    test-id
                    config
@@ -330,6 +334,7 @@
 (define/contract (spawn-mutant*test process-q
                                     module-to-mutate-name
                                     mutation-index
+                                    test-type
                                     test-mod
                                     test-id
                                     precision-config
@@ -343,6 +348,7 @@
   (->i ([process-q              (process-queue/c factory/c)]
         [module-to-mutate-name  module-name?]
         [mutation-index         natural?]
+        [test-type (or/c "hand" "rand")]
         [test-mod    module-name?]
         [test-id                natural?]
         [precision-config       config/c]
@@ -372,9 +378,10 @@
                          mutants-spawned)
     current-factory)
   (define outfile (build-path (data-output-dir)
-                              (format "~a_m~a_~a_t~a_~a.rktd"
+                              (format "~a_m~a_~a_~a_t~a_~a.rktd"
                                       module-to-mutate-name
                                       mutation-index
+                                      test-type
                                       test-mod
                                       test-id
                                       mutants-spawned)))
@@ -392,6 +399,7 @@
                            (current-configuration-path)
                            #:timeout/s timeout/s
                            #:memory/gb memory/gb
+                           #:test-type test-type
                            #:test-id test-id
                            #:fake-mutation? fake-mutation?
                            #:save-output (and debug:save-individual-mutant-outputs?
@@ -407,6 +415,7 @@
                                       (current-experiment-dir)
                                       #:fake-mutation? fake-mutation?
                                       #:log-mutation-info? (current-mutant-runner-log-mutation-info?)
+                                      #:test-type test-type
                                       #:test-id test-id
                                       #:timeout/s (or timeout/s (default-timeout/s))
                                       #:memory/gb (or memory/gb (default-memory-limit/gb))
@@ -424,15 +433,17 @@
                            ;; coerce to bool
                            (and (or timeout/s memory/gb) #t)
                            recorded-args
+                           test-type
                            test-mod
                            test-id
                            fake-mutation?))
     (log-factory
      info
-     "    Spawned mutant runner with id [~a] for ~a @ ~a, testing ~a @ ~a > ~a."
+     "    Spawned mutant runner with id [~a] for ~a @ ~a, testing [~a] ~a @ ~a > ~a."
      mutant-id
      module-to-mutate-name
      mutation-index
+     test-type
      test-mod
      test-id
      (pretty-path outfile))
@@ -472,6 +483,7 @@
                                             revival-counts
                                             increased-limits?
                                             recorded-args
+                                            test-type
                                             test-mod
                                             test-id
                                             fake-mutation?))
@@ -496,6 +508,7 @@
       [(cons 'done-ok (? run-status? result))
        ((configured:add-table-entry!) (current-sqlite-db-table-name) (current-sqlite-db-connection)
                                       #:configuration config
+                                      #:test-type test-type
                                       #:module-under-test test-mod
                                       #:test-index test-id
                                       #:mutant-module (if fake-mutation? "NO_MUTATIONS" mutant-mod)
@@ -570,7 +583,8 @@
     a-mutant-process)
 
   (match-define (struct* mutant*test-process
-                       ([test-mod test-mod]
+                       ([test-type test-type]
+                        [test-mod test-mod]
                         [test-id test-id]
                         [fake-mutation? fake-mutation?]))
     a-mutant-process)
@@ -578,17 +592,17 @@
   (cond [(>= for-failure MAX-FAILURE-REVIVALS)
          (log-factory error
                       "Runner errored all ~a / ~a tries on mutant:
- [~a] ~a @ ~a (test ~a ~a) with config
+ [~a] ~a @ ~a (test [~a] ~a ~a) with config
 ~v"
                       for-failure MAX-FAILURE-REVIVALS
                       id mod index
-                      test-mod test-id
+                      test-type test-mod test-id
                       (serialize-config config))
          (maybe-abort "Revival failed to resolve mutant errors"
                       process-q)]
         [else
          (log-factory warning
-                      "Runner errored on mutant [~a] ~a @ ~a (test ~a ~a) with config
+                      "Runner errored on mutant [~a] ~a @ ~a (test [~a] ~a ~a) with config
 ~v
 
 Exited with ~a and produced result: ~v
@@ -596,13 +610,14 @@ Exited with ~a and produced result: ~v
 Attempting revival ~a / ~a
 "
                       id mod index
-                      test-mod test-id
+                      test-type test-mod test-id
                       (serialize-config config)
                       status maybe-result
                       (add1 for-failure) MAX-FAILURE-REVIVALS)
          (spawn-mutant*test process-q
                        mod
                        index
+                       test-type
                        test-mod
                        test-id
                        config
@@ -918,6 +933,7 @@ Mutant: [~a] ~a @ ~a with config:
   (define contract-setting (make-parameter #f))
   (define metadata-file (make-parameter #f))
   (define configuration-path (make-parameter #f))
+  (define test-type (make-parameter #f))
   (command-line
    #:once-each
    [("-x" "--experiment-dir")
@@ -928,6 +944,10 @@ Mutant: [~a] ~a @ ~a with config:
     path
     "Path to benchmark to run. Mandatory."
     (bench-path-to-run path)]
+   [("-d" "--test-type")
+    specified-test-type
+    "Test type (e.g. 'rand' for tests in a directory 'rand-tests'). Mandatory"
+    (test-type specified-test-type)]
    [("-t" "--contract-setting")
     ctc-setting
     "Contract setting (max, types, or none). Mandatory."
@@ -1041,7 +1061,8 @@ Mutant: [~a] ~a @ ~a with config:
                @~a{
                    Running experiment with config @;
                    @(configuration-path) and contract level @;
-                   @(contract-setting)
+                   @(contract-setting) and test type @;
+                   @(test-type)
                    })
 
   ;; Create the sqlite database and the table for this benchmark
@@ -1057,6 +1078,7 @@ Mutant: [~a] ~a @ ~a with config:
       (define config (make-bench-config bench-to-run (contract-setting)))
       (run-all-mutants*config bench-to-run
                               config
+                              (test-type)
                               ;; #:log-progress (make-progress-logger log-progress!/raw)
                               ;; #:load-progress make-cached-results-function
                               )))

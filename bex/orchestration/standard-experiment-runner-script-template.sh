@@ -9,6 +9,7 @@ EXPERIMENT_DIR="$4"
 RACKET_PATH="$5"
 CPUS="$6"
 CONTRACT_SETTING="$7"
+TEST_TYPE="$8"
 
 KEEP_GOING="y"
 
@@ -46,7 +47,7 @@ elif [ "$CPUS" = "decide" ]; then
 fi
 
 if [ "$OUTPUT_DIR_NAME" = "" ]; then
-    OUTPUT_DIR_NAME="$BENCH/$CONTRACT_SETTING"
+    OUTPUT_DIR_NAME="$BENCH/$CONTRACT_SETTING/$TEST_TYPE"
 fi
 
 KEEP_GOING_FLAG="-k"
@@ -71,6 +72,7 @@ hostname >> $OUTPUT_DIR/$BENCH.log
     -x "$EXPERIMENT_DIR" \
     -b "$BENCHMARKS_PATH/$BENCH" \
     -t "$CONTRACT_SETTING" \
+    -d "$TEST_TYPE" \
     -o "$TEMPORARY_DATA_DIR" \
     -n "$CPUS" \
     -e "$OUTPUT_DIR/errs.log" \
