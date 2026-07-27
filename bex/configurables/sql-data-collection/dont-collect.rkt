@@ -2,7 +2,8 @@
 
 (require db
          "../../runner/mutation-runner-data.rkt"
-         "../../configurations/config.rkt")
+         "../../configurations/config.rkt"
+         "../../util/shared-ctcs.rkt")
 
 (provide (contract-out
           [ensure-db! (-> void?)]
@@ -11,7 +12,7 @@
           [add-table-entry! (valid-table-name/c
                              dummy-connection
                              #:configuration config/c
-                             #:test-type string?
+                             #:test-type test-type/c
                              #:module-under-test string?
                              #:test-index natural-number/c
                              #:mutant-module string?

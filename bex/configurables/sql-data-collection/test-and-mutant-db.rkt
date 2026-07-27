@@ -5,6 +5,7 @@
          "../../configurables/configurables.rkt"
          "../../runner/mutation-runner-data.rkt"
          "../../configurations/config.rkt"
+         "../../util/shared-ctcs.rkt"
          )
 
 (provide (contract-out
@@ -17,7 +18,7 @@
           [add-table-entry! (valid-table-name/c
                              connection?
                              #:configuration config/c
-                             #:test-type string?
+                             #:test-type test-type/c
                              #:module-under-test string?
                              #:test-index natural-number/c
                              #:mutant-module string?

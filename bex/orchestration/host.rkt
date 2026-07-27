@@ -7,6 +7,7 @@
 (require syntax/parse/define
          "host-utils.rkt"
          "../util/option.rkt"
+         "../util/shared-ctcs.rkt"
          "experiment-info.rkt")
 
 (define-runtime-paths
@@ -39,7 +40,7 @@
                   [submit-job! (->*m {string?
                                       string?
                                       #:contract-setting (or/c 'max 'types 'none)
-                                      #:test-type (or/c "hand" "rand")}
+                                      #:test-type test-type/c}
                                      {#:mode (or/c 'check 'record)
                                       #:cpus (or/c "decide" natural?)
                                       #:name string?}

@@ -12,6 +12,7 @@
          "../util/tests.rkt"
          "../util/log-controls.rkt"
          "../util/mutant-cmdline.rkt"
+         "../util/shared-ctcs.rkt"
          "../configurations/config.rkt"
          "../configurations/configure-benchmark.rkt"
          "../configurables/configurables.rkt"
@@ -348,7 +349,7 @@
   (->i ([process-q              (process-queue/c factory/c)]
         [module-to-mutate-name  module-name?]
         [mutation-index         natural?]
-        [test-type (or/c "hand" "rand")]
+        [test-type test-type/c]
         [test-mod    module-name?]
         [test-id                natural?]
         [precision-config       config/c]
