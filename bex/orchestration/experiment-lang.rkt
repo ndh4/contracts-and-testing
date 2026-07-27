@@ -13,7 +13,8 @@
          racket/runtime-path
          racket/date
          "experiment-manager.rkt"
-         "experiment-info.rkt")
+         "experiment-info.rkt"
+         "../util/shared-ctcs.rkt")
 
 (begin-for-syntax
   (require racket/runtime-path
@@ -103,7 +104,7 @@
 
 (define-simple-macro (with-configuration [host configuration]
                        {~seq #:contract-levels contract-level:ctc-setting ...}
-                       {~seq #:test-types test-type:string ...}
+                       {~seq #:test-types test-type ...}
                        {~alt
                         {~optional {~seq #:status-in status-file-path}}
                         {~optional {~and #:skip-setup skip-setup-kw}}
@@ -111,6 +112,7 @@
                         {~optional {~and #:manual-outcome-recording skip-record-outcomes-kw}}} ...
                        {~var first-mode (run-mode-spec (not (attribute skip-record-outcomes-kw)))}
                        {~var more-modes (run-mode-spec #f)} ...)
+  #:declare test-type (expr/c #'test-type/c)
   #:fail-when (not (or (attribute skip-record-outcomes-kw)
                        (member (attribute first-mode.compile-time-mode-name-str) '("TR" "blame"))))
               "Unless manually managing outcome recording with #:manual-outcome-recording, the first mode run must be TR/blame so that later modes can perform outcome parity checks."
@@ -141,7 +143,7 @@
           [the-status-file {~? status-file-path #f}]
           [the-benchs (list benchmark-name ...)]
           [the-ctc-levels (list ctc-level ...)]
-          [the-test-types (list test-type ...)])
+          [the-test-types (list test-type.c ...)])
       (printf "Orchestrating experiment for benchmarks ~a and contract-levels ~a and test-types ~a~n" the-benchs the-ctc-levels the-test-types)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)

@@ -12,7 +12,8 @@
 
 (provide (struct-out target-file)
          (struct-out context)
-         (struct-out test))
+         (struct-out test)
+         create-dir-if-not-exists!)
 
 (struct target-file [name info] #:prefab)
 (struct context [predecessor datum info] #:prefab)

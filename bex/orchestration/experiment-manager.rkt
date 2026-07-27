@@ -143,7 +143,6 @@
 
 ;; host<%> -> (option/c summary/c)
 (define (summarize-experiment-status a-host)
-  (displayln "In summarize-experiment-status")
   (define (add-progress incomplete-benchs)
     (match-define (list (list names _ ctc-levels test-types) ...) incomplete-benchs)
     (define progresses (get-progress a-host (map list names ctc-levels test-types)))
@@ -249,7 +248,6 @@
   (when print?
     (displayln @~a{Waiting for current jobs to finish on @host ...}))
   (let loop ()
-    (displayln "In loop")
     (define current-status
       (option-let*
        ([summary (summarize-experiment-status host)]
