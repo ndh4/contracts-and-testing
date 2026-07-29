@@ -21,7 +21,7 @@
   (build-path bench-dir "original"))
 
 (define (benchmark-test-dir bench-dir)
-  (build-path bench-dir "tests"))
+  (build-path bench-dir "hand-tests"))
 
 (define (benchmark-nontest-dir bench-dir)
   (build-path bench-dir "untyped"))

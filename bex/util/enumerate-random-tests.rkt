@@ -4,21 +4,21 @@
 
 (define level 'max)
 
-(define benchmark-name "abm_test")
+(define benchmark-name (make-parameter 'bad))
 
-(define benchmark-dir
+(define (benchmark-dir)
   (build-path
    "/Users/nhejduk/Documents/Research-Cloud/teco-parent/gtp-benchmarks/benchmarks"
-   benchmark-name))
+   (benchmark-name)))
 
-(define wiretap-results-dir
-  (build-path benchmark-dir (format "wiretap-~a-results" level)))
+(define (wiretap-results-dir)
+  (build-path (benchmark-dir) (format "wiretap-~a-results" level)))
 
-(define sourcecode-dir
-  (build-path benchmark-dir "original"))
+(define (sourcecode-dir)
+  (build-path (benchmark-dir) "original"))
 
-(define output-dir
-  (build-path benchmark-dir (format "rand_~a-tests" level)))
+(define (output-dir)
+  (build-path (benchmark-dir) (format "rand_~a-tests" level)))
 
 (define/contract
   (get-module-from-wiretap-result-name path)
@@ -38,7 +38,7 @@
                  '())))
 
 (define (make-testcases-obj source-file module-to-captureds)
-  (define hash-start (hash 0 (target-file (~a sourcecode-dir) '())))
+  (define hash-start (hash 0 (target-file (~a (sourcecode-dir)) '())))
   (define hash-with-context
     (hash-set hash-start 1
               (context 0 '(begin
@@ -50,7 +50,7 @@
              [next-index 2]
              #:result ht)
             ([input-filename testcase-files])
-    (define input (build-path wiretap-results-dir input-filename))
+    (define input (build-path (wiretap-results-dir) input-filename))
     (with-input-from-file input
       (lambda ()
         (let read-loop ()
@@ -61,35 +61,54 @@
                (write-loop ht next-index)]
               [else (read-loop)])))))))
 
+(define (make-test-from-call the-call)
+  (test 1 `(execute-call/namespace ,the-call (namespace-anchor->namespace teco_namespace_anchor)) '()))
+
 (define (write-loop ht next-id)
   (define line (read))
   (cond
     [(eof-object? line) (values ht next-id)]
     [(eq? 'call (car line))
-     (write-loop
-      (hash-set ht next-id (test 1 `(execute-call/namespace ,line (namespace-anchor->namespace teco_namespace_anchor)) '()))
-      (add1 next-id))]
+     (define the-test (make-test-from-call line))
+     (cond
+      [(and (equal? (cddr line) '((list) (list) (list)))
+            (member the-test (hash-values ht)))
+       ;; This call is a no-arg call already present in the table,
+       ;; so skip it.
+       (write-loop ht next-id)]
+      [else
+       (write-loop
+         (hash-set ht next-id the-test)
+         (add1 next-id))])]
     [else
      (write-loop ht next-id)]))
 
 (define (process-module source-file module-to-captureds)
   (define obj (make-testcases-obj source-file module-to-captureds))
   (with-output-to-file
-      (build-path output-dir
+      (build-path (output-dir)
                   (path-replace-extension source-file ".rktd"))
-    (thunk (pretty-write obj)) #:exists 'replace))
+    (thunk (write obj)) #:exists 'replace))
 
 
 (define (get-result-files dir-name)
   (filter
    (lambda (p) (regexp-match? #rx"^(.+)_TAP_(.+)rktd$" p))
-   (directory-list wiretap-results-dir)))
+   (directory-list (wiretap-results-dir))))
 
-(create-dir-if-not-exists! output-dir)
-
-(define module-to-captureds
-  (to-hash get-module-from-wiretap-result-name
-           (get-result-files wiretap-results-dir)))
-
-(for ([source-file (directory-list sourcecode-dir)])
-  (process-module source-file module-to-captureds))
+(for ([benchmark '(
+"snake"
+"abm_test"
+"morsecode"
+"sieve"
+"kcfa"
+)])
+  (printf "Collecting random tests for '~a'...~n" benchmark)
+  (parameterize ([benchmark-name benchmark])
+    (create-dir-if-not-exists! (output-dir))
+    (define module-to-captureds
+      (to-hash get-module-from-wiretap-result-name
+               (get-result-files (wiretap-results-dir))))
+    (for ([source-file (directory-list (sourcecode-dir))]
+          #:when (equal? (path-get-extension source-file) #".rkt"))
+      (process-module source-file module-to-captureds))))
