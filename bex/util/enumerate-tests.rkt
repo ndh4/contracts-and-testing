@@ -16,7 +16,8 @@
          (struct-out context)
          (struct-out test)
          create-dir-if-not-exists!
-         sanitize-table-name)
+         sanitize-table-name
+         add-entry!)
 
 (struct target-file [name info] #:prefab)
 (struct context [predecessor datum info] #:prefab)
