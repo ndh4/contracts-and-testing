@@ -36,9 +36,15 @@
   (define mod-path (get-mod-path mod-name benchmark))
   (define dbc (get-test-dbc mod-path test-type))
 
-  (query-list dbc
-   (format "SELECT id FROM ~a WHERE type=$1"
-           (sanitize-table-name mod-name)) "test"))
+  (dynamic-wind
+   void
+   (thunk
+    (query-list
+     dbc
+     (format "SELECT id FROM ~a WHERE type=$1"
+             (sanitize-table-name mod-name)) "test"))
+   (thunk
+    (disconnect dbc))))
 
 (define (get-mod-path mod-name bench)
   (findf (path-ends-with mod-name) (benchmark-untyped bench)))
@@ -47,7 +53,7 @@
   (define-values (base-dir file-name _) (split-path mod-path))
   (define-values (new-base __ ___) (split-path base-dir))
 
-  (sqlite3-connect #:database (build-path new-base (format "~a-tests" test-type) "test-info.sqlite3")
+  (sqlite3-connect #:database (path->string (cleanse-path (path->complete-path (build-path new-base (format "~a-tests" test-type) "test-info.sqlite3"))))
                    #:mode 'read-only))
 
 (define (get-record test-id test-dbc mod-name)
@@ -75,6 +81,12 @@
 
 (define (lookup-test test-id module-path test-type)
   (define mod-name (path-replace-extension (file-name-from-path module-path) #""))
-  (define test-as-list (assemble-test test-id (get-test-dbc module-path test-type) mod-name))
+  (define test-dbc (get-test-dbc module-path test-type))
+  (define test-as-list
+    (dynamic-wind
+     void
+     (thunk
+      (assemble-test test-id test-dbc mod-name))
+     (thunk (disconnect test-dbc))))
 
   (cons 'begin test-as-list))

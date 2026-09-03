@@ -116,15 +116,16 @@
   #:fail-when (not (or (attribute skip-record-outcomes-kw)
                        (member (attribute first-mode.compile-time-mode-name-str) '("TR" "blame"))))
               "Unless manually managing outcome recording with #:manual-outcome-recording, the first mode run must be TR/blame so that later modes can perform outcome parity checks."
+  #:with [benchmark-name ...] (if (attribute specific-benchmark)
+                                  #'(specific-benchmark.str ...)
+                                  (datum->syntax this-syntax all-benchmarks))
   #:with maybe-host-update (if (attribute skip-setup-kw)
                                #'(void)
                                #'(update-host! the-host
                                                the-setup-config
+                                               #:benchmark-names (list benchmark-name ...)
                                                #:skip-recompile? (skip-recompile?)
                                                (handle-host-update-failure! the-experiment-id)))
-  #:with [benchmark-name ...] (if (attribute specific-benchmark)
-                                  #'(specific-benchmark.str ...)
-                                  (datum->syntax this-syntax all-benchmarks))
   #:with [ctc-level ...] #'('contract-level.sym ...)
   (module+ main
     (define skip-recompile? (make-parameter #f))

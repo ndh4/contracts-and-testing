@@ -357,6 +357,7 @@
 (define (update-host! a-host
                       setup-config-name ; assumed to be in bex/setup/
                       #:skip-recompile? skip-recompile?
+                      #:benchmark-names benchmark-names
                       [handle-failure! (λ (reason)
                                          (raise-user-error 'update-host! reason))])
   (define host-repo-path
@@ -402,7 +403,7 @@
                    }
                @~a{
                    cd '@host-benchmarks-path' && @;
-                   @(get-field host-racket-path a-host) -l bex/util/enumerate-tests-for-benchmarks.rkt -- --gtp-benchmarks-dir . @(string-join experiment-benchmarks) && @;
+                   @(get-field host-racket-path a-host) -l bex/util/enumerate-tests-for-benchmarks.rkt -- --gtp-benchmarks-dir . @(string-join benchmark-names) && @;
                    echo "Done."
                    }))])
     (displayln step)

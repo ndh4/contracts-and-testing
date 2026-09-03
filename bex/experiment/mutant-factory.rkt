@@ -33,6 +33,7 @@
          racket/runtime-path
          racket/list
          syntax/parse/define
+         db
          (for-syntax racket/base))
 
 (module+ test
@@ -1086,5 +1087,7 @@ Mutant: [~a] ~a @ ~a with config:
 
   #;(finalize-log!)
   (finalize-configuration-outcomes!)
+
+  (disconnect conn)
 
   (exit 0))

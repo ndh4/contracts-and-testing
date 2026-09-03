@@ -3,13 +3,15 @@
 (require "enumerate-tests.rkt"
          db)
 
+(provide organize-random-tests!)
+
 (define level 'max)
 
 (define benchmark-name (make-parameter 'bad))
 
 (define (benchmark-dir)
   (build-path
-   "/Users/nhejduk/Documents/Research-Cloud/teco-parent/gtp-benchmarks/benchmarks"
+   "/Users/nhejduk/Research-Local/teco-parent/gtp-benchmarks/benchmarks"
    (benchmark-name)))
 
 (define (wiretap-results-dir)
@@ -60,14 +62,14 @@
 (define (add-record! dbc table-name id record)
   (match record
     [(target-file name info) (add-entry! dbc table-name id "target-file" sql-null name info)]
-    [(context pred datum info) (add-entry! dbc table-name id "context" pred (~a datum) info)]
-    [(test pred datum info) (add-entry! dbc table-name id "test" pred (~a datum) info)]))
+    [(context pred datum info) (add-entry! dbc table-name id "context" pred (~s datum) info)]
+    [(test pred datum info) (add-entry! dbc table-name id "test" pred (~s datum) info)]))
 
 (define (process-module! source-file testcase-files dbc)
   (define table-name (sanitize-table-name (file-name-from-path source-file)))
   (ensure-table! dbc table-name)
 
-  (add-record! dbc table-name 0 (target-file (~a (sourcecode-dir)) sql-null))
+  (add-record! dbc table-name 0 (target-file (~a source-file) sql-null))
   (add-record! dbc table-name 1
     (context 0 '(begin
                   (require rackunit)
@@ -119,20 +121,18 @@
   (when (file-exists? out) (delete-file out))
   (sqlite3-connect #:database out #:mode 'create))
 
-(for ([benchmark '(
-;"snake"
-"abm_test"
-;"morsecode"
-;"sieve"
-;"kcfa"
-)])
+(define (organize-random-tests! benchmark)
   (printf "Collecting random tests for '~a'...~n" benchmark)
   (parameterize ([benchmark-name benchmark])
     (define dbc (fresh-dbc))
     (define module-to-captured-ids
       (to-hash get-module-from-wiretap-result-name
                (get-result-files (wiretap-results-dir))))
-    (for ([source-file (directory-list (sourcecode-dir))]
-          #:when (equal? (path-get-extension source-file) #".rkt"))
-      (define testcase-files (hash-ref module-to-captured-ids (path->string source-file) '()))
-      (process-module! source-file testcase-files dbc))))
+    (dynamic-wind
+     void
+     (thunk
+      (for ([source-file (directory-list (sourcecode-dir))]
+            #:when (equal? (path-get-extension source-file) #".rkt"))
+        (define testcase-files (hash-ref module-to-captured-ids (path->string source-file) '()))
+        (process-module! source-file testcase-files dbc)))
+     (thunk (disconnect dbc)))))

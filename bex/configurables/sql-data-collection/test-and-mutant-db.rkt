@@ -49,7 +49,7 @@
     (make-directory* db-dir)
     ;; NOTE this connection is ignored. Is there a better way to create an empty
     ;; sqlite db?
-    (sqlite3-connect #:database cur-db-path #:mode 'create) 
+    (disconnect (sqlite3-connect #:database cur-db-path #:mode 'create))
     (void)))
 
 ;; create a connection to the database given the dbs dir for the experiment (for

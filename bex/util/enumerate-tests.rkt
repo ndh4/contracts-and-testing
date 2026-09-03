@@ -28,8 +28,8 @@
   x)
 
 (define (make-db! path mod-name)
-  (when (file-exists? path) (delete-file path))
   (define dbc (sqlite3-connect #:database path #:mode 'create))
+  (query-exec dbc (format "DROP TABLE IF EXISTS ~a" mod-name))
   (query-exec
    dbc
    (format "CREATE TABLE ~a (
@@ -52,10 +52,13 @@
 
 (define (into-records! in out mod-name)
   (define dbc (make-db! out mod-name))
-  (define test-data (with-input-from-file in get-test-code))
-
-  (add-entry! dbc mod-name 0 "target-file" sql-null (~a in) sql-null)
-  (generate-records! test-data dbc mod-name 1 0))
+  (dynamic-wind
+   void
+   (thunk
+    (define test-data (with-input-from-file in get-test-code))
+    (add-entry! dbc mod-name 0 "target-file" sql-null (~a in) sql-null)
+    (generate-records! test-data dbc mod-name 1 0))
+   (thunk (disconnect dbc))))
 
 (define (generate-records! test-data dbc mod-name next-id pred-id)
   (unless (null? test-data)
