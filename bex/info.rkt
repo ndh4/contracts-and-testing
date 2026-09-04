@@ -5,6 +5,8 @@
                      "scribble-lib"
                      "at-exp-lib"))
 (define deps '("base"
+               "db-lib"
+               "srfi-lite-lib"
                "custom-load"
                "errortrace-lib"
                "rackunit-lib"

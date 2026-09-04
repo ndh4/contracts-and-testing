@@ -26,7 +26,7 @@
 (define (get-test-to-add a-program)
 
   (log-insert-in-main-info (format "Inside GTTA, current-test-id is ~a" (current-test-id)))
-  (and (current-test-id) (lookup-test (current-test-id) (mod-path (program-main a-program)))))
+  (and (current-test-id) (lookup-test (current-test-id) (mod-path (program-main a-program)) (current-test-type))))
 
 (define (instrument-program a-program make-instrumented-module)
   (match-define (program main-module other-modules-to-instrument) a-program)

@@ -1,6 +1,7 @@
 #lang racket
 
 (require "enumerate-tests.rkt"
+         "enumerate-random-tests.rkt"
          "path-utils.rkt")
 
 (provide (contract-out
@@ -21,7 +22,7 @@
   (build-path bench-dir "original"))
 
 (define (benchmark-test-dir bench-dir)
-  (build-path bench-dir "tests"))
+  (build-path bench-dir "hand-tests"))
 
 (define (benchmark-nontest-dir bench-dir)
   (build-path bench-dir "untyped"))
@@ -34,6 +35,10 @@
                    (benchmark-test-dir bench-dir)
                    (benchmark-nontest-dir bench-dir))))
 
+(define (split-random-tests! benchmarks)
+  (for ([bm benchmarks])
+    (organize-random-tests! bm)))
+
 (module+ main
   (require racket/cmdline)
   (define gtp-benchmarks-dir (make-parameter #f))
@@ -45,4 +50,5 @@
                  (gtp-benchmarks-dir path)]
                 #:args benchmarks-to-split-up
                 (benchmarks benchmarks-to-split-up))
-  (split-up-all-benchmarks! (gtp-benchmarks-dir) (benchmarks)))
+  (split-up-all-benchmarks! (gtp-benchmarks-dir) (benchmarks))
+  (split-random-tests! (benchmarks)))

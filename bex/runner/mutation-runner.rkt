@@ -112,6 +112,7 @@
                                               #:modules-base-path [base-path #f]
                                               #:write-modules-to [write-to-dir #f]
                                               #:test-id [test-id #f]
+                                              #:test-type [test-type #f]
                                               #:on-module-exists [on-module-exists 'error]
                                               #:mutator [mutate mutate-module])
   (->i ([a-program program/c]
@@ -122,6 +123,7 @@
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
         #:fake-run? [fake-run? boolean?]
         #:test-id [test-id (or/c natural? #f)]
+        #:test-type [test-type (or/c string? #f)]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)]
         #:mutator [mutate (mod/c natural? #:in program/c . -> . (values syntax? mutated-identifier?))])
        #:pre/desc {base-path write-to-dir}
@@ -191,7 +193,8 @@
  make-configured-runner:  @make-configured-runner})
 
   (define runner
-    (parameterize ([current-test-id test-id])
+    (parameterize ([current-test-id test-id]
+                   [current-test-type test-type])
       (make-instrumented-runner
        a-program
        (compose1 mod-stx
@@ -245,6 +248,7 @@
                                           #:modules-base-path [base-path #f]
                                           #:write-modules-to [write-to-dir #f]
                                           #:test-id [test-id #f]
+                                          #:test-type [test-type #f]
                                           #:fake-run? [fake-run? #f]
                                           #:on-module-exists [on-module-exists 'error]
                                           #:mutator [mutate mutate-module])
@@ -259,6 +263,7 @@
         #:modules-base-path [base-path (or/c simple-form-path? #f)]
         #:write-modules-to [write-to-dir (or/c path-string? #f)]
         #:test-id [test-id (or/c natural? #f)]
+        #:test-type [test-type (or/c string? #f)]
         #:fake-run? [fake-run? boolean?]
         #:on-module-exists [on-module-exists (or/c 'error 'replace)]
         #:mutator [mutate (mod/c natural? #:in program/c . -> . (values syntax? mutated-identifier?))])
@@ -297,6 +302,7 @@
                                    #:modules-base-path base-path
                                    #:write-modules-to write-to-dir
                                    #:test-id test-id
+                                   #:test-type test-type
                                    #:on-module-exists on-module-exists
                                    #:mutator mutate))
     (define ((make-status* status-sym) [blamed #f]

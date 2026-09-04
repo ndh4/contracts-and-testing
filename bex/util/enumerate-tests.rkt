@@ -1,7 +1,9 @@
 #lang racket
 
 (require "read-module.rkt"
-         "path-utils.rkt")
+         "path-utils.rkt"
+         "tests.rkt"
+         db)
 
 (provide (contract-out
           [split-up-code
@@ -12,7 +14,10 @@
 
 (provide (struct-out target-file)
          (struct-out context)
-         (struct-out test))
+         (struct-out test)
+         create-dir-if-not-exists!
+         sanitize-table-name
+         add-entry!)
 
 (struct target-file [name info] #:prefab)
 (struct context [predecessor datum info] #:prefab)
@@ -22,25 +27,49 @@
   (printf ": ~a~n" x)
   x)
 
-(define (into-records in out)
-  (define test-data (with-input-from-file in get-test-code))
+(define (make-db! path mod-name)
+  (define dbc (sqlite3-connect #:database path #:mode 'create))
+  (query-exec dbc (format "DROP TABLE IF EXISTS ~a" mod-name))
+  (query-exec
+   dbc
+   (format "CREATE TABLE ~a (
+   id INTEGER PRIMARY KEY,
+   type TEXT,
+   pred INTEGER,
+   content TEXT,
+   info TEXT
+   )" mod-name))
+   dbc)
 
-  (define hash-start (hash 0 (target-file (~a in) '())))
-  (define h (generate-records test-data hash-start 1 0))
-  (with-output-to-file out (lambda () (pretty-write h)) #:exists 'replace))
+(define (add-entry! dbc mod-name id type pred content info)
+  (query-exec
+    dbc
+    (format "INSERT INTO ~a
+    (id, type, pred, content, info)
+    VALUES($1, $2, $3, $4, $5)"
+    mod-name)
+    id type pred content info))
 
-(define (generate-records test-data h next-id pred-id)
-  (cond
-    [(null? test-data) h]
-    [else
+(define (into-records! in out mod-name)
+  (define dbc (make-db! out mod-name))
+  (dynamic-wind
+   void
+   (thunk
+    (define test-data (with-input-from-file in get-test-code))
+    (add-entry! dbc mod-name 0 "target-file" sql-null (~a in) sql-null)
+    (generate-records! test-data dbc mod-name 1 0))
+   (thunk (disconnect dbc))))
+
+(define (generate-records! test-data dbc mod-name next-id pred-id)
+  (unless (null? test-data)
      (cond
        [(is-test? (first test-data))
-        (define new-h (hash-set h next-id (test pred-id (first test-data) '())))
-        (generate-records (rest test-data) new-h (add1 next-id) pred-id)]
+        (add-entry! dbc mod-name next-id "test" pred-id (~s (first test-data)) sql-null)
+        (generate-records! (rest test-data) dbc mod-name (add1 next-id) pred-id)]
        [else
         (define-values (ctxt rest-test-data) (consume-context test-data))
-        (define new-h (hash-set h next-id (context pred-id (cons 'begin ctxt) '())))
-        (generate-records rest-test-data new-h (add1 next-id) next-id)])]))
+        (add-entry! dbc mod-name next-id "context" pred-id (~s (cons 'begin ctxt)) sql-null)
+        (generate-records! rest-test-data dbc mod-name (add1 next-id) next-id)])))
 
 ; test-data -> (values
 ;                 extracted-context
@@ -73,7 +102,7 @@
   (for ([src-file src-files])
     (define name (file-name-from-path src-file))
     (when name
-      (into-records src-file (path-replace-extension (build-path test-dir name) ".rktd"))
+      (into-records! src-file (build-path test-dir "test-info.sqlite3") (sanitize-table-name name))
       (comment-out src-file
                    (build-path nontest-dir name)
                    (lambda (sexp)

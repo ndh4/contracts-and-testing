@@ -14,12 +14,8 @@
   [configs-dir "../configurables"]
   [experiment-launch-dir "../../.."])
 
-(define (penultimate-path-element path)
-  (cadr (reverse (explode-path path))))
-
-(define (final-path-element path)
-  (define-values (_base name _must-be-dir?) (split-path path))
-  name)
+(define (antepenultimate-path-element path)
+  (caddr (reverse (explode-path path))))
 
 (define (guess-path #:fail-thunk fail-f . parts)
   (define path (apply build-path parts))
@@ -44,32 +40,47 @@
 
 (define (infer-configuration log-path #:fail-thunk fail-thunk)
   (match (system/string @~a{grep -E 'Running experiment with config' @log-path})
-    [(regexp #rx"(?m:config (.+) and contract level (.+)$)" (list _ path))
+    [(regexp #rx"(?m:config (.+) and contract level (.+) and test type (.+)$)" (list _ path _))
      #:when (path-to-existant-file? path)
      path]
-    [(regexp #rx"(?m:config (.+) and contract level (.+)$)" (list _ path _))
+    [(regexp #rx"(?m:config (.+) and contract level (.+) and test type (.+)$)" (list _ path _ _))
      #:when (path-to-existant-file? (build-path experiment-launch-dir path))
      (build-path experiment-launch-dir path)]
-    [(regexp #rx"(?m:config .+/(.+) and contract level (.+)$)" (list _ config-name _))
+    [(regexp #rx"(?m:config .+/(.+) and contract level (.+) and test type (.+)$)" (list _ config-name _ _))
      #:when (path-to-existant-file? (build-path configs-dir config-name))
      (build-path configs-dir config-name)]
     [else
      (fail-thunk)]))
 
+(define (infer-ctc-level log-path #:fail-thunk fail-thunk)
+  (match (system/string @~a{grep -E 'Running experiment with config' @log-path})
+    [(regexp #rx"(?m:config (.+) and contract level (.+) and test type (.+)$)" (list _ _ ctc-level _))
+     ctc-level]
+    [else
+     (fail-thunk)]))
+
+(define (infer-test-type log-path #:fail-thunk fail-thunk)
+  (match (system/string @~a{grep -E 'Running experiment with config' @log-path})
+    [(regexp #rx"(?m:config (.+) and contract level (.+) and test type (.+)$)" (list _ _ _ test-type))
+     test-type]
+    [else
+     (fail-thunk)]))
+
 (struct mutant*test (mutant test-mod test-id))
 
-(define (all-mutant*tests-for bench #:with-sanity-checks? with-sanity-checks?)
+(define (all-mutant*tests-for bench test-type #:with-sanity-checks? with-sanity-checks?)
   (define select-mutants (configured:select-mutants))
   (define (select-mutants/0-for-sanity-checks module-to-mutate-name)
     (if module-to-mutate-name (select-mutants module-to-mutate-name bench) '(0)))
-  (for*/list ([module-to-mutate-name
+  (for*/sum ([module-to-mutate-name
                (in-list (if with-sanity-checks?
                             (cons #f (benchmark->mutatable-modules bench))
                             (benchmark->mutatable-modules bench)))]
               [mutation-index (select-mutants/0-for-sanity-checks module-to-mutate-name)]
               [module-under-test-name (in-list (benchmark->testable-modules bench))]
-              [test-index (get-all-test-ids module-under-test-name bench)])
-    (mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
+              [test-index (get-all-test-ids test-type module-under-test-name bench)])
+    1
+    #;(mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
 
 #;
 (define (check-progress-percentage progress-log-path all-mutants)
@@ -86,28 +97,29 @@
     [("none")  "configuration=0"]))
 
 ;; Query the number of rows in a sqlite table (0 if the table does not exist)
-(define/contract (num-rows dbc table-name ctc-level)
-  (connection? string? (or/c "max" "types" "none") . -> . natural-number/c)
+(define/contract (num-rows dbc table-name ctc-level test-type)
+  (connection? string? (or/c "max" "types" "none") string? . -> . natural-number/c)
   (if (table-exists? dbc table-name)
       (query-value
        dbc
        (format
-        "SELECT COUNT(*) FROM ~a WHERE ~a"
+        "SELECT COUNT(*) FROM ~a WHERE ~a AND test_type=$1"
         table-name
-        (configuration-string-matches ctc-level)))
+        (configuration-string-matches ctc-level))
+        test-type)
       0))
 
 ;; FIXME this will break if dbc is not a connection. A better approach would be
 ;; have a db setup function that returns a set of functions to modify the db,
 ;; but never actually hand the user control of the db
-(define/contract (check-progress-percentage/dbc dbc bench-name ctc-level all-mutant*tests)
-  (connection? string? (or/c "max" "types" "none") (listof mutant*test?) . -> . (and/c real? (not/c negative?) (<=/c 1)))
+(define/contract (check-progress-percentage/dbc dbc bench-name ctc-level test-type all-mutant*tests)
+  (connection? string? (or/c "max" "types" "none") string? number? . -> . (and/c real? (not/c negative?) (<=/c 1)))
   ;; GROSS HACK there should really be a global enumeration of the configs that
   ;; will run for a given experiment. As it stands, adding a config in
   ;; experiment-manager does not get reflected here, so we will get progress
   ;; values greater than 1
-  (/ (num-rows dbc bench-name ctc-level)
-     (length all-mutant*tests)))
+  (/ (num-rows dbc bench-name ctc-level test-type)
+     all-mutant*tests))
 
 (define (progress-bar-string % #:width width)
   (define head-pos (inexact->exact (round (* % width))))
@@ -132,12 +144,12 @@
  #:arguments {[(hash-table ['watch watch-mode?]
                            ['log-name log-names]
                            ['readable-output? readable-output?])
-               bench-con-level-dirs]
+               bench-con-tt-dirs]
               #:once-each
               [("-w" "--watch")
                'watch
                ("Interactively show a progress bar that updates every 5 sec."
-                "Only works with a single bench-con-level-dir.")
+                "Only works with a single bench-con-tt-dir.")
                #:record]
               [("-r" "--readable")
                'readable-output?
@@ -146,22 +158,22 @@
               #:multi
               [("-l" "--log-name")
                'log-name
-               ("Explicitly provide the log file name. (one per bench-con-level-dir)")
+               ("Explicitly provide the log file name. (one per bench-con-tt-dir)")
                #:collect {"path" cons empty}]
               ;; Benchmark directories in experiment-output. Need log in
               ;; directory to infer configuration
-              #:args bench-con-level-dirs}
- #:check [(andmap path-to-existant-directory? bench-con-level-dirs)
-          @~a{Unable to find @(filter-not path-to-existant-directory? bench-con-level-dirs)}]
- #:check [(not (and watch-mode? (not (= (length bench-con-level-dirs) 1))))
-          @~a{Watch mode can only be specified with a single bench-con-level-dir.}]
+              #:args bench-con-tt-dirs}
+ #:check [(andmap path-to-existant-directory? bench-con-tt-dirs)
+          @~a{Unable to find @(filter-not path-to-existant-directory? bench-con-tt-dirs)}]
+ #:check [(not (and watch-mode? (not (= (length bench-con-tt-dirs) 1))))
+          @~a{Watch mode can only be specified with a single bench-con-tt-dir.}]
 
  (define %s
-   (for/list ([bench-con-level-dir (in-list bench-con-level-dirs)]
+   (for/list ([bench-con-tt-dir (in-list bench-con-tt-dirs)]
               [log-name (in-sequences log-names (in-cycle (in-value #f)))])
      (option-let*
       ([log-path
-        (guess-path bench-con-level-dir (or log-name (~a (penultimate-path-element bench-con-level-dir) ".log"))
+        (guess-path bench-con-tt-dir (or log-name (~a (antepenultimate-path-element bench-con-tt-dir) ".log"))
                     #:fail-thunk
                     (λ (path)
                       (if readable-output?
@@ -182,8 +194,6 @@
                                 Are you running from the same directory the experiment was run?
                                 }))))]
 
-       [ctc-level (path->string (final-path-element bench-con-level-dir))]
-
        [config-path
         (infer-configuration
          log-path
@@ -194,9 +204,19 @@
                             'check-experiment-progress
                             "Unable to infer path to config for this experiment."))))]
 
-       ;; assume that the experiment-dir is three levels upward of the bench-con-level-dir
+       [ctc-level
+        (infer-ctc-level
+         log-path
+         #:fail-thunk (thunk (raise-user-error 'check-experiment-progress "Unable to infer contract level for this experiment")))]
+
+       [test-type
+        (infer-test-type
+         log-path
+         #:fail-thunk (thunk (raise-user-error 'check-experiment-progress "Unable to infer test type for this experiment")))]
+
+       ;; assume that the experiment-dir is four levels upward of the bench-con-tt-dir
        [experiment-dir
-        (simple-form-path (build-path bench-con-level-dir 'up 'up 'up))]
+        (simple-form-path (build-path bench-con-tt-dir 'up 'up 'up 'up))]
 
        [_ (begin
             (parameterize ([current-experiment-dir experiment-dir])
@@ -208,7 +228,7 @@
                                                              (simple-form-path config-path))
                              })))]
 
-       [all-mutant*tests (all-mutant*tests-for bench #:with-sanity-checks? #t)]
+       [all-mutant*tests (all-mutant*tests-for bench test-type #:with-sanity-checks? #t)]
 
        #;[progress-log-path
         (guess-path (path-replace-extension log-path "-progress.log")
@@ -224,9 +244,9 @@
       (cond [watch-mode?
              (define period 5)
              (define start-time (current-inexact-milliseconds))
-             (define start-% (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level all-mutant*tests))
+             (define start-% (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level test-type all-mutant*tests))
              (let loop ()
-               (define % (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level all-mutant*tests))
+               (define % (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level test-type all-mutant*tests))
                (define pretty-%
                  (truncate-string-to (~a (* (/ (truncate (* % 1000)) 1000.0) 100))
                                      4))
@@ -254,7 +274,7 @@
                  (sleep period)
                  (loop)))]
             [else
-             (define % (exact->inexact (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level all-mutant*tests)))
+             (define % (exact->inexact (check-progress-percentage/dbc dbc (benchmark->name bench) ctc-level test-type all-mutant*tests)))
              (if readable-output?
                  %
                  (displayln %))]))))

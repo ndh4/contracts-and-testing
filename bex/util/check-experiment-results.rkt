@@ -37,7 +37,7 @@
               #:when (path-to-existant-directory? ctc-level-dir))
      (define bench-dir-name (basename bench-dir))
      (define contents (directory-list ctc-level-dir #:build? #t))
-     (define-values {log-path status ended-with-err? config ctc-level}
+     (define-values {log-path status ended-with-err? config ctc-level test-type}
        (match (findf (λ (p) (and (regexp-match? @regexp{^[_A-Za-z0-9]+\.log$}
                                                 (basename p))
                                  (not (equal? (basename p)
@@ -45,15 +45,15 @@
                      contents)
          [(? path-to-existant-file? log-path)
           (define-values {status ended-with-err?} (extract-experiment-status log-path))
-          (define-values {config ctc-level}
+          (define-values {config ctc-level test-type}
             (with-input-from-file log-path
               (thunk
-               (match (regexp-match #px"Running experiment with config [^ ]+/([^/]+).rkt and contract level (max|types|none)"
+               (match (regexp-match #px"Running experiment with config [^ ]+/([^/]+).rkt and contract level (max|types|none) and test type (hand|rand)"
                                     (current-input-port))
-                 [(list _ config-name ctc-level) (values (~a config-name) (~a ctc-level))]
-                 [else (values '? '?)]))))
-          (values log-path status ended-with-err? config ctc-level)]
-         [else (values #f '? '? '? '?)]))
+                 [(list _ config-name ctc-level test-type) (values (~a config-name) (~a ctc-level) (~a test-type))]
+                 [else (values '? '? '?)]))))
+          (values log-path status ended-with-err? config ctc-level test-type)]
+         [else (values #f '? '? '? '? '?)]))
 
      (define errs?
        (cond [(equal? status 'complete)
@@ -65,7 +65,7 @@
                 [(? path-string? err-log-path) (not (<= (file-size err-log-path) 1))]
                 [else '?])]))
 
-     (values (cons bench-dir-name ctc-level)
+     (values (list bench-dir-name ctc-level test-type)
              (list status errs? config))))
 
  (define (format-name name)
@@ -77,9 +77,10 @@
 (define (build-status-list statuses condition?)
   (for/list ([{key status} (in-hash statuses)]
              #:when (condition? status))
-    (define name (car key))
-    (define ctc-level (cdr key))
-    (list (format-name name) (third status) ctc-level)))
+    (define name (first key))
+    (define ctc-level (second key))
+    (define test-type (third key))
+    (list (format-name name) (third status) ctc-level test-type)))
 
  (define complete/no-errors
    (build-status-list statuses

@@ -42,6 +42,7 @@
   (define module-to-mutate (make-parameter #f))
   (define mutation-index (make-parameter #f))
   (define test-id (make-parameter #f))
+  (define test-type (make-parameter #f))
   (define write-modules-to (make-parameter #f))
   (define on-module-exists (make-parameter 'error))
   (define timeout/s (make-parameter #f))
@@ -57,6 +58,10 @@
     dir
     "Directory for this experiment. Mandatory."
     (current-experiment-dir dir)]
+   [("-d" "--test-type")
+    specified-test-type
+    "Test type. Mandatory."
+    (test-type specified-test-type)]
    [("-b" "--benchmark-configuration")
     benchmark-configuration-str
     ("`write` form of the `benchmark-configuration` to run."
@@ -174,6 +179,7 @@
          (mutation-index)
          (benchmark-configuration-config (the-benchmark-configuration))
          #:test-id (test-id)
+         #:test-type (test-type)
          #:timeout/s (timeout/s)
          #:memory/gb (memory/gb)
          #:modules-base-path (find-program-base-path the-program)

@@ -189,6 +189,7 @@
                                     config-path
 
                                     mutant-error-log
+                                    #:test-type test-type
                                     #:fake-mutation? [fake-mutation? #f]
                                     #:fake-run? [fake-run? #f]
                                     #:timeout/s timeout/s
@@ -206,6 +207,7 @@
                                     config-path
                                     (current-experiment-dir)
                                     #:fake-mutation? fake-mutation?
+                                    #:test-type test-type
                                     #:fake-run? fake-run?
                                     #:log-mutation-info? log-mutation-info?
                                     #:test-id test-id

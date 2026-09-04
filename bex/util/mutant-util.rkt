@@ -10,6 +10,7 @@
              #:fake-mutation? boolean?}
             {#:timeout/s (or/c #f number?)
              #:test-id (or/c #f natural?)
+             #:test-type (or/c #f string?)
              #:memory/gb (or/c #f number?)
              #:log-mutation-info? boolean?
              #:fake-run? boolean?
@@ -96,6 +97,7 @@
                              #:fake-mutation? fake-mutation?
                              #:fake-run? [fake-run? #f]
                              #:timeout/s [timeout/s #f]
+                             #:test-type [test-type #f]
                              #:test-id [test-id #f]
                              #:memory/gb [memory/gb #f]
                              #:log-mutation-info? [log-mutation-info? (current-mutant-runner-log-mutation-info?)]
@@ -116,6 +118,7 @@
                                    config-path
                                    (mutant-error-log)
                                    #:fake-mutation? fake-mutation?
+                                   #:test-type test-type
                                    #:fake-run? fake-run?
                                    #:timeout/s (or timeout/s (default-timeout/s))
                                    #:test-id test-id
@@ -147,6 +150,7 @@
                                                       config-path
                                                       (current-experiment-dir)
                                                       #:fake-mutation? fake-mutation?
+                                                      #:test-type test-type
                                                       #:fake-run? fake-run?
                                                       #:log-mutation-info? log-mutation-info?
                                                       #:test-id test-id

@@ -13,7 +13,8 @@
          racket/runtime-path
          racket/date
          "experiment-manager.rkt"
-         "experiment-info.rkt")
+         "experiment-info.rkt"
+         "../util/shared-ctcs.rkt")
 
 (begin-for-syntax
   (require racket/runtime-path
@@ -69,6 +70,7 @@
                                                    mode.str
                                                    current-benchs
                                                    current-ctc-levels
+                                                   current-test-types
                                                    {~? name #f}
                                                    current-status-file
                                                    record-outcomes?)]))
@@ -92,6 +94,9 @@
 (define-syntax-parameter current-ctc-levels
   (λ _ #'#f))
 
+(define-syntax-parameter current-test-types
+  (λ _ #'#f))
+
 (define-simple-macro (module-begin top-level-e ...)
   (#%module-begin
    (module test racket/base) ;; no testing launching experiments...
@@ -99,6 +104,7 @@
 
 (define-simple-macro (with-configuration [host configuration]
                        {~seq #:contract-levels contract-level:ctc-setting ...}
+                       {~seq #:test-types test-type ...}
                        {~alt
                         {~optional {~seq #:status-in status-file-path}}
                         {~optional {~and #:skip-setup skip-setup-kw}}
@@ -106,18 +112,20 @@
                         {~optional {~and #:manual-outcome-recording skip-record-outcomes-kw}}} ...
                        {~var first-mode (run-mode-spec (not (attribute skip-record-outcomes-kw)))}
                        {~var more-modes (run-mode-spec #f)} ...)
+  #:declare test-type (expr/c #'test-type/c)
   #:fail-when (not (or (attribute skip-record-outcomes-kw)
                        (member (attribute first-mode.compile-time-mode-name-str) '("TR" "blame"))))
               "Unless manually managing outcome recording with #:manual-outcome-recording, the first mode run must be TR/blame so that later modes can perform outcome parity checks."
+  #:with [benchmark-name ...] (if (attribute specific-benchmark)
+                                  #'(specific-benchmark.str ...)
+                                  (datum->syntax this-syntax all-benchmarks))
   #:with maybe-host-update (if (attribute skip-setup-kw)
                                #'(void)
                                #'(update-host! the-host
                                                the-setup-config
+                                               #:benchmark-names (list benchmark-name ...)
                                                #:skip-recompile? (skip-recompile?)
                                                (handle-host-update-failure! the-experiment-id)))
-  #:with [benchmark-name ...] (if (attribute specific-benchmark)
-                                  #'(specific-benchmark.str ...)
-                                  (datum->syntax this-syntax all-benchmarks))
   #:with [ctc-level ...] #'('contract-level.sym ...)
   (module+ main
     (define skip-recompile? (make-parameter #f))
@@ -135,8 +143,9 @@
           [the-db-setup-script (orchestration-info-db-setup-script orchestration-info)]
           [the-status-file {~? status-file-path #f}]
           [the-benchs (list benchmark-name ...)]
-          [the-ctc-levels (list ctc-level ...)])
-      (printf "Orchestrating experiment for benchmarks ~a and contract-levels ~a~n" the-benchs the-ctc-levels)
+          [the-ctc-levels (list ctc-level ...)]
+          [the-test-types (list test-type.c ...)])
+      (printf "Orchestrating experiment for benchmarks ~a and contract-levels ~a and test-types ~a~n" the-benchs the-ctc-levels the-test-types)
       (parameterize ([current-experiment-dir
                       (build-path (get-field host-project-path the-host)
                                   "experiment-results"
@@ -162,7 +171,8 @@
                               [current-experiment-id  (syntax-id-rules () [_ the-experiment-id])]
                               [current-status-file (syntax-id-rules () [_ the-status-file])]
                               [current-benchs (syntax-id-rules () [_ the-benchs])]
-                              [current-ctc-levels (syntax-id-rules () [_ the-ctc-levels])])
+                              [current-ctc-levels (syntax-id-rules () [_ the-ctc-levels])]
+                              [current-test-types (syntax-id-rules () [_ the-test-types])])
           first-mode.implementation
           more-modes.implementation ...)))))
 
@@ -216,6 +226,7 @@
                       mode-name
                       benchmark-names
                       contract-levels
+                      test-types
                       name
                       status-file
                       record-outcomes?)
@@ -240,7 +251,7 @@
                          (raise-user-error 'check-host-empty! "Aborted."))))
   (send host setup-job-management!)
   (displayln @~a{Submitting benchmark jobs...})
-  (launch-benchmarks! host mode-name benchmark-names contract-levels
+  (launch-benchmarks! host mode-name benchmark-names contract-levels test-types
                       (handle-launch-benchmarks-failure! experiment-id)
                       #:outcome-checking-mode (if record-outcomes? 'record 'check))
   (displayln @~a{Waiting for benchmarks to finish...})
