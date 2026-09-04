@@ -72,14 +72,15 @@
   (define select-mutants (configured:select-mutants))
   (define (select-mutants/0-for-sanity-checks module-to-mutate-name)
     (if module-to-mutate-name (select-mutants module-to-mutate-name bench) '(0)))
-  (for*/list ([module-to-mutate-name
+  (for*/sum ([module-to-mutate-name
                (in-list (if with-sanity-checks?
                             (cons #f (benchmark->mutatable-modules bench))
                             (benchmark->mutatable-modules bench)))]
               [mutation-index (select-mutants/0-for-sanity-checks module-to-mutate-name)]
               [module-under-test-name (in-list (benchmark->testable-modules bench))]
               [test-index (get-all-test-ids test-type module-under-test-name bench)])
-    (mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
+    1
+    #;(mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
 
 #;
 (define (check-progress-percentage progress-log-path all-mutants)
@@ -112,13 +113,13 @@
 ;; have a db setup function that returns a set of functions to modify the db,
 ;; but never actually hand the user control of the db
 (define/contract (check-progress-percentage/dbc dbc bench-name ctc-level test-type all-mutant*tests)
-  (connection? string? (or/c "max" "types" "none") string? (listof mutant*test?) . -> . (and/c real? (not/c negative?) (<=/c 1)))
+  (connection? string? (or/c "max" "types" "none") string? number? . -> . (and/c real? (not/c negative?) (<=/c 1)))
   ;; GROSS HACK there should really be a global enumeration of the configs that
   ;; will run for a given experiment. As it stands, adding a config in
   ;; experiment-manager does not get reflected here, so we will get progress
   ;; values greater than 1
   (/ (num-rows dbc bench-name ctc-level test-type)
-     (length all-mutant*tests)))
+     all-mutant*tests))
 
 (define (progress-bar-string % #:width width)
   (define head-pos (inexact->exact (round (* % width))))
