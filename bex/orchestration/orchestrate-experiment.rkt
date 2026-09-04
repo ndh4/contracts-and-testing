@@ -7,8 +7,8 @@
 (with-configuration [local
                      teco]
   #:contract-levels max
-  #:test-types "rand_max"
-  #:only abm_test
+  #:test-types "rand_max" "hand"
+  #:only kcfa
   #:status-in status-file
   #:manual-outcome-recording
   (run-mode teco-prime #:record-outcomes))
