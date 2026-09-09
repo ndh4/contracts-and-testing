@@ -1,6 +1,7 @@
 #lang racket
 
 (require "enumerate-tests.rkt"
+         racket/runtime-path
          db)
 
 (provide organize-random-tests!)
@@ -9,9 +10,11 @@
 
 (define benchmark-name (make-parameter 'bad))
 
+(define-runtime-path BENCHMARKS "../../../gtp-benchmarks/benchmarks")
+
 (define (benchmark-dir)
   (build-path
-   "/Users/nhejduk/Research-Local/teco-parent/gtp-benchmarks/benchmarks"
+   BENCHMARKS
    (benchmark-name)))
 
 (define (wiretap-results-dir)
