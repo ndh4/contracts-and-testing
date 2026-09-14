@@ -376,7 +376,8 @@
                              "Updating benchmarks..."
                              (if skip-recompile? "Skipping recompilation..." "Recompiling...")
                              "Checking status:"
-                             "Enumerating tests in benchmarks..."))]
+                             "Enumerating tests in benchmarks..."
+                             "Copying state of benchmarks under test..."))]
         [cmd (in-list
               (list
                @~a{
@@ -405,7 +406,16 @@
                    cd '@host-benchmarks-path' && @;
                    @(get-field host-racket-path a-host) -l bex/util/enumerate-tests-for-benchmarks.rkt -- --gtp-benchmarks-dir . @(string-join benchmark-names) && @;
                    echo "Done."
-                   }))])
+                   }
+               @~a{
+                   cd '@(current-experiment-dir)'
+                   mkdir ./snapshot
+                   for benchmark in @(string-join benchmark-names " ")
+                   do
+                      cp -r @|host-benchmarks-path|/benchmarks/$benchmark ./snapshot/$benchmark
+                   done
+                   echo "Done."
+               }))])
     (displayln step)
     (unless (send a-host
                   system/host
