@@ -1,7 +1,7 @@
 #lang racket
 
 (require "enumerate-tests.rkt"
-         "enumerate-random-tests.rkt"
+         "enumerate-random-tests-v2.rkt"
          "path-utils.rkt")
 
 (provide (contract-out
@@ -37,7 +37,7 @@
 
 (define (split-random-tests! benchmarks)
   (for ([bm benchmarks])
-    (organize-random-tests! bm)))
+    (make-random-tests! bm)))
 
 (module+ main
   (require racket/cmdline)
