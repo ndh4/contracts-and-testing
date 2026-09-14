@@ -409,9 +409,10 @@
                    }
                @~a{
                    cd '@(current-experiment-dir)'
+                   mkdir ./snapshot
                    for benchmark in @(string-join benchmark-names " ")
                    do
-                      cp -r @|host-benchmarks-path|/benchmarks/$benchmark ./$benchmark
+                      cp -r @|host-benchmarks-path|/benchmarks/$benchmark ./snapshot/$benchmark
                    done
                    echo "Done."
                }))])
