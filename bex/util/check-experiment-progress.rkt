@@ -70,24 +70,16 @@
 
 (define (all-mutant*tests-for bench test-type #:with-sanity-checks? with-sanity-checks?)
   (define select-mutants (configured:select-mutants))
-  (define (select-mutants/0-for-sanity-checks module-to-mutate-name)
-    (if module-to-mutate-name (select-mutants module-to-mutate-name bench) '(0)))
-  (for*/sum ([module-to-mutate-name
+  (define (select-mutants/allow-sanity-checks module-to-mutate-name)
+    (if module-to-mutate-name (select-mutants module-to-mutate-name bench) '(NO_MUTATIONS)))
+  (for*/sum ([module-under-test-name (in-list (benchmark->testable-modules bench))]
+             [test-index (get-all-test-ids test-type module-under-test-name bench)]
+             [module-to-mutate-name
                (in-list (if with-sanity-checks?
                             (cons #f (benchmark->mutatable-modules bench))
                             (benchmark->mutatable-modules bench)))]
-              [mutation-index (select-mutants/0-for-sanity-checks module-to-mutate-name)]
-              [module-under-test-name (in-list (benchmark->testable-modules bench))]
-              [test-index (get-all-test-ids test-type module-under-test-name bench)])
-    1
-    #;(mutant*test (mutant module-to-mutate-name mutation-index #t) module-under-test-name test-index)))
-
-#;
-(define (check-progress-percentage progress-log-path all-mutants)
-  (define progress (file->list progress-log-path))
-  (/ (length progress)
-     ;; TODO what is sample size?
-     (* (sample-size) (length all-mutants))))
+             [mutation-index (select-mutants/allow-sanity-checks module-to-mutate-name)])
+    1))
 
 (define/contract (configuration-string-matches ctc-level)
   (-> (or/c "max" "types" "none") string?)
