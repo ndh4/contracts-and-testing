@@ -4,7 +4,7 @@
 
 (define-runtime-path status-file "../../../experiment-status.txt")
 
-(with-configuration [local
+(with-configuration [zythos-local/one-job-per-mutant
                      teco]
   #:contract-levels max types none
   #:test-types "rand" "hand"
