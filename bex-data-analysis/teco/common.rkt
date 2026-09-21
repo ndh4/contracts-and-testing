@@ -54,8 +54,8 @@
    (dbc)
    (format
     "CREATE TABLE ~a AS
-      SELECT module_under_test, test_index, test_check_enabled, mutant_module, mutation_index from ~a
-      JOIN ~a USING (module_under_test, test_index) WHERE ~a AND configuration = $1"
+      SELECT module_under_test, test_index, test_type, test_check_enabled, mutant_module, mutation_index from ~a
+      JOIN ~a USING (module_under_test, test_index, test_type) WHERE ~a AND configuration = $1"
     new-name
     mapping
     suite
@@ -70,9 +70,9 @@
   (query-rows
    (dbc)
    (format
-    "SELECT module_under_test, test_index, test_check_enabled, COUNT(*) from ~a
-                                          GROUP BY module_under_test, test_index, test_check_enabled
-     HAVING COUNT(*) = (SELECT(MAX(cnt)) FROM (SELECT COUNT(*) as cnt FROM ~a GROUP BY module_under_test, test_index, test_check_enabled))"
+    "SELECT module_under_test, test_index, test_type, test_check_enabled, COUNT(*) from ~a
+                                          GROUP BY module_under_test, test_index, test_type, test_check_enabled
+     HAVING COUNT(*) = (SELECT(MAX(cnt)) FROM (SELECT COUNT(*) as cnt FROM ~a GROUP BY module_under_test, test_index, test_type, test_check_enabled))"
     kills-table
     kills-table)))
 
@@ -88,28 +88,31 @@
    (format
     "DELETE FROM ~a
     WHERE (mutant_module, mutation_index)
-    IN (SELECT DISTINCT mutant_module, mutation_index FROM ~a WHERE module_under_test=$1 AND test_index=$2 AND test_check_enabled=$3)"
+    IN (SELECT DISTINCT mutant_module, mutation_index FROM ~a WHERE module_under_test=$1 AND test_index=$2 AND test_type=$3 AND test_check_enabled=$4)"
     kills-table
     kills-table)
    (test-id-modul test)
    (test-id-index test)
+   (test-id-type test)
    (bool->sqlint (test-id-check-enabled? test))))
 
 (define (add-test! #:test test #:suite suite)
   (query-exec (dbc)
-              (format "INSERT INTO ~a VALUES ($1, $2, $3)" suite)
+              (format "INSERT INTO ~a VALUES ($1, $2, $3, $4)" suite)
               (test-id-modul test)
               (test-id-index test)
+              (test-id-type test)
               (bool->sqlint (test-id-check-enabled? test))))
 
 (define (delete-test! #:test test #:kills-table kills-table)
   (query-exec
    (dbc)
    (format "DELETE FROM ~a
-                       WHERE module_under_test=$1 AND test_index=$2 AND test_check_enabled=$3"
+                       WHERE module_under_test=$1 AND test_index=$2 AND test_type=$3 AND test_check_enabled=$4"
            kills-table)
    (test-id-modul test)
    (test-id-index test)
+   (test-id-type test)
    (bool->sqlint (test-id-check-enabled? test))))
 
 (define (delete-mutant! #:mutant mutant #:kills-table kills-table)
@@ -140,21 +143,23 @@
 
        (query-exec (dbc) (format "DELETE FROM ~a WHERE mutant_module='NO_MUTATIONS'" mapping))))))
 
-(define (maybe-make-test-suite! #:src src-table #:dest dest-table)
+(define (maybe-make-test-suite! #:src src-table #:dest dest-table #:test-type test-type)
   (query-exec
    (dbc)
    (format "CREATE TABLE IF NOT EXISTS ~a AS SELECT *
-                                             FROM (SELECT DISTINCT module_under_test, test_index FROM ~a)
+                                             FROM (SELECT DISTINCT module_under_test, test_index, test_type FROM ~a)
                                              JOIN (SELECT 0 as test_check_enabled WHERE ~a
                                                                           UNION ALL
                                                                           SELECT 1 WHERE ~a
-                                             )"
+                                             )
+                                             WHERE $1=$2 OR test_type=$1"
            dest-table
            src-table
            (bool->sqlstring (or (eq? (tcc) 'both_tc)
                                 (eq? (tcc) 'no_tc)))
            (bool->sqlstring (or (eq? (tcc) 'both_tc)
-                                (eq? (tcc) 'yes_tc))))))
+                                (eq? (tcc) 'yes_tc))))
+   test-type "all"))
 
 (define/contract (bool->sqlstring b)
   (-> boolean? (or/c "TRUE" "FALSE"))

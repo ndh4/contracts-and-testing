@@ -12,12 +12,12 @@
          "reducers/delayed-greedy.rkt"
          racket/runtime-path)
 
-(define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf)
+(define (run-reducers red-list #:test-suite suite #:test-mutant-mapping mapping #:configuration conf #:test-type test-type)
   (define tests
-    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index, test_check_enabled from ~a ORDER BY module_under_test, test_index" suite))))
+    (map vec->test-id (query-rows (dbc) (format "SELECT module_under_test, test_index, test_type, test_check_enabled from ~a WHERE $1=$2 OR test_type=$1 ORDER BY module_under_test, test_index, test_type" suite) test-type "all")))
 
   (printf
-   "~n~a (~a contracts, ~a)~n"
+   "~n~a (~a contracts, ~a, ~a tests)~n"
    mapping
    (cond
      [(= conf 0) "no"]
@@ -29,7 +29,8 @@
   (match (tcc)
     ['yes_tc "test checks on"]
     ['no_tc "test checks off"]
-    ['both_tc "test check mixed reduction"]))
+    ['both_tc "test check mixed reduction"])
+  test-type)
   (printf "Mutation score: ~a~n"
           (real->decimal-string (get-mutation-score #:result-table-name mapping
                                                     #:test-suite-table-name suite
@@ -67,7 +68,7 @@
 
     (printf "Reduced test suite size: ~a~n"
             (length (query-rows (dbc)
-                                (format "SELECT module_under_test, test_index, test_check_enabled from ~a"
+                                (format "SELECT module_under_test, test_index, test_type, test_check_enabled from ~a"
                                         reduction-result))))
 
     #;(displayln (format "~a: ~a"
@@ -104,11 +105,12 @@
   (parameterize ([dbc (db-connection a-slice)]
                  [tcc test-check-config])
 
-    (define test-suite-name (format "~a_tests_~a" bm-name (tcc)))
-    (maybe-make-test-suite! #:src bm-name #:dest test-suite-name)
+    (define test-suite-name (format "~a_tests_~a_~a" bm-name (tcc) (slice-test-type a-slice)))
+    (maybe-make-test-suite! #:src bm-name #:dest test-suite-name #:test-type (slice-test-type a-slice))
     (maybe-move-sanity! bm-name)
     (run-reducers
      (list reduce-by-lin-search reduce-by-vanilla-greedy reduce-by-delayed-greedy reduce-by-harrold)
      #:test-suite test-suite-name
      #:test-mutant-mapping bm-name
-     #:configuration (slice-config a-slice))))
+     #:configuration (slice-config a-slice)
+     #:test-type (slice-test-type a-slice))))

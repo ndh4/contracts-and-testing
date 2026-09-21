@@ -11,9 +11,13 @@
 (define/contract slices-to-process
   (listof slice?)
   (list
-      (slice "teco-04-20-2026@16:23:46" "kcfa" 0)
-      (slice "teco-04-30-2026@11:13:36" "kcfa" 1111111)
-      (slice "teco-04-20-2026@16:23:46" "kcfa" 2222222)
+      (slice "teco-09-17-2026@12:54:34_snake" "snake" 22222222 "all")
+      (slice "teco-09-17-2026@12:54:34_snake" "snake" 0 "all")
+      (slice "teco-09-17-2026@12:54:34_snake" "snake" 22222222 "hand")
+      (slice "teco-09-17-2026@12:54:34_snake" "snake" 0 "hand")
+      (slice "teco-09-17-2026@12:54:34_snake" "snake" 22222222 "rand")
+      (slice "teco-09-17-2026@12:54:34_snake" "snake" 0 "rand")
+;      (slice "teco-09-16-2026@11:00:06_kcfa" "kcfa" 1111111)
 ;      (slice "teco-04-21-2026@23:27:58" "morsecode" 0)
 ;      (slice "teco-04-30-2026@13:19:27" "morsecode" 1111)
 ;      (slice "teco-04-21-2026@23:27:58" "morsecode" 2222)

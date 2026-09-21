@@ -25,10 +25,11 @@
      "SELECT COUNT(*) from (SELECT DISTINCT mutant_module, mutation_index from ~a
                             INNER JOIN ~a
                             ON ~a.module_under_test = ~a.module_under_test AND
-                               ~a.test_index = ~a.test_index
+                               ~a.test_index = ~a.test_index AND
+                               ~a.test_type = ~a.test_type
                             WHERE configuration = $1
                             AND ~a)"
-     (append (build-list 6 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))
+     (append (build-list 8 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))
              (list (test-passed=0 #:test-suite-name test-suite-table-name #:mapping-name result-table-name)))))
    configuration))
 

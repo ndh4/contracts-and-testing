@@ -7,16 +7,16 @@
          (struct-out slice)
          bool->sqlint)
 
-(define-struct test-id [modul index check-enabled?]
+(define-struct test-id [modul index type check-enabled?]
   #:transparent)
 
 (define-struct mutant-id [modul index]
   #:transparent)
 
-(define-struct slice [experiment benchmark config])
+(define-struct slice [experiment benchmark config test-type])
 
 (define (vec->test-id row)
-  (test-id (vector-ref row 0) (vector-ref row 1) (sqlint->bool (vector-ref row 2))))
+  (test-id (vector-ref row 0) (vector-ref row 1) (vector-ref row 2) (sqlint->bool (vector-ref row 3))))
 
 (define (vec->mutant-id row)
   (mutant-id (vector-ref row 0) (vector-ref row 1)))
