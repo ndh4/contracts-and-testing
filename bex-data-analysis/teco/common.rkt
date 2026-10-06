@@ -59,7 +59,7 @@
     new-name
     mapping
     suite
-    (test-passed=0 #:test-suite-name suite #:mapping-name mapping))
+    (test-failed? #:test-suite-name suite #:mapping-name mapping))
    conf)
   new-name)
 

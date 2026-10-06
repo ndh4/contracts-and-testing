@@ -30,7 +30,7 @@
                             WHERE configuration = $1
                             AND ~a)"
      (append (build-list 8 (lambda (idx) (if (even? idx) result-table-name test-suite-table-name)))
-             (list (test-passed=0 #:test-suite-name test-suite-table-name #:mapping-name result-table-name)))))
+             (list (test-failed? #:test-suite-name test-suite-table-name #:mapping-name result-table-name)))))
    configuration))
 
 (define (get-mutation-score #:result-table-name result-table-name

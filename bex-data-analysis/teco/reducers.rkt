@@ -32,9 +32,9 @@
     ['both_tc "test check mixed reduction"])
   test-type)
   (printf "Mutation score: ~a~n"
-          (real->decimal-string (get-mutation-score #:result-table-name mapping
+          (real->decimal-string (* 100 (get-mutation-score #:result-table-name mapping
                                                     #:test-suite-table-name suite
-                                                    #:serialized-configuration conf)
+                                                    #:serialized-configuration conf))
                                 6))
   (printf "Test suite size: ~a~n" (length tests))
 
@@ -57,8 +57,8 @@
                         result))
                   '(#f +inf.0)
                   tests)))
-
-  (for/list ([reducer red-list])
+0
+  #;(for/list ([reducer red-list])
     (define reduction-result
       (reducer #:test-suite suite
                #:test-mutant-mapping mapping
