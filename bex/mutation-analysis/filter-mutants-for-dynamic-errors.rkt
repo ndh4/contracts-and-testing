@@ -14,7 +14,7 @@
          "../util/progress-log.rkt"
          "../util/mutant-util.rkt"
          "../runner/mutation-runner.rkt"
-         process-queue/priority
+         process-queue/functional
          racket/hash
          racket/random)
 

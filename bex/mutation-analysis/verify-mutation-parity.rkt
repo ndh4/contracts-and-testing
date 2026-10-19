@@ -9,7 +9,7 @@
          "../util/program.rkt"
          "../util/for.rkt"
          "../util/binary-search.rkt"
-         process-queue/priority
+         process-queue/functional
          racket/runtime-path)
 
 (module common rscript

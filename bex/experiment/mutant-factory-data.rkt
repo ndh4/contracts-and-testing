@@ -35,7 +35,7 @@
          "../runner/mutation-runner.rkt"
          "../configurations/config.rkt"
          "../configurations/configure-benchmark.rkt"
-         process-queue/priority
+         process-queue/functional
          syntax/parse/define)
 
 ;; see last result of `process`

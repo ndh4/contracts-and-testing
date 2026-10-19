@@ -9,7 +9,7 @@
          "../../util/mutant-util.rkt"
          "../../util/path-utils.rkt"
          "../../util/run-mutants-in-parallel.rkt"
-         process-queue/priority)
+         process-queue/functional)
 
 ;; db layout is:
 ;; bench-name? -> (hash/c mutant/c run-status?)

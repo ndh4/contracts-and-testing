@@ -4,7 +4,7 @@
          "../configurations/config.rkt"
          "progress-log.rkt"
          "mutant-util.rkt"
-         process-queue/priority)
+         process-queue/functional)
 
 (define result-type/c any/c)
 (provide (contract-out

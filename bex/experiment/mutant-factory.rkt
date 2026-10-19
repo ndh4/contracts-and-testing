@@ -20,7 +20,7 @@
          "blame-trail-data.rkt"
          "integrity-metadata.rkt"
          (only-in "../orchestration/experiment-info.rkt" current-experiment-dir)
-         process-queue/priority
+         process-queue/functional
          racket/file
          racket/format
          racket/match
@@ -174,9 +174,6 @@
                       (make-process-queue
                        (process-limit)
                        (factory (bench-info bench config) (hash) (hash) 0)
-                       < ;; lower priority value means schedule sooner (this was
-                       ;; unconfigurable with the original implementation, now just
-                       ;; stick to that original default)
                        #:kill-older-than
                        (if (current-run-with-condor-machines)
                            (*

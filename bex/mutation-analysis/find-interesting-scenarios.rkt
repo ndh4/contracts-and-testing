@@ -23,7 +23,7 @@
          "../util/progress-log.rkt"
          "../util/mutant-util.rkt"
          "../runner/mutation-runner.rkt"
-         process-queue/priority)
+         process-queue/functional)
 
 (define-runtime-paths
   [default-parameterizing-config "../configurables/configs/TR.rkt"])
@@ -346,7 +346,6 @@
    (for/fold ([q (make-process-queue process-limit
                                  ; (listof (list/c benchmark-name? scenario?))
                                  empty
-                                 <
                                  #:kill-older-than (* 5 60))])
              ([benchmark-name (in-list (db:keys summaries-db))])
      (define benchmark-path (build-path benchmarks-dir benchmark-name))
