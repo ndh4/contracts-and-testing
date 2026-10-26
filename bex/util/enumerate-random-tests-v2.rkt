@@ -1,5 +1,8 @@
 #lang racket
 
+(provide find-contracted-identifiers
+         reader-loop)
+
 (define (reader-loop #:in in #:initial-accum-val initial-accum-val #:on-expr on-expr)
   (let loop ([accum initial-accum-val])
     (define expr (read in))
