@@ -376,7 +376,7 @@
         [(? exn:fail?)
          ;; Any failures during compilation that aren't type errors are
          ;; categorized as syntax errors.
-         ((make-status* 'syntax-error))]
+         ((make-status* 'syntax-error) #f (exn-message e))]
         [else
          (report-unexpected-error 'handle-module-evaluation-error
                                   "Unexpected error while loading modules."
@@ -404,7 +404,7 @@
           (extract-errortrace-stack e)
           (extract-context-stack e))]
         [(? exn:fail:syntax?) ; don't think should ever happen?
-         ((make-status* 'syntax-error))]
+         ((make-status* 'syntax-error) #f "this should never happen")]
         [(? exn:test?)
          ((make-status* 'test-failure)
           #f

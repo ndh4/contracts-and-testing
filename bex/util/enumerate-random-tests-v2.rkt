@@ -22,7 +22,13 @@
        (lambda (#:expr expr #:accum accum)
          (match expr
            [(list* 'define/contract (cons (? symbol? id) _) _ _)
-            ;; ^ Match shorthand function definitions: (define (id args ...) body ...)
+            ;; ^ Match shorthand function definitions: (define (id args ...) contract body ...)
+            (cons id accum)]
+           [(list 'define/contract (? symbol? id) _ _)
+            ;; ^ Match other definitions: (define id contract rhs)
+            (cons id accum)]
+           [(list* 'define/contract (cons (cons (? symbol? id) _) _) _ _)
+            ;; ^ Match other definitions: (define id contract rhs)
             (cons id accum)]
            [else
             (when (string-contains? (~a expr) "define/contract")
