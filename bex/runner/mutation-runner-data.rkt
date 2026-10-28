@@ -65,9 +65,9 @@
                 [else #f])]
              [errortrace-text
                {outcome}
-               (if (member outcome '(contract-violation runtime-error test-failure))
-                   string?
-                   #f)]
+               (cond [(member outcome '(contract-violation runtime-error test-failure)) string?]
+                     [(member outcome '(syntax-error)) (or/c string? #f)]
+                     [else #f])]
              [errortrace-stack
               {outcome}
               (if (member outcome '(contract-violation runtime-error test-failure))
