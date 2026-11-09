@@ -73,6 +73,7 @@
                                  "morsecode"
                                  "sieve"
                                  "snake"
+                                 "snake_plus"
                                 #;"telegram"
                                 #;"bazaar"
                                 #;"quirkle"
