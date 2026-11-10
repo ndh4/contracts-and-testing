@@ -727,13 +727,18 @@ Mutant: [~a] ~a @ ~a with config:
         (match (with-input-from-file path read)
           [(and (or (struct* run-status
                              ([outcome (or 'completed
-                                           'syntax-error
                                            'timeout
                                            'skipped
                                            'index-exceeded
                                            'oom)]
                               [blamed #f]
                               [errortrace-text #f]
+                              [errortrace-stack #f]
+                              [context-stack #f]))
+                    (struct* run-status
+                             ([outcome 'syntax-error]
+                              [blamed #f]
+                              [errortrace-text (or (? string?) #f)]
                               [errortrace-stack #f]
                               [context-stack #f]))
                     (struct* run-status
